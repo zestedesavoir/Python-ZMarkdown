@@ -94,7 +94,7 @@ class CodeHilite(object):
 
     def __init__(self, src=None, linenums=None, guess_lang=True,
                 css_class="codehilite", lang=None, style='default',
-                noclasses=False, tab_length=4, hl_lines=None):
+                noclasses=False, tab_length=4, hl_lines=None, linenostart=1):
         self.src = src
         self.lang = lang
         self.linenums = linenums
@@ -104,6 +104,7 @@ class CodeHilite(object):
         self.noclasses = noclasses
         self.tab_length = tab_length
         self.hl_lines = hl_lines or []
+        self.linenostart = linenostart
 
     def hilite(self):
         """
@@ -136,7 +137,8 @@ class CodeHilite(object):
                                       cssclass=self.css_class,
                                       style=self.style,
                                       noclasses=self.noclasses,
-                                      hl_lines=self.hl_lines)
+                                      hl_lines=self.hl_lines,
+                                      linenostart = self.linenostart)
             return highlight(self.src, lexer, formatter)
         else:
             # just escape and build markup usable by JS highlighting libs
@@ -186,7 +188,9 @@ class CodeHilite(object):
             (?P<lang>[\w+-]*)               # The language
             \s*                             # Arbitrary whitespace
             # Optional highlight lines, single- or double-quote-delimited
-            (hl_lines=(?P<quot>"|')(?P<hl_lines>.*?)(?P=quot))?
+            (hl_lines[ ]*=[ ]*(?P<quot>"|')(?P<hl_lines>.*?)(?P=quot))?
+            \s*
+            (linenostart[ ]*=[ ]*(?P<linenostart>.*?))?
             ''',  re.VERBOSE)
         # search first line for shebang
         m = c.search(fl)
@@ -204,6 +208,10 @@ class CodeHilite(object):
                 self.linenums = True
 
             self.hl_lines = parse_hl_lines(m.group('hl_lines'))
+            try:
+                self.linenostart = int(m.group('linenostart'))
+            except:
+                self.linenistart = 1
         else:
             # No match
             lines.insert(0, fl)

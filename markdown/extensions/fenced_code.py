@@ -119,7 +119,8 @@ class FencedBlockPreprocessor(Preprocessor):
 (?P<fence>^(?:~{3,}|`{3,}))[ ]*         # Opening ``` or ~~~
 (\{?\.?(?P<lang>[a-zA-Z0-9_+-]*))?[ ]*  # Optional {, and lang
 # Optional highlight lines, single- or double-quote-delimited
-(hl_lines=(?P<quot>"|')(?P<hl_lines>.*?)(?P=quot))?[ ]*
+(hl_lines[ ]*=[ ]*(?P<quot>"|')(?P<hl_lines>.*?)(?P=quot))?[ ]*
+(linenostart[ ]*=[ ]*(?P<linenostart>.*?))?[ ]*
 }?[ ]*\n                                # Optional closing }
 (?P<code>.*?)(?<=\n)
 (?P=fence)[ ]*$''', re.MULTILINE | re.DOTALL | re.VERBOSE)
@@ -155,6 +156,10 @@ class FencedBlockPreprocessor(Preprocessor):
                 # If config is not empty, then the codehighlite extension
                 # is enabled, so we call it to highlight the code
                 if self.codehilite_conf:
+                    try:
+                        linenost = int(m.group("linenostart"))
+                    except:
+                        linenost = 1
                     highliter = CodeHilite(m.group('code'),
                             linenums=self.codehilite_conf['linenums'][0],
                             guess_lang=self.codehilite_conf['guess_lang'][0],
@@ -162,7 +167,9 @@ class FencedBlockPreprocessor(Preprocessor):
                             style=self.codehilite_conf['pygments_style'][0],
                             lang=(m.group('lang') or None),
                             noclasses=self.codehilite_conf['noclasses'][0],
-                            hl_lines=parse_hl_lines(m.group('hl_lines')))
+                            hl_lines=parse_hl_lines(m.group('hl_lines')),
+                            linenostart=linenost
+                            )
 
                     code = highliter.hilite()
                 else:
