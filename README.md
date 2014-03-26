@@ -11,6 +11,8 @@ Modification
 
 Main modifications :
 - A `master-zds` branch with all modification (`master` will remain updated with upstream)
+- Add range support in codehilite's `hl_lines` option
+- Add `linenostart` option in codehilite to defining the starting number.
 
 Original Readme
 ---------------
