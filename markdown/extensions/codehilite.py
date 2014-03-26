@@ -35,16 +35,32 @@ except ImportError:
 def parse_hl_lines(expr):
     """Support our syntax for emphasizing certain lines of code.
 
-    expr should be like '1 2' to emphasize lines 1 and 2 of a code block.
+    expr should be like '1 2' to emphasize lines 1 and 2 of a code block
+    or contains lines ranges like '1 3-5' to emplasize lines 1 and 3 to
+    5 included.
     Returns a list of ints, the line numbers to emphasize.
     """
     if not expr:
         return []
 
-    try:
-        return list(map(int, expr.split()))
-    except ValueError:
-        return []
+    listsHL = []
+    for exp in expr.split():
+        lex = exp.split("-")
+        if len(lex) == 1:
+            try:
+                val = int(lex[0])
+                listsHL.append(val)
+            except ValueError:
+                pass
+        elif len(lex) ==2:
+            try:
+                valMin = int(lex[0])
+                valMax = int(lex[1])
+                for val in range(valMin, valMax+1):
+                    listsHL.append(val)
+            except ValueError:
+                pass
+    return listsHL
 
 
 # ------------------ The Main CodeHilite Class ----------------------
@@ -65,7 +81,8 @@ class CodeHilite(object):
 
     * css_class: Set class name of wrapper div ('codehilite' by default).
 
-    * hl_lines: (List of integers) Lines to emphasize, 1-indexed.
+    * hl_lines: (List of integers) Lines to emphasize, 1-indexed. Can also containts elements
+    range.
 
     Low Level Usage:
         >>> code = CodeHilite()
@@ -77,7 +94,7 @@ class CodeHilite(object):
 
     def __init__(self, src=None, linenums=None, guess_lang=True,
                 css_class="codehilite", lang=None, style='default',
-                noclasses=False, tab_length=4, hl_lines=None):
+                noclasses=False, tab_length=4, hl_lines=None, linenostart=1):
         self.src = src
         self.lang = lang
         self.linenums = linenums
@@ -87,6 +104,7 @@ class CodeHilite(object):
         self.noclasses = noclasses
         self.tab_length = tab_length
         self.hl_lines = hl_lines or []
+        self.linenostart = linenostart
 
     def hilite(self):
         """
@@ -119,7 +137,8 @@ class CodeHilite(object):
                                       cssclass=self.css_class,
                                       style=self.style,
                                       noclasses=self.noclasses,
-                                      hl_lines=self.hl_lines)
+                                      hl_lines=self.hl_lines,
+                                      linenostart = self.linenostart)
             return highlight(self.src, lexer, formatter)
         else:
             # just escape and build markup usable by JS highlighting libs
@@ -153,7 +172,7 @@ class CodeHilite(object):
 
         Also parses optional list of highlight lines, like:
 
-            :::python hl_lines="1 3"
+            :::python hl_lines="1 3 6-8"
         """
 
         import re
@@ -169,7 +188,9 @@ class CodeHilite(object):
             (?P<lang>[\w+-]*)               # The language
             \s*                             # Arbitrary whitespace
             # Optional highlight lines, single- or double-quote-delimited
-            (hl_lines=(?P<quot>"|')(?P<hl_lines>.*?)(?P=quot))?
+            (hl_lines[ ]*=[ ]*(?P<quot>"|')(?P<hl_lines>.*?)(?P=quot))?
+            \s*
+            (linenostart[ ]*=[ ]*(?P<linenostart>.*?))?
             ''',  re.VERBOSE)
         # search first line for shebang
         m = c.search(fl)
@@ -187,6 +208,10 @@ class CodeHilite(object):
                 self.linenums = True
 
             self.hl_lines = parse_hl_lines(m.group('hl_lines'))
+            try:
+                self.linenostart = int(m.group('linenostart'))
+            except:
+                self.linenistart = 1
         else:
             # No match
             lines.insert(0, fl)
