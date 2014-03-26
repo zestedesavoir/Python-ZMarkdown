@@ -1,10 +1,13 @@
-[Python-Markdown][]
+[Python-ZMarkdown][]
 ===================
 
-[![Build Status](http://img.shields.io/travis/waylan/Python-Markdown.svg)](https://travis-ci.org/waylan/Python-Markdown)
-[![Downloads](http://img.shields.io/pypi/dm/Markdown.svg)](https://pypi.python.org/pypi/Markdown#downloads)
-[![Latest Version](http://img.shields.io/pypi/v/Markdown.svg)](http://pypi.python.org/pypi/Markdown)
-[![BSD License](http://img.shields.io/badge/license-BSD-yellow.svg)](http://opensource.org/licenses/BSD-3-Clause)
+About
+-----
+
+This is a small fork of Python-Markdown including somes improvements suitables for zds. 
+
+Original Readme
+---------------
 
 This is a Python implementation of John Gruber's [Markdown][]. 
 It is almost completely compliant with the reference implementation,
