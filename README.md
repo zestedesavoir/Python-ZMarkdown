@@ -1,10 +1,16 @@
-[Python-ZMarkdown][]
-===================
+Python-ZMarkdown
+=================
 
 About
 -----
 
 This is a small fork of Python-Markdown including somes improvements suitables for zds. 
+
+Modification
+------------
+
+Main modifications :
+- A `master-zds` branch with all modification (`master` will remain updated with upstream)
 
 Original Readme
 ---------------
