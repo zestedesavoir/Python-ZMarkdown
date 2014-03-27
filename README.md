@@ -4,7 +4,7 @@ Python-ZMarkdown
 About
 -----
 
-This is a small fork of Python-Markdown including somes improvements suitables for zds. 
+This is a small fork of [Python-Markdown](http://packages.python.org/Markdown/) including somes improvements suitables for zds. 
 
 Modification
 ------------
