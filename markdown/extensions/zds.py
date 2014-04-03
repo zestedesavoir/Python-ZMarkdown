@@ -29,21 +29,20 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from . import Extension
 
-from subsuperscript import SubSuperscriptExtension
-from delext import DelExtension
-from urlize import UrlizeExtension
-from kbd import KbdExtension
-from mathjax import MathJaxExtension
-from customblock import CustomBlockExtension
-from align import AlignExtension
-from video import VideoExtension
-from preprocessblock import PreprocessBlockExtension
-from emoticons import EmoticonExtension
-from smileysDef import *
-from grid_tables import GridTableExtension
-from comments import CommentsExtension
-from smartLegend import SmartLegendExtension
-from headerDec import DownHeaderExtension
+from .subsuperscript import SubSuperscriptExtension
+from .delext import DelExtension
+from .urlize import UrlizeExtension
+from .kbd import KbdExtension
+from .mathjax import MathJaxExtension
+from .customblock import CustomBlockExtension
+from .align import AlignExtension
+from .video import VideoExtension
+from .preprocessblock import PreprocessBlockExtension
+from .emoticons import EmoticonExtension
+from .grid_tables import GridTableExtension
+from .comments import CommentsExtension
+from .smartLegend import SmartLegendExtension
+from .headerDec import DownHeaderExtension
 
 
 class ZdsExtension(Extension):
@@ -51,7 +50,7 @@ class ZdsExtension(Extension):
 
     def extendMarkdown(self, md, md_globals):
         """ Register extension instances. """
-        self.inline = self.config.get("inline", default=True)
+        self.inline = self.config.get("inline", True)
         self.emoticons = self.config.get("emoticons", {})
         
         # create extensions :
