@@ -119,13 +119,15 @@ class FencedBlockPreprocessor(Preprocessor):
 (?P<fence>^(?:~{3,}|`{3,}))[ ]*         # Opening ``` or ~~~
 (\{?\.?(?P<lang>[a-zA-Z0-9_+-]*))?[ ]*  # Optional {, and lang
 # Optional highlight lines, single- or double-quote-delimited
-(hl_lines[ ]*=[ ]*(?P<quot>"|')(?P<hl_lines>.*?)(?P=quot))?[ ]*
-(linenostart[ ]*=[ ]*(?P<linenostart>.*?))?[ ]*
+((?<!\n)(?P<arglist>.*?))?[ ]*
 }?[ ]*\n                                # Optional closing }
 (?P<code>.*?)(?<=\n)
 (?P=fence)[ ]*$''', re.MULTILINE | re.DOTALL | re.VERBOSE)
     CODE_WRAP = '<pre><code%s>%s</code></pre>'
     LANG_TAG = ' class="%s"'
+
+    HL_LINES_RE = re.compile(r'''hl_lines[ ]*=[ ]*(?P<quot>"|')(?P<hl_lines>.*?)(?P=quot)''')
+    LINENOSTART_RE = re.compile(r'''linenostart[ ]*=[ ]*(?P<linenostart>[0-9]*)''')
 
     def __init__(self, md):
         super(FencedBlockPreprocessor, self).__init__(md)
@@ -150,16 +152,29 @@ class FencedBlockPreprocessor(Preprocessor):
             m = self.FENCED_BLOCK_RE.search(text)
             if m:
                 lang = ''
-                if m.group('lang'):
+                not_error_parse_lang = (not m.group('arglist') or (m.group('arglist') and len(m.group('arglist')) > 0 and m.group('arglist')[0] != "="))
+                if m.group('lang') and not_error_parse_lang:
                     lang = self.LANG_TAG % m.group('lang')
+                
+                al = None
+                if m.group('arglist'):
+                    al = m.group('arglist')
+                if not not_error_parse_lang and al:
+                    al = m.group('lang') + al
 
                 # If config is not empty, then the codehighlite extension
                 # is enabled, so we call it to highlight the code
                 if self.codehilite_conf:
-                    try:
-                        linenost = int(m.group("linenostart"))
-                    except:
-                        linenost = 1
+                    hll = ""
+                    linenost = 1
+                    if al:
+                        mhl = self.HL_LINES_RE.search(al)
+                        mln = self.LINENOSTART_RE.search(al)
+                        if mhl and mhl.group('hl_lines'):
+                            hll = mhl.group('hl_lines')
+                        if mln and mln.group('linenostart'):
+                            linenost = mln.group('linenostart')
+
                     highliter = CodeHilite(m.group('code'),
                             linenums=self.codehilite_conf['linenums'][0],
                             guess_lang=self.codehilite_conf['guess_lang'][0],
@@ -167,7 +182,7 @@ class FencedBlockPreprocessor(Preprocessor):
                             style=self.codehilite_conf['pygments_style'][0],
                             lang=(m.group('lang') or None),
                             noclasses=self.codehilite_conf['noclasses'][0],
-                            hl_lines=parse_hl_lines(m.group('hl_lines')),
+                            hl_lines=parse_hl_lines(hll),
                             linenostart=linenost
                             )
 
