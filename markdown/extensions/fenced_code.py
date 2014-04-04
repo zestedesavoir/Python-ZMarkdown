@@ -119,7 +119,7 @@ class FencedBlockPreprocessor(Preprocessor):
 (?P<fence>^(?:~{3,}|`{3,}))[ ]*         # Opening ``` or ~~~
 (\{?\.?(?P<lang>[a-zA-Z0-9_+-]*))?[ ]*  # Optional {, and lang
 # Optional highlight lines, single- or double-quote-delimited
-((?<!\n)(?P<arglist>.*?))?[ ]*
+((?<!\n)(?P<arglist>.*?))[ ]*
 }?[ ]*\n                                # Optional closing }
 (?P<code>.*?)(?<=\n)
 (?P=fence)[ ]*$''', re.MULTILINE | re.DOTALL | re.VERBOSE)
