@@ -22,7 +22,7 @@ class EmoticonExtension(markdown.Extension):
 
     def extendMarkdown(self, md, md_globals):
         self.md = md
-        EMOTICON_RE = r'(?=(^|\W))(?P<emoticon>%s)(?=(\W|$))' % '|'.join(
+        EMOTICON_RE = r'(?:(^|\s))(?P<emoticon>%s)(?:(\s|$))' % '|'.join(
             [re.escape(emoticon) for emoticon in self.getConfig('EMOTICONS').keys()])
         md.inlinePatterns.add('emoticons', EmoticonPattern(EMOTICON_RE, self),">not_strong")
 
