@@ -149,7 +149,7 @@ class FootnoteExtension(Extension):
             if self.md.output_format not in ['html5', 'xhtml5']:
                 backlink.set("rev", "footnote") # Invalid in HTML5
             backlink.set("class", "footnote-backref")
-            backlink.set("title", "Retourner au texte lié à pied de page %d" % \
+            backlink.set("title", "Retourner au texte lié à la note %d" % \
                             (self.footnotes.index(id)+1))
             backlink.text = FN_BACKLINK_TEXT
 
