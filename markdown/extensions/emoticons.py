@@ -22,7 +22,7 @@ class EmoticonExtension(markdown.Extension):
 
     def extendMarkdown(self, md, md_globals):
         self.md = md
-        EMOTICON_RE = r'(?:(^|\s))(?P<emoticon>%s)(?:(\s|$))' % '|'.join(
+        EMOTICON_RE = r'(^|\s)(?P<emoticon>%s)(\s|$)' % '|'.join(
             [re.escape(emoticon) for emoticon in self.getConfig('EMOTICONS').keys()])
         md.inlinePatterns.add('emoticons', EmoticonPattern(EMOTICON_RE, self),">not_strong")
 
@@ -32,7 +32,10 @@ class EmoticonPattern(Pattern):
         self.emoticons = emoticons
 
     def handleMatch(self, m):
-        emoticon = m.group('emoticon')
+        try:
+            emoticon = m.group('emoticon')
+        except IndexError:
+            return None
         el = etree.Element('img')
         el.set('src', '%s' % (self.emoticons.getConfig('EMOTICONS')[emoticon],))
         el.set('alt', emoticon)
