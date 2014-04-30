@@ -4,8 +4,8 @@
 import markdown
 
 # Global Vars
-SUBSCRIPT_RE   = r'(\~)([^\~]+)\2'  
-SUPERSCRIPT_RE = r'(\^)([^^]+)\2' 
+SUBSCRIPT_RE   = r'(\~)(.+?)(\~)'  
+SUPERSCRIPT_RE = r'(\^)(.+?)(\^)' 
 
 class SubSuperscriptPattern(markdown.inlinepatterns.Pattern):
     """ Return a sub or superscript Element"""
