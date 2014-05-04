@@ -43,7 +43,7 @@ from .treeprocessors import build_treeprocessors
 from .inlinepatterns import build_inlinepatterns
 from .postprocessors import build_postprocessors
 from .extensions import Extension
-from .serializers import to_html_string, to_xhtml_string
+from .serializers import to_html_string, to_xhtml_string, to_pandoc_string
 
 __all__ = ['Markdown', 'markdown', 'markdownFromFile']
 
@@ -53,7 +53,7 @@ logger = logging.getLogger('MARKDOWN')
 class Markdown(object):
     """Convert Markdown to HTML."""
 
-    doc_tag = "div"     # Element used to wrap document - later removed
+    doc_tag = "div"  # Element used to wrap document - later removed
 
     option_defaults = {
         'html_replacement_text' : '[HTML_REMOVED]',
@@ -70,6 +70,7 @@ class Markdown(object):
         'xhtml' : to_xhtml_string,
         'xhtml1': to_xhtml_string,
         'xhtml5': to_xhtml_string,
+        'pandoc': to_pandoc_string,
     }
 
     ESCAPED_CHARS = ['\\', '`', '*', '_', '{', '}', '[', ']',
@@ -170,7 +171,7 @@ class Markdown(object):
 
         return self
 
-    def build_extension(self, ext_name, configs = []):
+    def build_extension(self, ext_name, configs=[]):
         """Build extension by name, then return the module.
 
         The extension name may contain arguments as part of the string in the
@@ -180,9 +181,9 @@ class Markdown(object):
 
         # Parse extensions config params (ignore the order)
         configs = dict(configs)
-        pos = ext_name.find("(") # find the first "("
+        pos = ext_name.find("(")  # find the first "("
         if pos > 0:
-            ext_args = ext_name[pos+1:-1]
+            ext_args = ext_name[pos + 1:-1]
             ext_name = ext_name[:pos]
             pairs = [x.split("=") for x in ext_args.split(",")]
             configs.update([(x.strip(), y.strip()) for (x, y) in pairs])
@@ -193,11 +194,11 @@ class Markdown(object):
             module_name = '.'.join(['markdown.extensions', ext_name])
 
         # Try loading the extension first from one place, then another
-        try: # New style (markdown.extensions.<extension>)
+        try:  # New style (markdown.extensions.<extension>)
             module = __import__(module_name, {}, {}, [module_name.rpartition('.')[0]])
         except ImportError:
             module_name_old_style = '_'.join(['mdx', ext_name])
-            try: # Old style (mdx_<extension>)
+            try:  # Old style (mdx_<extension>)
                 module = __import__(module_name_old_style)
             except ImportError as e:
                 message = "Failed loading extension '%s' from '%s' or '%s'" \
@@ -243,7 +244,7 @@ class Markdown(object):
             valid_formats = list(self.output_formats.keys())
             valid_formats.sort()
             message = 'Invalid Output Format: "%s". Use one of %s.' \
-                       % (self.output_format, 
+                       % (self.output_format,
                           '"' + '", "'.join(valid_formats) + '"')
             e.args = (message,) + e.args[1:]
             raise
@@ -300,11 +301,11 @@ class Markdown(object):
         output = self.serializer(root)
         if self.stripTopLevelTags:
             try:
-                start = output.index('<%s>'%self.doc_tag)+len(self.doc_tag)+2
-                end = output.rindex('</%s>'%self.doc_tag)
+                start = output.index('<%s>' % self.doc_tag) + len(self.doc_tag) + 2
+                end = output.rindex('</%s>' % self.doc_tag)
                 output = output[start:end].strip()
             except ValueError:
-                if output.strip().endswith('<%s />'%self.doc_tag):
+                if output.strip().endswith('<%s />' % self.doc_tag):
                     # We have an empty document
                     output = ''
                 else:
@@ -353,7 +354,7 @@ class Markdown(object):
             if not isinstance(text, util.text_type):
                 text = text.decode(encoding)
 
-        text = text.lstrip('\ufeff') # remove the byte-order mark
+        text = text.lstrip('\ufeff')  # remove the byte-order mark
 
         # Convert
         html = self.convert(text)
@@ -372,7 +373,7 @@ class Markdown(object):
                 output_file.write(html)
                 # Don't close here. User may want to write more.
         else:
-            # Encode manually and write bytes to stdout. 
+            # Encode manually and write bytes to stdout.
             html = html.encode(encoding, "xmlcharrefreplace")
             try:
                 # Write bytes directly to buffer (Python 3).

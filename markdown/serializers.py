@@ -145,11 +145,15 @@ def _serialize_html(write, elem, qnames, namespaces, format):
         tag = qnames[tag]
         if tag is None:
             if text:
-                write(_escape_cdata(text))
+                if format=='pandoc':
+                    write(text)
+                else:
+                    write(_escape_cdata(text))
             for e in elem:
                 _serialize_html(write, e, qnames, None, format)
         else:
-            write("<" + tag)
+            if format!='pandoc':
+                write("<" + tag)
             items = elem.items()
             if items or namespaces:
                 items = sorted(items) # lexical order
@@ -201,7 +205,6 @@ def _write_html(root,
         return "".join(data)
     else:
         return _encode("".join(data))
-
 
 # --------------------------------------------------------------------
 # serialization support
@@ -274,3 +277,6 @@ def to_html_string(element):
 
 def to_xhtml_string(element):
     return _write_html(ElementTree(element).getroot(), format="xhtml")
+
+def to_pandoc_string(element):
+    return _write_html(ElementTree(element).getroot(), format="pandoc")

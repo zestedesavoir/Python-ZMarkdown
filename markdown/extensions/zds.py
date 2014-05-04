@@ -100,7 +100,6 @@ class ZdsExtension(Extension):
                 legend_ext,                         # Legend support
                 align_ext,                          # Right align and center support
                 dheader_ext,                        # Down Header support
-                'nl2br',                            # Convert new line to br tags support, included in python markdown
                 ])
         md.registerExtensions(exts, {})
         if self.inline:
