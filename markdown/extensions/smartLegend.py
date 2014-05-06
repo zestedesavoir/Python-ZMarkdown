@@ -210,7 +210,7 @@ class LegendProcessor(BlockProcessor):
     def __init__(self, parser, md):
         BlockProcessor.__init__(self, parser)
         self.md = md
-        self.RE = re.compile(r'(^|\n)((?P<typelegend>Figure|Table|Code|Equation|Video|Source)[ ]{0,1})*\:[ ]{0,1}(?P<txtlegend>.*?)(\n|$)')
+        self.RE = re.compile(r'(^|\n)((?P<typelegend>Figure|Table|Code|Equation|Video|Source)\s?)*\:\s?(?P<txtlegend>.*?)(\n|$)')
 
     def test(self, parent, block):
         mLeg = self.RE.search(block)
