@@ -309,7 +309,7 @@ class OListProcessor(BlockProcessor):
     # The ol tag will get starts="3" attribute
     STARTSWITH = '1'
     # List of allowed sibling tags. 
-    SIBLING_TAGS = ['ol', 'ul']
+    SIBLING_TAGS = ['ol', ]
 
     def test(self, parent, block):
         return bool(self.RE.match(block))
@@ -405,6 +405,7 @@ class UListProcessor(OListProcessor):
 
     TAG = 'ul'
     RE = re.compile(r'^[ ]{0,3}[*+-][ ]+(.*)')
+    SIBLING_TAGS = ['ul',]
 
 
 class HashHeaderProcessor(BlockProcessor):
