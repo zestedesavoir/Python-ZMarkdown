@@ -23,5 +23,3 @@ class MathJaxExtension(markdown.Extension):
 
 def makeExtension(configs=None):
     return MathJaxExtension(configs)
-
-(?<!\\)(?P<St>\$\$?)(.+?)(?<!\\)(?P=St)
