@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import markdown
 from markdown.treeprocessors import Treeprocessor
@@ -68,7 +69,7 @@ class CodeParser(InFigureParser):
             hs = self.md.htmlStash
             for i in range(hs.html_counter):
                 if element.text == hs.get_placeholder(i) :
-                    Teste = ET.fromstring(hs.rawHtmlBlocks[i][0])
+                    Teste = ET.fromstring(hs.rawHtmlBlocks[i][0].encode('utf-8'))
                     if Teste is not None and Teste.tag=="table" and "class" in Teste.attrib and Teste.attrib["class"] == "codehilitetable":
                         return True
                     else:
