@@ -37,9 +37,9 @@ class FigureParser(InFigureParser):
         InFigureParser.__init__(self)
         self.ignoringImg = ignoringImg
     
-    def detect(self, parent, element, legend):
+    def detect(self, element, type):
         lelems = list(element.iter())
-        return  (legend.attrib["type"] == "unknown" or legend.attrib["type"] == "Figure") \
+        return  (type == "unknown" or type == "Figure") \
                 and element.tag=="p" \
                 and (element.text is None or element.text.strip() == "") \
                 and (len(lelems) == 1 or (len(lelems)==2 and lelems[0] is element)) \
@@ -49,9 +49,9 @@ class FigureParser(InFigureParser):
         InFigureParser.transform(self, parent, element, legend, index, True)
 
 class EquationParser(InFigureParser):
-    def detect(self, parent, element, legend):
+    def detect(self, element, type):
         lelems = list(element.iter())
-        return  (legend.attrib["type"] == "unknown" or legend.attrib["type"] == "Equation") \
+        return  (type == "unknown" or type == "Equation") \
                 and element.tag=="p" \
                 and (element.text is None or element.text.strip() == "") \
                 and (len(lelems) == 1 or (len(lelems)==2 and lelems[0] is element)) \
@@ -64,8 +64,8 @@ class CodeParser(InFigureParser):
     def __init__(self, md):
         self.md = md
 
-    def detect(self, parent, element, legend):
-        if  (legend.attrib["type"] == "unknown" or legend.attrib["type"] == "Code") and element.tag=="p" :
+    def detect(self, element, type):
+        if  (type == "unknown" or type == "Code") and element.tag=="p" :
             hs = self.md.htmlStash
             for i in range(hs.html_counter):
                 if element.text == hs.get_placeholder(i) :
@@ -77,13 +77,13 @@ class CodeParser(InFigureParser):
         return False
 
 class QuoteParser(InFigureParser):
-    def detect(self, parent, element, legend):
-        return  (legend.attrib["type"] == "unknown" or legend.attrib["type"] == "Source") and element.tag=="blockquote"
+    def detect(self, element, type):
+        return  (type == "unknown" or type == "Source") and element.tag=="blockquote"
 
 
 class TableParser(object):
-    def detect(self, parent, element, legend):
-        return  (legend.attrib["type"] == "unknown" or legend.attrib["type"] == "Table") and element.tag=="table"
+    def detect(self, element, type):
+        return  (type == "unknown" or type == "Table") and element.tag=="table"
 
     def transform(self,  parent, element, legend, index):
         parent.remove(legend)
@@ -95,9 +95,9 @@ class TableParser(object):
         element.insert(0, cap)
 
 class VideoParser(InFigureParser):
-    def detect(self, parent, element, legend):
+    def detect(self, element, type):
         lelems = list(element.iter())
-        return  (legend.attrib["type"] == "unknown" or legend.attrib["type"] == "Video") \
+        return  (type == "unknown" or type == "Video") \
                 and element.tag=="iframe" 
 
 
@@ -134,7 +134,7 @@ class SmartLegendProcessor(Treeprocessor):
                     if nelem.tag in self.configs["PARENTS"] and nelem not in elemsToInspect:
                         elemsToInspect.append(nelem)
                     if nelem.tag == "customlegend" and precedent is not None : # and len(list(nelem.itertext())) == 0 :
-                        proc = self.detectElement(elem, precedent, nelem)
+                        proc = self.detectElement(precedent, nelem.attrib["type"])
                         if proc is not None:
                             proc.transform(elem, precedent, nelem, i-1)
                             Restart = True
@@ -177,9 +177,9 @@ class SmartLegendProcessor(Treeprocessor):
                     i+=1
         return root
     
-    def detectElement(self, parent, elem, legend):
+    def detectElement(self, elem, legend):
         for proc in self.processors:
-            if proc.detect(parent, elem, legend) :
+            if proc.detect(elem, legend) :
                 return proc
         return None
 
@@ -208,14 +208,37 @@ class SmartLegendProcessor(Treeprocessor):
         return root
 
 class LegendProcessor(BlockProcessor):
-    def __init__(self, parser, md):
+    def __init__(self, parser, md, configs):
         BlockProcessor.__init__(self, parser)
         self.md = md
+        self.configs = configs
+
+        self.processors = ( FigureParser(configs["IGNORING_IMG"]),
+                            EquationParser(),
+                            CodeParser(md),
+                            TableParser(),
+                            VideoParser(),
+                            QuoteParser())
         self.RE = re.compile(ur'(^|(?<=\n))((?P<typelegend>Figure|Table|Code|Equation|Video|Source)\s?)*\:\s?(?P<txtlegend>.*?)(\n|$)')
+    
+    def detectElement(self, elem, legend):
+        for proc in self.processors:
+            if proc.detect(elem, legend) :
+                return proc
+        return None
 
     def test(self, parent, block):
         mLeg = self.RE.search(block)
-        return bool(mLeg)
+        if not bool(mLeg):
+            return False
+        gd = mLeg.groupdict()
+        if gd["typelegend"] is None:
+            type = "unknown"
+        else:
+            type = gd["typelegend"]
+        sibling = self.lastChild(parent)
+
+        return self.detectElement(sibling, type) is not None
 
     def run(self, parent, blocks):
         
@@ -253,7 +276,7 @@ class SmartLegendExtension(markdown.extensions.Extension):
     def extendMarkdown(self, md, md_globals):
         md.registerExtension(self)
         md.treeprocessors.add('smart-legend', SmartLegendProcessor(md.parser,self.configs, md),"_end")
-        md.parser.blockprocessors.add('legend-processor', LegendProcessor(md.parser,md),"_begin")
+        md.parser.blockprocessors.add('legend-processor', LegendProcessor(md.parser,md, self.configs),"_begin")
 
 def makeExtension(configs={}):
     return SmartImgExtension(configs=configs)
