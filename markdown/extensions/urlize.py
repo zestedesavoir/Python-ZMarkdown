@@ -40,12 +40,15 @@ u'<p>del.icio.us</p>'
 import markdown
 
 # Global Vars
-URLIZE_RE = '(%s)' % '|'.join([
-    r'<(?:f|ht)tps?://[^>]*>',
-    r'\b(?:f|ht)tps?://[^)<>\s]+[^.,)<>\s]',
-    r'\bwww\.[^)<>\s]+[^.,)<>\s]',
-    r'[^(<\s]+\.(?:com|net|org)\b',
-])
+URLIZE_RE = = ur'(^|(?<=\s))({0})((?=\s)|$)'.format("|".join((
+    # mail adress :
+    r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", 
+    # Anything with protocol between < >
+    r"<(?:f|ht)tps?://[^>]*>",
+    # with protocol : any valid domain match
+    r"((?:f|ht)tps?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?", 
+    # without protocol, only somes specified protocols match
+    r"((?:f|ht)tps?:\/\/)?([\da-z\.-]+)\.(?:com|net|org|fr)([\/\w \.-]*)*\/?")))
 
 class CorrectURLProcessor(markdown.treeprocessors.Treeprocessor):
     def __init__(self):
@@ -54,7 +57,7 @@ class CorrectURLProcessor(markdown.treeprocessors.Treeprocessor):
     def run(self, node):
         
         for child in node.getiterator():
-            if child.tag == 'a' and 'href' in child.attrib and  child.attrib['href'].split('://')[0] not in ('http','https','ftp') and not child.attrib['href'].startswith('#'):
+            if child.tag == 'a' and 'href' in child.attrib and  child.attrib['href'].split('://')[0] not in ('http','https','ftp') and not child.attrib['href'].startswith('#') not child.attrib['href'].startswith('mailto:'):
                 child.attrib['href'] = 'http://' + child.attrib['href']
         return node
 
