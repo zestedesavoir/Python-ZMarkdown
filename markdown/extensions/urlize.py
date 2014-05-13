@@ -64,7 +64,7 @@ class CorrectURLProcessor(markdown.treeprocessors.Treeprocessor):
 class UrlizePattern(markdown.inlinepatterns.Pattern):
     """ Return a link Element given an autolink (`http://example/com`). """
     def handleMatch(self, m):
-        url = m.group(2)
+        url = m.group(3)
         
         if url.startswith('<'):
             url = url[1:-1]
