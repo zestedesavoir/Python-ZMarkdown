@@ -40,7 +40,7 @@ u'<p>del.icio.us</p>'
 import markdown
 
 # Global Vars
-URLIZE_RE = = ur'(^|(?<=\s))({0})((?=\s)|$)'.format("|".join((
+URLIZE_RE = ur'(^|(?<=\s))({0})((?=\s)|$)'.format("|".join((
     # mail adress :
     r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", 
     # Anything with protocol between < >
