@@ -38,21 +38,25 @@ class FigureParser(InFigureParser):
         self.ignoringImg = ignoringImg
     
     def detect(self, element, type):
-        if element != None:
-            lelems = list(element.iter())
-            return  (type == "unknown" or type == "Figure") \
-                    and element.tag=="p" \
-                    and (element.text is None or element.text.strip() == "") \
-                    and (len(lelems) == 1 or (len(lelems)==2 and lelems[0] is element)) \
-                    and lelems[-1].tag == "img" \
-                    and (lelems[-1].attrib["src"] not in self.ignoringImg)
-        else:
+        if element == None:
             return False
+        lelems = list(element.iter())
+        return  (type == "unknown" or type == "Figure") \
+                and element.tag=="p" \
+                and (element.text is None or element.text.strip() == "") \
+                and (len(lelems) == 1 or (len(lelems)==2 and lelems[0] is element)) \
+                and lelems[-1].tag == "img" \
+                and (lelems[-1].attrib["src"] not in self.ignoringImg)
+
+            
     def transform(self,  parent, element, legend, index):
         InFigureParser.transform(self, parent, element, legend, index, True)
 
 class EquationParser(InFigureParser):
+
     def detect(self, element, type):
+        if element == None:
+            return False
         lelems = list(element.iter())
         return  (type == "unknown" or type == "Equation") \
                 and element.tag=="p" \
@@ -68,6 +72,8 @@ class CodeParser(InFigureParser):
         self.md = md
 
     def detect(self, element, type):
+        if element == None:
+            return False
         if  (type == "unknown" or type == "Code") and element.tag=="p" :
             hs = self.md.htmlStash
             for i in range(hs.html_counter):
@@ -81,11 +87,16 @@ class CodeParser(InFigureParser):
 
 class QuoteParser(InFigureParser):
     def detect(self, element, type):
+        if element == None:
+            return False
+            
         return  (type == "unknown" or type == "Source") and element.tag=="blockquote"
 
 
 class TableParser(object):
     def detect(self, element, type):
+        if element == None:
+            return False
         return  (type == "unknown" or type == "Table") and element.tag=="table"
 
     def transform(self,  parent, element, legend, index):
@@ -99,6 +110,8 @@ class TableParser(object):
 
 class VideoParser(InFigureParser):
     def detect(self, element, type):
+        if element == None:
+            return False
         lelems = list(element.iter())
         return  (type == "unknown" or type == "Video") \
                 and element.tag=="iframe" 
