@@ -38,13 +38,16 @@ class FigureParser(InFigureParser):
         self.ignoringImg = ignoringImg
     
     def detect(self, element, type):
-        lelems = list(element.iter())
-        return  (type == "unknown" or type == "Figure") \
-                and element.tag=="p" \
-                and (element.text is None or element.text.strip() == "") \
-                and (len(lelems) == 1 or (len(lelems)==2 and lelems[0] is element)) \
-                and lelems[-1].tag == "img" \
-                and (lelems[-1].attrib["src"] not in self.ignoringImg)
+        if element != None:
+            lelems = list(element.iter())
+            return  (type == "unknown" or type == "Figure") \
+                    and element.tag=="p" \
+                    and (element.text is None or element.text.strip() == "") \
+                    and (len(lelems) == 1 or (len(lelems)==2 and lelems[0] is element)) \
+                    and lelems[-1].tag == "img" \
+                    and (lelems[-1].attrib["src"] not in self.ignoringImg)
+        else:
+            return False
     def transform(self,  parent, element, legend, index):
         InFigureParser.transform(self, parent, element, legend, index, True)
 
