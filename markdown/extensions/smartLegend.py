@@ -19,7 +19,7 @@ class InFigureParser(object):
             oldImg = element
 
         nFig = util.etree.Element("figure")
-        nFigCaption = util.etree.Element("figurecaption")
+        nFigCaption = util.etree.Element("figcaption")
         contentLegend = legend.items()
         for el in legend:
             legend.remove(el)
@@ -182,7 +182,7 @@ class SmartLegendProcessor(Treeprocessor):
                             oldImg = lelems[-1]
                             nelem.remove(oldImg)
                             nFig = util.etree.Element("figure")
-                            nFigCaption = util.etree.Element("figurecaption")
+                            nFigCaption = util.etree.Element("figcaption")
                             nFigCaption.text = oldImg.attrib["alt"]
                             oldImg.attrib["alt"]=""
                             nFig.append(oldImg)
