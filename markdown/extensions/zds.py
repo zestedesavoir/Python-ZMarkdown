@@ -43,7 +43,7 @@ from .grid_tables import GridTableExtension
 from .comments import CommentsExtension
 from .smartLegend import SmartLegendExtension
 from .headerDec import DownHeaderExtension
-
+from .smarty import SmartyExtension
 
 class ZdsExtension(Extension):
     """ Add various extensions to Markdown class."""
@@ -60,6 +60,7 @@ class ZdsExtension(Extension):
         kbd_ext         = KbdExtension()            # Keyboard support
         mathjax_ext     = MathJaxExtension()        # MathJax support
         emo_ext         = EmoticonExtension({"EMOTICONS" : self.emoticons}) # smileys support
+        sm_ext          = SmartyExtension({'smart_quotes': False})
         if not self.inline:
             customblock_ext = CustomBlockExtension(
                 { "s(ecret)?"       : "spoiler",
@@ -82,6 +83,7 @@ class ZdsExtension(Extension):
                 kbd_ext,                            # Kbd support
                 mathjax_ext,                        # Mathjax support
                 emo_ext,                            # Smileys support
+                sm_ext,
                 ]
         if not self.inline:
             exts.extend([
