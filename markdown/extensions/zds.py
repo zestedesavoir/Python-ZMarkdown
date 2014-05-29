@@ -60,7 +60,7 @@ class ZdsExtension(Extension):
         kbd_ext         = KbdExtension()            # Keyboard support
         mathjax_ext     = MathJaxExtension()        # MathJax support
         emo_ext         = EmoticonExtension({"EMOTICONS" : self.emoticons}) # smileys support
-        sm_ext          = SmartyExtension({'smart_quotes': False})
+        sm_ext          = SmartyExtension((('smart_quotes', False),))
         if not self.inline:
             customblock_ext = CustomBlockExtension(
                 { "s(ecret)?"       : "spoiler",
