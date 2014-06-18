@@ -8,6 +8,7 @@ import re
 from markdown import util
 import xml.etree.ElementTree as ET
 import copy
+from markdown.inlinepatterns import IMAGE_LINK_RE
 
 class InFigureParser(object):
     
@@ -37,18 +38,21 @@ class FigureParser(InFigureParser):
     def __init__(self, ignoringImg):
         InFigureParser.__init__(self)
         self.ignoringImg = ignoringImg
-    
+        self.ree = re.compile(r"^" + IMAGE_LINK_RE + r"(\n|$)")
+
     def detect(self, element, type):
         if element == None:
             return False
         lelems = list(element.iter())
+        #print repr(element.text)
         return  (type == "unknown" or type == "Figure") \
                 and element.tag=="p" \
-                and (element.text is None or element.text.strip() == "") \
+                and( ( element.text is not None \
+                and self.ree.search(element.text)) \
+                or ( (element.text is None or element.text.strip() == "") \
                 and (len(lelems) == 1 or (len(lelems)==2 and lelems[0] is element)) \
                 and lelems[-1].tag == "img" \
-                and (lelems[-1].attrib["src"] not in self.ignoringImg)
-
+                and (lelems[-1].attrib["src"] not in self.ignoringImg)))
             
     def transform(self,  parent, element, legend, index):
         InFigureParser.transform(self, parent, element, legend, index, True)
