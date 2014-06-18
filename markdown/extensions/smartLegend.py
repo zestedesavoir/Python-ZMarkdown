@@ -7,6 +7,7 @@ from markdown.blockprocessors import BlockProcessor
 import re
 from markdown import util
 import xml.etree.ElementTree as ET
+import copy
 
 class InFigureParser(object):
     
@@ -132,7 +133,6 @@ class SmartLegendProcessor(Treeprocessor):
     
     def run(self, root):
         root = self.parse_legend(root)
-        root = self.remove_remaining_legend(root)
         root = self.parse_autoimg(root)
         return root
     
@@ -199,29 +199,6 @@ class SmartLegendProcessor(Treeprocessor):
                 return proc
         return None
 
-    def remove_remaining_legend(self, root):
-        elemsToInspect = [root]
-        while len(elemsToInspect) > 0:
-            elem = elemsToInspect.pop()
-            Restart=True
-            while Restart:
-                Restart = False
-                index = 0
-                for nelem in elem:
-                    elemsToInspect.append(nelem)
-                    if nelem.tag == "customlegend" :
-                        elem.remove(nelem)
-                        pp = util.etree.Element('p')
-                        contentLegend = nelem.items()
-                        for el in nelem:
-                            pp.append(el)
-                        elem.insert(index, pp)
-                        
-                        Restart = True
-                        break
-                    index += 1
-
-        return root
 
 class LegendProcessor(BlockProcessor):
     def __init__(self, parser, md, configs):
@@ -244,16 +221,21 @@ class LegendProcessor(BlockProcessor):
         return None
 
     def test(self, parent, block):
+        
         mLeg = self.RE.search(block)
         if not bool(mLeg):
             return False
+        else:
+            return True
+            
+    def test_complete(self, parent, block):
+        mLeg = self.RE.search(block)
         gd = mLeg.groupdict()
         if gd["typelegend"] is None:
             type = "unknown"
         else:
             type = gd["typelegend"]
         sibling = self.lastChild(parent)
-
         return self.detectElement(sibling, type) is not None
 
     def run(self, parent, blocks):
@@ -263,7 +245,16 @@ class LegendProcessor(BlockProcessor):
         before = block[:mLeg.start()]
         after = block[mLeg.end():]
         contentStart = block[mLeg.start():mLeg.start("txtlegend")]
+        cpp = None
         if before:
+            cpp = copy.copy(parent)
+            self.parser.parseBlocks(cpp, [before])
+        else:
+            cpp = parent
+        if not self.test_complete(cpp, block):
+            blocks.insert(0, block)
+            return False
+        elif before:
             self.parser.parseBlocks(parent, [before])
         nLegend = util.etree.Element("customlegend")
         self.parser.parseChunk(nLegend, mLeg.group('txtlegend'))
