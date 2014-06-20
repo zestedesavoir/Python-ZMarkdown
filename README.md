@@ -1,6 +1,9 @@
 Python-ZMarkdown
 =================
 
+[![Build Status](http://img.shields.io/travis/zestedesavoir/Python-ZMarkdown.svg)](https://travis-ci.org/zestedesavoir/Python-ZMarkdown)
+[![BSD License](http://img.shields.io/badge/license-BSD-yellow.svg)](http://opensource.org/licenses/BSD-3-Clause)
+
 About
 -----
 
