@@ -27,8 +27,10 @@ dev_status_map = {
     'alpha': '3 - Alpha',
     'beta' : '4 - Beta',
     'rc'   : '4 - Beta',
-    'final': '5 - Production/Stable'
+    'final': '5 - Production/Stable',
+    'zds'  : '5 - Production/Stable'
 }
+
 if version_info[3] == 'alpha' and version_info[4] == 0:
     DEVSTATUS = '2 - Pre-Alpha'
 else:
