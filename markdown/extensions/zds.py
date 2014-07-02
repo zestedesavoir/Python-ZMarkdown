@@ -71,7 +71,8 @@ class ZdsExtension(Extension):
                 })                                      # CustomBlock support
             align_ext       = AlignExtension()          # Right align and center support
             video_ext       = VideoExtension()          # Video support
-            preprocess_ext  = PreprocessBlockExtension({"preprocess" : ("fenced_code_block",)}) # Preprocess extension
+            
+            preprocess_ext  = PreprocessBlockExtension({"preprocess" : ("fenced_code_block", "footnote", "reference","abbr", )}) # Preprocess extension
             gridtable_ext   = GridTableExtension()      # Grid Table support
             comment_ext     = CommentsExtension({"START_TAG" : "<--COMMENT", "END_TAG" : "COMMENT-->"}) # Comment support
             legend_ext      = SmartLegendExtension({"IGNORING_IMG" : self.emoticons.values(), "PARENTS" : ("div", "blockquote")})       # Smart Legend support
