@@ -65,7 +65,7 @@ class VideoBProcessor(BlockProcessor):
         after  = block[m.end():]
 
         if before:
-            self.parser.parseBlocks(parent, [before])
+            self.md.parser.parseBlocks(parent, [before])
         
         el = self.klass.handleMatch(m)
         parent.append(el)
