@@ -46,9 +46,9 @@ URLIZE_RE = ur'(^|(?<=\s))({0})((?=\s)|$)'.format("|".join((
     # Anything with protocol between < >
     r"<(?:f|ht)tps?://[^>]*>",
     # with protocol : any valid domain match
-    r"((?:f|ht)tps?://)([\da-z\.-]+)\.([a-z\.]{2,6})[/\w\.$%&_?#=-]*\/?", 
+    r"((?:f|ht)tps?://)([\da-z\.-]+)\.([a-z\.]{2,6})[/\w\.$%&_?#=()-]*\/?", 
     # without protocol, only somes specified protocols match
-    r"((?:f|ht)tps?://)?([\da-z\.-]+)\.(?:com|net|org|fr)[/\w\.$%&_?#=-]*\/?")))
+    r"((?:f|ht)tps?://)?([\da-z\.-]+)\.(?:com|net|org|fr)[/\w\.$%&_?#=()-]*\/?")))
 
 class CorrectURLProcessor(markdown.treeprocessors.Treeprocessor):
     def __init__(self):
