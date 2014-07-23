@@ -58,10 +58,10 @@ class ZdsExtension(Extension):
         del_ext         = DelExtension()            # Del support
         urlize_ext      = UrlizeExtension()         # Autolink support
         kbd_ext         = KbdExtension()            # Keyboard support
-        mathjax_ext     = MathJaxExtension()        # MathJax support
         emo_ext         = EmoticonExtension({"EMOTICONS" : self.emoticons}) # smileys support
-        sm_ext          = SmartyExtension((('smart_quotes', False),))
         if not self.inline:
+            sm_ext          = SmartyExtension((('smart_quotes', False),))
+            mathjax_ext     = MathJaxExtension()        # MathJax support
             customblock_ext = CustomBlockExtension(
                 { "s(ecret)?"       : "spoiler",
                   "i(nformation)?"  : "information ico-after",
