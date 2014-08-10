@@ -57,11 +57,11 @@ class ZdsExtension(Extension):
         sub_ext         = SubSuperscriptExtension() # Sub and Superscript support
         del_ext         = DelExtension()            # Del support
         urlize_ext      = UrlizeExtension()         # Autolink support
-        kbd_ext         = KbdExtension()            # Keyboard support
-        mathjax_ext     = MathJaxExtension()        # MathJax support
-        emo_ext         = EmoticonExtension({"EMOTICONS" : self.emoticons}) # smileys support
         sm_ext          = SmartyExtension((('smart_quotes', False),))
         if not self.inline:
+            mathjax_ext     = MathJaxExtension()        # MathJax support
+            kbd_ext         = KbdExtension()            # Keyboard support
+            emo_ext         = EmoticonExtension({"EMOTICONS" : self.emoticons}) # smileys support
             customblock_ext = CustomBlockExtension(
                 { "s(ecret)?"       : "spoiler",
                   "i(nformation)?"  : "information ico-after",
@@ -81,9 +81,6 @@ class ZdsExtension(Extension):
         exts = [sub_ext,                            # Subscript support
                 del_ext,                            # Del support
                 urlize_ext,                         # Autolink support
-                kbd_ext,                            # Kbd support
-                mathjax_ext,                        # Mathjax support
-                emo_ext,                            # Smileys support
                 sm_ext,
                 ]
         if not self.inline:
@@ -96,6 +93,8 @@ class ZdsExtension(Extension):
                 'codehilite(linenums=True,guess_lang=False)',
                                                     # Code hightlight support, with line numbers, included in python-markdwon
                 customblock_ext,                    # CustomBlock support
+                kbd_ext,                            # Kbd support
+                emo_ext,                            # Smileys support
                 video_ext,                          # Video support
                 preprocess_ext,                     # Preprocess support
                 gridtable_ext,                      # Grid tables support
@@ -103,6 +102,7 @@ class ZdsExtension(Extension):
                 legend_ext,                         # Legend support
                 align_ext,                          # Right align and center support
                 dheader_ext,                        # Down Header support
+                mathjax_ext,                        # Mathjax support
                 ])
         md.registerExtensions(exts, {})
         if self.inline:
@@ -110,6 +110,9 @@ class ZdsExtension(Extension):
             md.preprocessors.pop("reference")
             md.inlinePatterns.pop("image_link")
             md.inlinePatterns.pop("image_reference")
+            md.inlinePatterns.pop("reference")
+            md.inlinePatterns.pop("short_reference")
+            md.inlinePatterns.pop("linebreak")
 
 
 def makeExtension(configs={}):

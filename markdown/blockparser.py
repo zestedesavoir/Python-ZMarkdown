@@ -75,7 +75,10 @@ class BlockParser:
         Nothing is returned.
 
         """
-        self.parseBlocks(parent, text.split('\n\n'))
+        if self.markdown.inline:
+            self.blockprocessors["paragraph"].run(parent, [text])
+        else:
+            self.parseBlocks(parent, text.split('\n\n'))
 
     def parseBlocks(self, parent, blocks):
         """ Process blocks of markdown text and attach to given etree node. 

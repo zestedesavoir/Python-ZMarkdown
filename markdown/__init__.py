@@ -61,6 +61,7 @@ class Markdown(object):
         'enable_attributes'     : True,
         'smart_emphasis'        : True,
         'lazy_ol'               : True,
+        'inline'                : False,
     }
 
     output_formats = {
@@ -137,6 +138,7 @@ class Markdown(object):
                                 configs=kwargs.get('extension_configs', {}))
         self.set_output_format(kwargs.get('output_format', 'xhtml1'))
         self.reset()
+
 
     def build_parser(self):
         """ Build the parser from the various parts. """
@@ -270,7 +272,6 @@ class Markdown(object):
         5. The output is written to a string.
 
         """
-
         # Fixup the source text
         if not source.strip():
             return ''  # a blank unicode string
