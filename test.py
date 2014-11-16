@@ -31,5 +31,5 @@ def get_markdown_instance(Inline=False):
 
 input_file = codecs.open("prob.md", mode="r", encoding="utf-8")
 text = input_file.read()
-print get_markdown_instance(Inline=False).convert(text).encode('utf-8')
+print(get_markdown_instance(Inline=False).convert(text).encode('utf-8'))
 
