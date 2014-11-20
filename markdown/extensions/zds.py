@@ -52,6 +52,7 @@ class ZdsExtension(Extension):
         """ Register extension instances. """
         self.inline = self.config.get("inline", True)
         self.emoticons = self.config.get("emoticons", {})
+        self.js_support = self.config.get("js_support", False)
         
         # create extensions :
         sub_ext         = SubSuperscriptExtension() # Sub and Superscript support
@@ -70,7 +71,7 @@ class ZdsExtension(Extension):
                   "e(rreur)?"       : "error ico-after",
                 })                                      # CustomBlock support
             align_ext       = AlignExtension()          # Right align and center support
-            video_ext       = VideoExtension()          # Video support
+            video_ext       = VideoExtension(js_support=self.js_support)          # Video support
             
             preprocess_ext  = PreprocessBlockExtension({"preprocess" : ("fenced_code_block", "footnote", "reference","abbr", )}) # Preprocess extension
             gridtable_ext   = GridTableExtension()      # Grid Table support

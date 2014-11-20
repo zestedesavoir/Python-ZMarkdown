@@ -7,7 +7,7 @@ import time
 
 # Markdowns customs extensions :
 def get_markdown_instance(Inline=False):
-    zdsext = ZdsExtension({"inline": Inline, "emoticons": {"TOTOTO":"truc"}})
+    zdsext = ZdsExtension({"inline": Inline, "emoticons": {"TOTOTO":"truc"}, "js_support": True})
     # Generate parser
     md = markdown.Markdown(extensions=(zdsext,),
                            safe_mode = 'escape',
@@ -30,14 +30,6 @@ def get_markdown_instance(Inline=False):
     return md
 
 input_file = codecs.open("prob.md", mode="r", encoding="utf-8")
-
 text = input_file.read()
-NN = 50
-TTot = 0.0
-for i in range(NN):
-    t1 = time.clock()
-    get_markdown_instance(Inline=False).convert(text).encode('utf-8')
-    TTot += time.clock() - t1
-
-print TTot/float(NN)
+print get_markdown_instance(Inline=False).convert(text).encode('utf-8')
 
