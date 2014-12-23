@@ -86,7 +86,7 @@ class Dailymotion(object):
     def __init__(self, config):
         self.config = config
     def handleMatch(self, m):
-        url = 'http://www.dailymotion.com/embed/video/%s' % m.group('dailymotionid')
+        url = 'https://www.dailymotion.com/embed/video/%s' % m.group('dailymotionid')
         width = self.config['dailymotion_width'][0]
         height = self.config['dailymotion_height'][0]
         return render_iframe(url, width, height)
@@ -96,7 +96,7 @@ class Metacafe(object):
     def __init__(self, config):
         self.config = config
     def handleMatch(self, m):
-        url = 'http://www.metacafe.com/embed/%s/' % m.group('metacafeid')
+        url = 'https://www.metacafe.com/embed/%s/' % m.group('metacafeid')
         width = self.config['metacafe_width'][0]
         height = self.config['metacafe_height'][0]
         return render_iframe(url, width, height)
@@ -106,7 +106,7 @@ class Veoh(object):
     def __init__(self, config):
         self.config = config
     def handleMatch(self, m):
-        url = 'http://www.veoh.com/videodetails2.swf?permalinkId=%s' % m.group('veohid')
+        url = 'https://www.veoh.com/videodetails2.swf?permalinkId=%s' % m.group('veohid')
         width = self.config['veoh_width'][0]
         height = self.config['veoh_height'][0]
         return flash_object(url, width, height)
@@ -116,7 +116,7 @@ class Vimeo(object):
     def __init__(self, config):
         self.config = config
     def handleMatch(self, m):
-        url = 'http://player.vimeo.com/video/%s' % m.group('vimeoid')
+        url = 'https://player.vimeo.com/video/%s' % m.group('vimeoid')
         width = self.config['vimeo_width'][0]
         height = self.config['vimeo_height'][0]
         return render_iframe(url, width, height)
@@ -136,7 +136,7 @@ class Youtube(object):
     def __init__(self, config):
         self.config = config
     def handleMatch(self, m):
-        url = 'http://www.youtube.com/embed/%s' % m.group('youtubeid')
+        url = 'https://www.youtube.com/embed/%s' % m.group('youtubeid')
         width = self.config['youtube_width'][0]
         height = self.config['youtube_height'][0]
         return render_iframe(url, width, height)
