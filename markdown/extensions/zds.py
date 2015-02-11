@@ -53,7 +53,7 @@ class ZdsExtension(Extension):
         self.inline = self.config.get("inline", True)
         self.emoticons = self.config.get("emoticons", {})
         self.js_support = self.config.get("js_support", False)
-        
+
         # create extensions :
         sub_ext         = SubSuperscriptExtension() # Sub and Superscript support
         del_ext         = DelExtension()            # Del support
@@ -72,7 +72,7 @@ class ZdsExtension(Extension):
                 })                                      # CustomBlock support
             align_ext       = AlignExtension()          # Right align and center support
             video_ext       = VideoExtension(js_support=self.js_support)          # Video support
-            
+
             preprocess_ext  = PreprocessBlockExtension({"preprocess" : ("fenced_code_block", "footnote", "reference","abbr", )}) # Preprocess extension
             gridtable_ext   = GridTableExtension()      # Grid Table support
             comment_ext     = CommentsExtension({"START_TAG" : "<--COMMENT", "END_TAG" : "COMMENT-->"}) # Comment support
