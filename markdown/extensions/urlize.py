@@ -57,7 +57,7 @@ class CorrectURLProcessor(markdown.treeprocessors.Treeprocessor):
     def run(self, node):
 
         for child in node.getiterator():
-            if child.tag == 'a' and 'href' in child.attrib and  child.attrib['href'].split('://')[0] not in ('http','https','ftp') and not child.attrib['href'].startswith('#') and not child.attrib['href'].startswith('mailto:'):
+            if child.tag == 'a' and 'href' in child.attrib and  child.attrib['href'].split('://')[0] not in ('http','https','ftp') and not child.attrib['href'].startswith('#') and not child.attrib['href'].startswith('/') and not child.attrib['href'].startswith('mailto:'):
                 child.attrib['href'] = 'http://' + child.attrib['href']
         return node
 
