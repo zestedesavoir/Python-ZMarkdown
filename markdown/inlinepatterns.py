@@ -305,7 +305,7 @@ class BacktickPattern(Pattern):
 
     def handleMatch(self, m):
         el = util.etree.Element(self.tag)
-        el.text = util.AtomicString(m.group(3).strip())
+        el.text = util.AtomicString(m.group(3)) #.strip())
         return el
 
 
