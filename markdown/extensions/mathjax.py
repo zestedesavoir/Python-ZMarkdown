@@ -12,8 +12,10 @@ class MathJaxPattern(markdown.inlinepatterns.Pattern):
             node = markdown.util.etree.Element('span')
             node.text = "\\" + m.group(2) + m.group(3) + "\\" + m.group(2)
         else:
-            node = markdown.util.etree.Element('mathjax')
-            node.text = markdown.util.AtomicString(m.group(2) + m.group(3) + m.group(2))
+            node = markdown.util.etree.Element('div')
+            node.set('class', "mathjax-wrapper")
+            mnode = markdown.util.etree.SubElement(node, "mathjax")
+            mnode.text = markdown.util.AtomicString(m.group(2) + m.group(3) + m.group(2))
         return node
 
 class MathJaxExtension(markdown.Extension):

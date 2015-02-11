@@ -53,7 +53,9 @@ class TableProcessor(BlockProcessor):
             else:
                 align.append(None)
         # Build table
-        table = etree.SubElement(parent, 'table')
+        pr = etree.SubElement(parent, 'div')
+        pr.set('class', "table-wrapper")
+        table = etree.SubElement(pr, 'table')
         thead = etree.SubElement(table, 'thead')
         self._build_row(header, thead, align, border)
         tbody = etree.SubElement(table, 'tbody')
