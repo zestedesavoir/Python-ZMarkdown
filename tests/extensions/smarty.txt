@@ -1,3 +1,4 @@
+'.
 1440--80's  
 1440--'80s  
 1440---'80s  
@@ -15,6 +16,11 @@ It's fun. What's fun?
 em-dashes (---) and ellipes (...)  
 "[Link](http://example.com)" --- she said.
 
+"Ellipsis within quotes..."
+
+Кавычки-<<ёлочки>>  
+Anführungszeichen->>Chevrons<<
+
 --- -- ---
 
 Escaped \-- ndash  
@@ -23,3 +29,8 @@ Escaped ellipsis\...
 
 'Escaped \"quotes\" in real ones'  
 \'"Real" quotes in escaped ones\'
+
+Skip `"code" -- --- 'spans' ...`.
+
+    Also skip "code" 'blocks'
+	foo -- bar --- baz ...

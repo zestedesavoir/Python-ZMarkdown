@@ -1,13 +1,19 @@
 import traceback
-from .util import MarkdownSyntaxError
 from nose.plugins import Plugin
 from nose.plugins.errorclass import ErrorClass, ErrorClassPlugin
 
+
+class MarkdownSyntaxError(Exception):
+    pass
+
+
 class Markdown(ErrorClassPlugin):
     """ Add MarkdownSyntaxError and ensure proper formatting. """
-    mdsyntax = ErrorClass(MarkdownSyntaxError, 
-                          label='MarkdownSyntaxError', 
-                          isfailure=True)
+    mdsyntax = ErrorClass(
+        MarkdownSyntaxError,
+        label='MarkdownSyntaxError',
+        isfailure=True
+    )
     enabled = True
 
     def configure(self, options, conf):
@@ -35,28 +41,30 @@ def escape(html):
 
 class HtmlOutput(Plugin):
     """Output test results as ugly, unstyled html. """
-    
+
     name = 'html-output'
-    score = 2 # run late
+    score = 2  # run late
     enabled = True
-    
+
     def __init__(self):
         super(HtmlOutput, self).__init__()
-        self.html = [ '<html><head>',
-                      '<title>Test output</title>',
-                      '</head><body>' ]
-   
+        self.html = [
+            '<html><head>',
+            '<title>Test output</title>',
+            '</head><body>'
+        ]
+
     def configure(self, options, conf):
         self.conf = conf
 
     def addSuccess(self, test):
         self.html.append('<span>ok</span>')
-    
+
     def addError(self, test, err):
         err = self.formatErr(err)
         self.html.append('<span>ERROR</span>')
         self.html.append('<pre>%s</pre>' % escape(err))
-            
+
     def addFailure(self, test, err):
         err = self.formatErr(err)
         self.html.append('<span>FAIL</span>')
@@ -64,9 +72,10 @@ class HtmlOutput(Plugin):
 
     def finalize(self, result):
         self.html.append('<div>')
-        self.html.append("Ran %d test%s" %
-                         (result.testsRun, result.testsRun != 1 and "s" 
-or ""))
+        self.html.append(
+            "Ran %d test%s" %
+            (result.testsRun, result.testsRun != 1 and "s" or "")
+        )
         self.html.append('</div>')
         self.html.append('<div>')
         if not result.wasSuccessful():
@@ -89,7 +98,7 @@ or ""))
     def formatErr(self, err):
         exctype, value, tb = err
         return ''.join(traceback.format_exception(exctype, value, tb))
-    
+
     def startContext(self, ctx):
         try:
             n = ctx.__name__
@@ -104,12 +113,13 @@ or ""))
 
     def stopContext(self, ctx):
         self.html.append('</fieldset>')
-    
+
     def startTest(self, test):
-        self.html.extend([ '<div><span>',
-                           test.shortDescription() or str(test),
-                           '</span>' ])
-        
+        self.html.extend([
+            '<div><span>',
+            test.shortDescription() or str(test),
+            '</span>'
+        ])
+
     def stopTest(self, test):
         self.html.append('</div>')
-

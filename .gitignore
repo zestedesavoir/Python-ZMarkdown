@@ -11,3 +11,6 @@ MANIFEST
 *~
 *#*
 .tox/*
+.coverage
+htmlcov/*
+*komodo*

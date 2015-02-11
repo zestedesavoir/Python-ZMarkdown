@@ -38,7 +38,7 @@ caret has any special meaning.
 
 A footnote content must start with the label followed by a colon and at least 
 one space. The label used to define the content must exactly match the label used
-in the body (including capitalization and whitespace). The content would then 
+in the body (including capitalization and white space). The content would then 
 follow the label either on the same line or on the next line. The content may 
 contain multiple lines, paragraphs, code blocks, blockquotes and most any other 
 markdown syntax. The additional lines must be indented one level (four spaces or 
@@ -64,7 +64,7 @@ is indented consistently and any errors are more easily discernible by the autho
 Usage
 -----
 
-See [Extensions](index.html) for general extension usage, specify `footnotes`
+See [Extensions](index.html) for general extension usage, specify `markdown.extensions.footnotes`
 as the name of the extension.
 
 See the [Library Reference](../reference.html#extensions) for information about

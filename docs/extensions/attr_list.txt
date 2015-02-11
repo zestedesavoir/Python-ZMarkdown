@@ -71,7 +71,7 @@ The above results in the following output:
 ### Inline ###
 
 To define attributes on inline elements, the attribute list should be defined 
-immediately after the inline element with no whitespace.
+immediately after the inline element with no white space.
 
     [link](http://example.com){: class="foo bar" title="Some title!" }
 
@@ -82,7 +82,7 @@ The above results in the following output:
 Usage
 -----
 
-See [Extensions](index.html) for general extension usage, specify `attr_list`
+See [Extensions](index.html) for general extension usage, specify `markdown.extensions.attr_list`
 as the name of the extension.
 
 This extension does not accept any special configuration options.
