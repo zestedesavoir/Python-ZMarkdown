@@ -97,7 +97,7 @@ class TableExtension(Extension):
         """ Add an instance of TableProcessor to BlockParser. """
         md.parser.blockprocessors.add('table',
                                       TableProcessor(md.parser),
-                                      '<ulist')
+                                      '>ulist')
 
 
 def makeExtension(*args, **kwargs):
