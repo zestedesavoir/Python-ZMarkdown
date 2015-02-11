@@ -350,6 +350,23 @@ class HtmlPattern(Pattern):
 
         return util.INLINE_PLACEHOLDER_RE.sub(get_stash, text)
 
+try:
+    # Python2
+    from urlparse import urlsplit as upurlsplit
+    from urlparse import urlunsplit as upurlunsplit
+    from urllib import quote as ulquote
+    from urllib import quote_plus as ulquote_plus
+except ImportError:
+    # Python 3
+    from urllib.parse import urlsplit as upurlsplit
+    from urllib.parse import urlunsplit as upurlunsplit
+    from urllib.parse import quote as ulquote
+    from urllib.parse import quote_plus as ulquote_plus 
+def url_fix(s):
+    scheme, netloc, path, qs, anchor = upurlsplit(s)
+    path = ulquote(path, '/%')
+    qs = ulquote_plus(qs, ':&=')
+    return upurlunsplit((scheme, netloc, path, qs, anchor))
 
 class LinkPattern(Pattern):
     """ Return a link element from the given match. """
@@ -393,6 +410,7 @@ class LinkPattern(Pattern):
             return url
 
         try:
+            base_url = url
             scheme, netloc, path, params, query, fragment = url = urlparse(url)
         except ValueError:  # pragma: no cover
             # Bad url - so bad it couldn't be parsed.
@@ -408,14 +426,14 @@ class LinkPattern(Pattern):
             # This should not happen. Treat as suspect.
             return ''
 
-        for part in url[2:]:
-            if ":" in part:
-                # A colon in "path", "parameters", "query"
-                # or "fragment" is suspect.
-                return ''
+        #for part in url[2:]:
+        #    if ":" in part:
+        #        # A colon in "path", "parameters", "query"
+        #        # or "fragment" is suspect.
+        #        return ''
 
         # Url passes all tests. Return url as-is.
-        return urlunparse(url)
+        return url_fix(base_url)
 
 
 class ImagePattern(LinkPattern):
