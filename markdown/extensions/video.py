@@ -145,7 +145,7 @@ class JsFiddle(object):
     def __init__(self, config):
         self.config = config 
     def handleMatch(self, m):
-        url =  "http://jsfiddle.net/{}/{}/embedded/result,js,html,css/".format(m.group('jsfiddleid'), m.group('jsfiddlerev'))
+        url =  "https://jsfiddle.net/{}/{}/embedded/result,js,html,css/".format(m.group('jsfiddleid'), m.group('jsfiddlerev'))
 
         width = self.config['jsfiddle_width'][0]
         height = self.config['jsfiddle_height'][0]
