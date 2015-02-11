@@ -36,7 +36,7 @@ Negative examples:
 u'<p>del.icio.us</p>'
 
 """
-
+from __future__ import unicode_literals
 import markdown
 
 # Global Vars
