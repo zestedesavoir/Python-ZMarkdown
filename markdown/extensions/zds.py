@@ -47,6 +47,14 @@ from .smarty import SmartyExtension
 
 class ZdsExtension(Extension):
     """ Add various extensions to Markdown class."""
+    def __init__(self, *args, **kwargs):
+        self.config = {
+            'inline': [False, ''],
+            'emoticons': [{}, ''],
+            'js_support': [False, ''],
+        }
+
+        super(ZdsExtension, self).__init__(*args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
         """ Register extension instances. """
