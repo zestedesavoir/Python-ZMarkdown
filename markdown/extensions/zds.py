@@ -58,9 +58,9 @@ class ZdsExtension(Extension):
 
     def extendMarkdown(self, md, md_globals):
         """ Register extension instances. """
-        self.inline = self.config.get("inline", True)
-        self.emoticons = self.config.get("emoticons", {})
-        self.js_support = self.config.get("js_support", False)
+        self.inline = self.getConfigs().get("inline", True)
+        self.emoticons = self.getConfigs().get("emoticons", {})
+        self.js_support = self.getConfigs().get("js_support", False)
 
         # create extensions :
         sub_ext         = SubSuperscriptExtension() # Sub and Superscript support
@@ -114,6 +114,7 @@ class ZdsExtension(Extension):
                 mathjax_ext,                        # Mathjax support
                 ])
         md.registerExtensions(exts, {})
+        print (exts)
         if self.inline:
             #md.parser.blockprocessors.clear()
             md.preprocessors.pop("reference")
