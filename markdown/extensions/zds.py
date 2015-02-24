@@ -44,6 +44,7 @@ from .comments import CommentsExtension
 from .smartLegend import SmartLegendExtension
 from .headerDec import DownHeaderExtension
 from .smarty import SmartyExtension
+from .codehilite import CodeHiliteExtension
 
 class ZdsExtension(Extension):
     """ Add various extensions to Markdown class."""
@@ -66,7 +67,7 @@ class ZdsExtension(Extension):
         sub_ext         = SubSuperscriptExtension() # Sub and Superscript support
         del_ext         = DelExtension()            # Del support
         urlize_ext      = UrlizeExtension()         # Autolink support
-        sm_ext          = SmartyExtension((('smart_quotes', False),))
+        sm_ext          = SmartyExtension(smart_quotes=False)
         if not self.inline:
             mathjax_ext     = MathJaxExtension()        # MathJax support
             kbd_ext         = KbdExtension()            # Keyboard support
@@ -94,12 +95,12 @@ class ZdsExtension(Extension):
                 ]
         if not self.inline:
             exts.extend([
-                'abbr',                             # Abbreviation support, included in python-markdown
-                'footnotes',                        # Footnotes support, included in python-markdown
+                'markdown.extensions.abbr',                             # Abbreviation support, included in python-markdown
+                'markdown.extensions.footnotes',                        # Footnotes support, included in python-markdown
                                                     # Footnotes place marker can be set with the PLACE_MARKER option
-                'tables',                           # Tables support, included in python-markdown
-                'fenced_code',                      # Extended syntaxe for code block support, included in python-markdown
-                'codehilite(linenums=True,guess_lang=False)',
+                'markdown.extensions.tables',                           # Tables support, included in python-markdown
+                'markdown.extensions.fenced_code',                      # Extended syntaxe for code block support, included in python-markdown
+                CodeHiliteExtension(linenums=True,guess_lang=False),
                                                     # Code hightlight support, with line numbers, included in python-markdwon
                 customblock_ext,                    # CustomBlock support
                 kbd_ext,                            # Kbd support
@@ -114,7 +115,6 @@ class ZdsExtension(Extension):
                 mathjax_ext,                        # Mathjax support
                 ])
         md.registerExtensions(exts, {})
-        print (exts)
         if self.inline:
             #md.parser.blockprocessors.clear()
             md.preprocessors.pop("reference")
