@@ -45,6 +45,7 @@ from .smartLegend import SmartLegendExtension
 from .headerDec import DownHeaderExtension
 from .smarty import SmartyExtension
 from .codehilite import CodeHiliteExtension
+from .toc import TocExtension
 
 
 class ZdsExtension(Extension):
@@ -94,6 +95,7 @@ class ZdsExtension(Extension):
             legend_ext = SmartLegendExtension({"IGNORING_IMG": self.emoticons.values(),
                                                "PARENTS": ("div", "blockquote")})  # Smart Legend support
             dheader_ext = DownHeaderExtension({"OFFSET": 2})  # Offset header support
+            toc_ext         = TocExtension(baselevel=3, anchorlink=True, marker="[sommaire]")
         # Define used ext
         exts = [sub_ext,  # Subscript support
                 del_ext,  # Del support
@@ -101,6 +103,7 @@ class ZdsExtension(Extension):
                 sm_ext,
                 ]
         if not self.inline:
+<<<<<<< 97965b090d9da07523c903296b308815168f2e72
             exts.extend(['markdown.extensions.abbr',  # Abbreviation support, included in python-markdown
                          'markdown.extensions.footnotes',  # Footnotes support, included in python-markdown
                          # Footnotes place marker can be set with the PLACE_MARKER option
@@ -121,6 +124,29 @@ class ZdsExtension(Extension):
                          dheader_ext,  # Down Header support
                          mathjax_ext,  # Mathjax support
                          ])
+=======
+            exts.extend([
+                'markdown.extensions.abbr',                             # Abbreviation support, included in python-markdown
+                'markdown.extensions.footnotes',                        # Footnotes support, included in python-markdown
+                                                    # Footnotes place marker can be set with the PLACE_MARKER option
+                'markdown.extensions.tables',                           # Tables support, included in python-markdown
+                'markdown.extensions.fenced_code',                      # Extended syntaxe for code block support, included in python-markdown
+                CodeHiliteExtension(linenums=True,guess_lang=False),
+                                                    # Code hightlight support, with line numbers, included in python-markdwon
+                customblock_ext,                    # CustomBlock support
+                kbd_ext,                            # Kbd support
+                emo_ext,                            # Smileys support
+                video_ext,                          # Video support
+                preprocess_ext,                     # Preprocess support
+                gridtable_ext,                      # Grid tables support
+                comment_ext,                        # Comment support
+                legend_ext,                         # Legend support
+                align_ext,                          # Right align and center support
+                dheader_ext,                        # Down Header support
+                mathjax_ext,                        # Mathjax support
+                toc_ext,                            # Table of content support
+                ])
+>>>>>>> add support of table of content
         md.registerExtensions(exts, {})
         if self.inline:
             # md.parser.blockprocessors.clear()
