@@ -356,17 +356,22 @@ try:
     from urlparse import urlunsplit as upurlunsplit
     from urllib import quote as ulquote
     from urllib import quote_plus as ulquote_plus
+    py3=False
 except ImportError:
     # Python 3
     from urllib.parse import urlsplit as upurlsplit
     from urllib.parse import urlunsplit as upurlunsplit
     from urllib.parse import quote as ulquote
-    from urllib.parse import quote_plus as ulquote_plus 
+    from urllib.parse import quote_plus as ulquote_plus
+    unicode = str
+    py3=True
 def url_fix(s):
+    if not py3 and isinstance(s, unicode):
+        s = s.encode('utf8')
     scheme, netloc, path, qs, anchor = upurlsplit(s)
     path = ulquote(path, '/%')
     qs = ulquote_plus(qs, ':&=')
-    return upurlunsplit((scheme, netloc, path, qs, anchor))
+    return unicode(upurlunsplit((scheme, netloc, path, qs, anchor)))
 
 class LinkPattern(Pattern):
     """ Return a link element from the given match. """
