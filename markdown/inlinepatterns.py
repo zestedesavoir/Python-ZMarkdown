@@ -352,26 +352,26 @@ class HtmlPattern(Pattern):
 
 try:
     # Python2
-    from urlparse import urlsplit as upurlsplit
-    from urlparse import urlunsplit as upurlunsplit
-    from urllib import quote as ulquote
-    from urllib import quote_plus as ulquote_plus
-    py3=False
+    from urlparse import urlsplit, urlunsplit
+    import urllib
+    def url_fix(s, charset='utf-8'):
+        scheme, netloc, path, qs, anchor = urlsplit(s)
+        path = urllib.quote(path.encode("utf-8"))
+        qs = urllib.quote_plus(qs, ':&=')
+        return urlunsplit((scheme, netloc, path, qs, anchor)).decode(charset)
+    
 except ImportError:
     # Python 3
-    from urllib.parse import urlsplit as upurlsplit
-    from urllib.parse import urlunsplit as upurlunsplit
-    from urllib.parse import quote as ulquote
-    from urllib.parse import quote_plus as ulquote_plus
-    unicode = str
-    py3=True
-def url_fix(s):
-    if not py3 and isinstance(s, unicode):
-        s = s.encode('utf8')
-    scheme, netloc, path, qs, anchor = upurlsplit(s)
-    path = ulquote(path, '/%')
-    qs = ulquote_plus(qs, ':&=')
-    return unicode(upurlunsplit((scheme, netloc, path, qs, anchor)))
+    from urllib.parse import urlsplit
+    from urllib.parse import urlunsplit
+    from urllib.parse import quote
+    from urllib.parse import quote_plus
+    
+    def url_fix(s):
+        scheme, netloc, path, qs, anchor = urlsplit(s)
+        path = quote(path, '/%')
+        qs = quote_plus(qs, ':&=')
+        return unicode(urlunsplit((scheme, netloc, path, qs, anchor)))
 
 class LinkPattern(Pattern):
     """ Return a link element from the given match. """
