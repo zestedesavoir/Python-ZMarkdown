@@ -153,16 +153,40 @@ class JsFiddle(object):
 
 
 def render_iframe(url, width, height):
+    ratio = int(height) * 100 / int(width)
+
+    container = etree.Element('div')
+    container.set('class', 'video-container')
+    container.set('style', 'max-width: {0}px; max-height: {1}px;'.format(width, height))
+
+    wrapper = etree.Element('div')
+    wrapper.set('class', 'video-wrapper')
+    wrapper.set('style', 'padding-bottom: {0}%'.format(ratio))
+
     iframe = etree.Element('iframe')
-    iframe.set('width', width)
-    iframe.set('height', height)
+    iframe.set('class', 'video-responsive')
+    iframe.set('width', '100%')
+    iframe.set('height', '100%')
     iframe.set('src', url)
     iframe.set('allowfullscreen', 'true')
     iframe.set('frameborder', '0')
-    return iframe
+
+    wrapper.append(iframe)
+    container.append(wrapper)
+    return container
 
 
 def flash_object(url, width, height):
+    ratio = int(height) * 100 / int(width)
+
+    container = etree.Element('div')
+    container.set('class', 'video-container')
+    container.set('style', 'max-width: {0}px; max-height: {1}px;'.format(width, height))
+
+    wrapper = etree.Element('div')
+    wrapper.set('class', 'video-wrapper')
+    wrapper.set('style', 'padding-bottom: {0}%'.format(ratio))
+    
     obj = etree.Element('object')
     obj.set('type', 'application/x-shockwave-flash')
     obj.set('width', width)
@@ -176,7 +200,10 @@ def flash_object(url, width, height):
     param.set('name', 'allowFullScreen')
     param.set('value', 'true')
     obj.append(param)
-    return obj
+    
+    wrapper.append(obj)
+    container.append(wrapper)
+    return container
 
 
 def makeExtension(configs=None):
