@@ -41,13 +41,13 @@ class VideoExtension(markdown.Extension):
         self.add_inline(md, 'metacafe', Metacafe,
             r'http://www\.metacafe\.com/watch/(?P<metacafeid>\d+)/?(:?.+/?)')
         self.add_inline(md, 'veoh', Veoh,
-            r'http://www\.veoh\.com/\S*(#watch%3D|watch/)(?P<veohid>\w+)')
+            r'https?://www\.veoh\.com/\S*(#watch%3D|watch/)(?P<veohid>\w+)')
         self.add_inline(md, 'vimeo', Vimeo,
-            r'http://(www.|)vimeo\.com/(?P<vimeoid>\d+)\S*')
+            r'https?://(www.|)vimeo\.com/(?P<vimeoid>\d+)\S*')
         self.add_inline(md, 'yahoo', Yahoo,
-            r'http://screen\.yahoo\.com/.+/?')
+            r'https?://screen\.yahoo\.com/.+/?')
         self.add_inline(md, 'youtube', Youtube,
-            r'https?://www\.youtube\.com/watch\?\S*v=(?P<youtubeid>\S[^&/]+)')
+            r'https?://(www.|)youtube\.com/watch\?\S*v=(?P<youtubeid>\S[^&/]+)')
         self.add_inline(md, 'youtube_short', Youtube,
             r'https?://youtu\.be/(?P<youtubeid>\S[^?&/]+)?')
         if self.config["jsfiddle"][0]:
