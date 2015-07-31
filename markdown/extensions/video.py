@@ -20,6 +20,8 @@ class VideoExtension(markdown.Extension):
             'yahoo_height': ['351', 'Height for Yahoo! videos'],
             'youtube_width': ['560', 'Width for Youtube videos'],
             'youtube_height': ['315', 'Height for Youtube videos'],
+            'ina_width': ['620', 'Width for INA videos'],
+            'ina_height': ['349', 'Height for INA videos'],
             'jsfiddle' : [False, ''],
             'jsfiddle_width': ['560', 'Width for jsfiddle'],
             'jsfiddle_height': ['560', 'Height for jsfiddle'],
@@ -50,6 +52,8 @@ class VideoExtension(markdown.Extension):
             r'https?://(www.|)youtube\.com/watch\?\S*v=(?P<youtubeid>\S[^&/]+)')
         self.add_inline(md, 'youtube_short', Youtube,
             r'https?://youtu\.be/(?P<youtubeid>\S[^?&/]+)?')
+        self.add_inline(md, 'ina', INA,
+            r'https?://www\.ina\.fr/video/(?P<inaid>[A-Z0-9]+)/([\w\-]*)\.html')
         if self.config["jsfiddle"][0]:
             self.add_inline(md, 'jsfiddle', JsFiddle,
                 r'https?://(www.|)jsfiddle\.net/(?P<jsfiddleid>[a-z0-9]+)/(?P<jsfiddlerev>[0-9]+)/?')
@@ -140,6 +144,17 @@ class Youtube(object):
         width = self.config['youtube_width'][0]
         height = self.config['youtube_height'][0]
         return render_iframe(url, width, height)
+
+
+class INA(object):
+    def __init__(self, config):
+        self.config = config
+    def handleMatch(self, m):
+        url = 'http://player.ina.fr/player/embed/%s/1/1b0bd203fbcd702f9bc9b10ac3d0fc21/560/315/1/148db8' % m.group('inaid')
+        width = self.config['ina_width'][0]
+        height = self.config['ina_height'][0]
+        return render_iframe(url, width, height)
+
 
 class JsFiddle(object):
     def __init__(self, config):
