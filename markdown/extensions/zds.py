@@ -15,6 +15,7 @@ from .grid_tables import GridTableExtension
 from .header_dec import DownHeaderExtension
 from .kbd import KbdExtension
 from .mathjax import MathJaxExtension
+from .ping import PingExtension
 from .smart_legend import SmartLegendExtension
 from .smarty import SmartyExtension
 from .subsuperscript import SubSuperscriptExtension
@@ -31,6 +32,7 @@ class ZdsExtension(Extension):
             'inline': [False, ''],
             'emoticons': [{}, ''],
             'js_support': [False, ''],
+            'pings': [[], ''],
         }
 
         super(ZdsExtension, self).__init__(*args, **kwargs)
@@ -42,15 +44,22 @@ class ZdsExtension(Extension):
         self.js_support = self.getConfigs().get("js_support", False)
         md.inline = self.inline
 
+        def is_pinged(user=None):
+            return False
+
+        self.is_pinged = self.getConfigs().get('is_pinged', is_pinged)
+
         # create extensions :
         sub_ext = SubSuperscriptExtension()  # Sub and Superscript support
         del_ext = DelExtension()  # Del support
         urlize_ext = UrlizeExtension()  # Autolink support
         sm_ext = SmartyExtension(smart_quotes=False)
+        ping_ext = PingExtension(is_pinged=self.is_pinged)  # Ping support
         # Define used ext
         exts = [sub_ext,  # Subscript support
                 del_ext,  # Del support
                 urlize_ext,  # Autolink support
+                ping_ext,  # Ping support
                 sm_ext]
 
         if not self.inline:
