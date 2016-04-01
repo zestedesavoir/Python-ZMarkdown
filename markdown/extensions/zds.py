@@ -27,6 +27,8 @@ when you upgrade to any future version of Python-Markdown.
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+
+from markdown.extensions.ping import PingExtension
 from . import Extension
 
 from .subsuperscript import SubSuperscriptExtension
@@ -55,6 +57,7 @@ class ZdsExtension(Extension):
             'inline': [False, ''],
             'emoticons': [{}, ''],
             'js_support': [False, ''],
+            'pings': [[], ''],
         }
 
         super(ZdsExtension, self).__init__(*args, **kwargs)
@@ -65,11 +68,17 @@ class ZdsExtension(Extension):
         self.emoticons = self.getConfigs().get("emoticons", {})
         self.js_support = self.getConfigs().get("js_support", False)
 
+        def is_pinged(user=None):
+            return False
+
+        self.is_pinged = self.getConfigs().get('is_pinged', is_pinged)
+
         # create extensions :
         sub_ext = SubSuperscriptExtension()  # Sub and Superscript support
         del_ext = DelExtension()  # Del support
         urlize_ext = UrlizeExtension()  # Autolink support
         sm_ext = SmartyExtension(smart_quotes=False)
+        ping_ext = PingExtension(is_pinged=self.is_pinged)  # Ping support
         if not self.inline:
             mathjax_ext = MathJaxExtension()  # MathJax support
             kbd_ext = KbdExtension()  # Keyboard support
@@ -98,6 +107,7 @@ class ZdsExtension(Extension):
         exts = [sub_ext,  # Subscript support
                 del_ext,  # Del support
                 urlize_ext,  # Autolink support
+                ping_ext,  # Ping support
                 sm_ext,
                 ]
         if not self.inline:
