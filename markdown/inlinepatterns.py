@@ -305,7 +305,7 @@ class BacktickPattern(Pattern):
 
     def handleMatch(self, m):
         el = util.etree.Element(self.tag)
-        el.text = util.AtomicString(m.group(3)) #.strip())
+        el.text = util.AtomicString(m.group(3).strip())
         return el
 
 
@@ -359,14 +359,14 @@ try:
         path = urllib.quote(path.encode("utf-8"))
         qs = urllib.quote_plus(qs, ':&=')
         return urlunsplit((scheme, netloc, path, qs, anchor)).decode(charset)
-    
+
 except ImportError:
     # Python 3
     from urllib.parse import urlsplit
     from urllib.parse import urlunsplit
     from urllib.parse import quote
     from urllib.parse import quote_plus
-    
+
     def url_fix(s):
         scheme, netloc, path, qs, anchor = urlsplit(s)
         path = quote(path, '/%')

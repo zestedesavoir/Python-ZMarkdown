@@ -36,8 +36,8 @@ BLOCK_LEVEL_ELEMENTS = re.compile(
     re.IGNORECASE
 )
 # Placeholders
-STX = '\u0002'  # Use STX ("Start of text") for start-of-placeholder
-ETX = '\u0003'  # Use ETX ("End of text") for end-of-placeholder
+STX = u'\u0002'  # Use STX ("Start of text") for start-of-placeholder
+ETX = u'\u0003'  # Use ETX ("End of text") for end-of-placeholder
 INLINE_PLACEHOLDER_PREFIX = STX+"klzzwxh:"
 INLINE_PLACEHOLDER = INLINE_PLACEHOLDER_PREFIX + "%s" + ETX
 INLINE_PLACEHOLDER_RE = re.compile(INLINE_PLACEHOLDER % r'([0-9]+)')
