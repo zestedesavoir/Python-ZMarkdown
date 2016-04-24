@@ -1,5 +1,5 @@
 nose==1.3.7
 coverage
 pyyaml==3.11
-pytidylib
+pytidylib==0.2.4
 pygments==2.1.3
