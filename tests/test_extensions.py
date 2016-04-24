@@ -137,8 +137,9 @@ class TestCodeHilite(unittest.TestCase):
         if self.has_pygments:
             self.assertEqual(
                 md.convert(text),
-                '<div class="codehilite">'
-                '<pre><span class="c"># A Code Comment</span>\n'
+                '<div class="codehilite"><pre>'
+                '<span></span>'
+                '<span class="c1"># A Code Comment</span>\n'
                 '</pre></div>'
             )
         else:
@@ -190,8 +191,9 @@ class TestCodeHilite(unittest.TestCase):
         if self.has_pygments:
             self.assertEqual(
                 md.convert(text),
-                '<div class="codehilite">'
-                '<pre><span class="c"># A Code Comment</span>\n'
+                '<div class="codehilite"><pre>'
+                '<span></span>'
+                '<span class="c1"># A Code Comment</span>\n'
                 '</pre></div>'
             )
         else:
@@ -212,9 +214,10 @@ class TestCodeHilite(unittest.TestCase):
                 self.assertEqual(
                     md.convert(text),
                     '<div class="codehilite"><pre>'
-                    '<span class="c">#line 1</span>\n'
-                    '<span class="hll"><span class="c">#line 2</span>\n</span>'
-                    '<span class="c">#line 3</span>\n'
+                    '<span></span>'
+                    '<span class="c1">#line 1</span>\n'
+                    '<span class="hll"><span class="c1">#line 2</span>\n</span>'
+                    '<span class="c1">#line 3</span>\n'
                     '</pre></div>'
                 )
             else:
@@ -337,6 +340,7 @@ line 3
             self.assertEqual(
                 md.convert(text),
                 '<div class="codehilite"><pre>'
+                '<span></span>'
                 '<span class="hll">line 1\n</span>'
                 'line 2\n'
                 '<span class="hll">line 3\n</span>'
@@ -376,9 +380,10 @@ line 3
                 self.assertEqual(
                     md.convert(text),
                     '<div class="codehilite"><pre>'
-                    '<span class="hll"><span class="c">#line 1</span>\n</span>'
-                    '<span class="c">#line 2</span>\n'
-                    '<span class="hll"><span class="c">#line 3</span>\n</span>'
+                    '<span></span>'
+                    '<span class="hll"><span class="c1">#line 1</span>\n</span>'
+                    '<span class="c1">#line 2</span>\n'
+                    '<span class="hll"><span class="c1">#line 3</span>\n</span>'
                     '</pre></div>'
                 )
             else:

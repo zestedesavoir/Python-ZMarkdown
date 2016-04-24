@@ -1,11 +1,12 @@
 # coding: utf-8
 
+from __future__ import print_function
+
 import codecs
 import markdown
 from markdown.extensions.zds import ZdsExtension
 import time
- from __future__ import print_function
- 
+
 # Markdowns customs extensions :
 def get_markdown_instance(Inline=False):
     zdsext = ZdsExtension({"inline": Inline, "emoticons": {"TOTOTO":"truc"}, "js_support": True})

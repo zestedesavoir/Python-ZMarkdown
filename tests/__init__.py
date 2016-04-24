@@ -78,15 +78,16 @@ def get_config(dir_name):
 def normalize(text):
     """ Normalize whitespace for a string of html using tidylib. """
     output, errors = tidylib.tidy_fragment(text, options={
-        'drop_empty_paras': 0,
-        'fix_backslash': 0,
-        'fix_bad_comments': 0,
-        'fix_uri': 0,
-        'join_styles': 0,
-        'lower_literals': 0,
-        'merge_divs': 0,
-        'output_xhtml': 1,
-        'quote_ampersand': 0,
+        'drop-empty-paras': 0,
+        'fix-backslash': 0,
+        'fix-bad-comments': 0,
+        'fix-uri': 0,
+        'join-styles': 0,
+        'lower-literals': 0,
+        'merge-divs': 0,
+        'merge-spans': 0,
+        'output-html': 0,
+        'quote-ampersand': 0,
         'newline': 'LF'
     })
     return output
@@ -104,12 +105,12 @@ class CheckSyntax(object):
             raise nose.plugins.skip.SkipTest('Test skipped per config.')
         input_file = file + config.get(cfg_section, 'input_ext')
         with codecs.open(input_file, encoding="utf-8") as f:
-            input = f.read()
+            input = f.read().strip()
         output_file = file + config.get(cfg_section, 'output_ext')
         with codecs.open(output_file, encoding="utf-8") as f:
             # Normalize line endings
             # (on windows, git may have altered line endings).
-            expected_output = f.read().replace("\r\n", "\n")
+            expected_output = f.read().replace("\r\n", "\n").strip()
         output = markdown.markdown(input, **config.get_args(file))
         if tidylib and config.get(cfg_section, 'normalize'):
             # Normalize whitespace with tidylib before comparing.
@@ -125,7 +126,8 @@ class CheckSyntax(object):
             output.splitlines(True),
             output_file,
             'actual_output.html',
-            n=3
+            n=3,
+            lineterm="\n"
         )]
         if diff:
             raise MarkdownSyntaxError(
