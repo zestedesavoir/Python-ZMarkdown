@@ -20,6 +20,8 @@ class VideoExtension(markdown.Extension):
             'yahoo_height': ['351', 'Height for Yahoo! videos'],
             'youtube_width': ['560', 'Width for Youtube videos'],
             'youtube_height': ['315', 'Height for Youtube videos'],
+            'ina_width': ['620', 'Width for INA videos'],
+            'ina_height': ['349', 'Height for INA videos'],
             'jsfiddle' : [False, ''],
             'jsfiddle_width': ['560', 'Width for jsfiddle'],
             'jsfiddle_height': ['560', 'Height for jsfiddle'],
@@ -41,15 +43,17 @@ class VideoExtension(markdown.Extension):
         self.add_inline(md, 'metacafe', Metacafe,
             r'http://www\.metacafe\.com/watch/(?P<metacafeid>\d+)/?(:?.+/?)')
         self.add_inline(md, 'veoh', Veoh,
-            r'http://www\.veoh\.com/\S*(#watch%3D|watch/)(?P<veohid>\w+)')
+            r'https?://www\.veoh\.com/\S*(#watch%3D|watch/)(?P<veohid>\w+)')
         self.add_inline(md, 'vimeo', Vimeo,
-            r'http://(www.|)vimeo\.com/(?P<vimeoid>\d+)\S*')
+            r'https?://(www.|)vimeo\.com/(?P<vimeoid>\d+)\S*')
         self.add_inline(md, 'yahoo', Yahoo,
-            r'http://screen\.yahoo\.com/.+/?')
+            r'https?://screen\.yahoo\.com/.+/?')
         self.add_inline(md, 'youtube', Youtube,
-            r'https?://www\.youtube\.com/watch\?\S*v=(?P<youtubeid>\S[^&/]+)')
+            r'https?://(www.|)youtube\.com/watch\?\S*v=(?P<youtubeid>\S[^&/]+)')
         self.add_inline(md, 'youtube_short', Youtube,
             r'https?://youtu\.be/(?P<youtubeid>\S[^?&/]+)?')
+        self.add_inline(md, 'ina', INA,
+            r'https?://www\.ina\.fr/video/(?P<inaid>[A-Z0-9]+)/([\w\-]*)\.html')
         if self.config["jsfiddle"][0]:
             self.add_inline(md, 'jsfiddle', JsFiddle,
                 r'https?://(www.|)jsfiddle\.net/(?P<jsfiddleid>[a-z0-9]+)/(?P<jsfiddlerev>[0-9]+)/?')
@@ -141,6 +145,17 @@ class Youtube(object):
         height = self.config['youtube_height'][0]
         return render_iframe(url, width, height)
 
+
+class INA(object):
+    def __init__(self, config):
+        self.config = config
+    def handleMatch(self, m):
+        url = 'http://player.ina.fr/player/embed/%s/1/1b0bd203fbcd702f9bc9b10ac3d0fc21/560/315/1/148db8' % m.group('inaid')
+        width = self.config['ina_width'][0]
+        height = self.config['ina_height'][0]
+        return render_iframe(url, width, height)
+
+
 class JsFiddle(object):
     def __init__(self, config):
         self.config = config 
@@ -153,16 +168,40 @@ class JsFiddle(object):
 
 
 def render_iframe(url, width, height):
+    ratio = int(height) * 100 / int(width)
+
+    container = etree.Element('div')
+    container.set('class', 'video-container')
+    container.set('style', 'max-width: {0}px; max-height: {1}px;'.format(width, height))
+
+    wrapper = etree.Element('div')
+    wrapper.set('class', 'video-wrapper')
+    wrapper.set('style', 'padding-bottom: {0}%'.format(ratio))
+
     iframe = etree.Element('iframe')
-    iframe.set('width', width)
-    iframe.set('height', height)
+    iframe.set('class', 'video-responsive')
+    iframe.set('width', '100%')
+    iframe.set('height', '100%')
     iframe.set('src', url)
     iframe.set('allowfullscreen', 'true')
     iframe.set('frameborder', '0')
-    return iframe
+
+    wrapper.append(iframe)
+    container.append(wrapper)
+    return container
 
 
 def flash_object(url, width, height):
+    ratio = int(height) * 100 / int(width)
+
+    container = etree.Element('div')
+    container.set('class', 'video-container')
+    container.set('style', 'max-width: {0}px; max-height: {1}px;'.format(width, height))
+
+    wrapper = etree.Element('div')
+    wrapper.set('class', 'video-wrapper')
+    wrapper.set('style', 'padding-bottom: {0}%'.format(ratio))
+    
     obj = etree.Element('object')
     obj.set('type', 'application/x-shockwave-flash')
     obj.set('width', width)
@@ -176,7 +215,10 @@ def flash_object(url, width, height):
     param.set('name', 'allowFullScreen')
     param.set('value', 'true')
     obj.append(param)
-    return obj
+    
+    wrapper.append(obj)
+    container.append(wrapper)
+    return container
 
 
 def makeExtension(configs=None):
