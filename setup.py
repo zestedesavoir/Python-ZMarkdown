@@ -22,15 +22,16 @@ def get_version():
     finally:
         fp.close()
 
+
 version, version_info = get_version()
 
 # Get development Status for classifiers
 dev_status_map = {
     'alpha': '3 - Alpha',
-    'beta' : '4 - Beta',
-    'rc'   : '4 - Beta',
+    'beta': '4 - Beta',
+    'rc': '4 - Beta',
     'final': '5 - Production/Stable',
-    'zds'  : '5 - Production/Stable'
+    'zds': '5 - Production/Stable'
 }
 
 if version_info[3] == 'alpha' and version_info[4] == 0:
@@ -46,7 +47,6 @@ SCRIPT_NAME = 'markdown_py'
 
 
 class md_install_scripts(install_scripts):
-
     """ Customized install_scripts. Create markdown_py.bat for win32. """
 
     def run(self):
@@ -57,9 +57,7 @@ class md_install_scripts(install_scripts):
                 script_dir = os.path.join(sys.prefix, 'Scripts')
                 script_path = os.path.join(script_dir, SCRIPT_NAME)
                 bat_str = '@"%s" "%s" %%*' % (sys.executable, script_path)
-                bat_path = os.path.join(
-                    self.install_dir, '%s.bat' % SCRIPT_NAME
-                )
+                bat_path = os.path.join(self.install_dir, '%s.bat' % SCRIPT_NAME)
                 f = open(bat_path, 'w')
                 f.write(bat_str)
                 f.close()
@@ -70,7 +68,6 @@ class md_install_scripts(install_scripts):
 
 
 class build_docs(Command):
-
     """ Build markdown documentation into html."""
 
     description = '"build" documentation (convert markdown text to html)'
@@ -89,11 +86,10 @@ class build_docs(Command):
         self.sitemap = ''
 
     def finalize_options(self):
-        self.set_undefined_options(
-            'build',
-            ('build_base', 'build_base'),
-            ('force', 'force')
-        )
+        self.set_undefined_options('build',
+                                   ('build_base', 'build_base'),
+                                   ('force', 'force')
+                                   )
         self.docs = self._get_docs()
 
     def _get_docs(self):
@@ -107,13 +103,13 @@ class build_docs(Command):
         """ Build and return context to pass to template. """
         # set defaults
         c = {
-            'title':      '',
-            'prev_url':   '',
+            'title': '',
+            'prev_url': '',
             'prev_title': '',
-            'next_url':   '',
+            'next_url': '',
             'next_title': '',
-            'crumb':      '',
-            'version':    version,
+            'crumb': '',
+            'version': version,
         }
         c['body'] = self.md.convert(src)
         c['toc'] = self.md.toc
@@ -156,15 +152,11 @@ class build_docs(Command):
         else:
             with codecs.open('docs/_template.html', encoding='utf-8') as f:
                 template = f.read()
-            self.md = markdown.Markdown(
-                extensions=[
-                    'extra',
-                    'toc(permalink=true)',
-                    'meta',
-                    'admonition',
-                    'smarty'
-                ]
-            )
+            self.md = markdown.Markdown(extensions=['extra',
+                                                    'toc(permalink=true)',
+                                                    'meta',
+                                                    'admonition',
+                                                    'smarty'])
             for infile in self.docs:
                 outfile, ext = os.path.splitext(infile)
                 if ext == '.txt':
@@ -194,7 +186,6 @@ class build_docs(Command):
 
 
 class md_build(build):
-
     """ Run "build_docs" command from "build" command. """
 
     user_options = build.user_options + [
@@ -211,6 +202,7 @@ class md_build(build):
         return not self.no_build_docs
 
     sub_commands = build.sub_commands + [('build_docs', has_docs)]
+
 
 long_description = '''
 This is a Python implementation of John Gruber's Markdown_.
@@ -233,42 +225,39 @@ You may ask for help and discuss various other issues on the
 .. _`bug tracker`: http://github.com/waylan/Python-Markdown/issues
 '''
 
-setup(
-    name='Markdown',
-    version=version,
-    url='https://pythonhosted.org/Markdown/',
-    download_url='http://pypi.python.org/packages/source/M/Markdown/Markdown-%s.tar.gz' % version,
-    description='Python implementation of Markdown.',
-    long_description=long_description,
-    author='Manfred Stienstra, Yuri takhteyev and Waylan limberg',
-    author_email='waylan.limberg [at] icloud.com',
-    maintainer='Waylan Limberg',
-    maintainer_email='waylan.limberg [at] icloud.com',
-    license='BSD License',
-    packages=['markdown', 'markdown.extensions'],
-    scripts=['bin/%s' % SCRIPT_NAME],
-    cmdclass={
-        'install_scripts': md_install_scripts,
-        'build_docs': build_docs,
-        'build': md_build
-    },
-    classifiers=[
-        'Development Status :: %s' % DEVSTATUS,
-        'License :: OSI Approved :: BSD License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.2',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
-        'Topic :: Communications :: Email :: Filters',
-        'Topic :: Internet :: WWW/HTTP :: Dynamic Content :: CGI Tools/Libraries',
-        'Topic :: Internet :: WWW/HTTP :: Site Management',
-        'Topic :: Software Development :: Documentation',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-        'Topic :: Text Processing :: Filters',
-        'Topic :: Text Processing :: Markup :: HTML'
-    ]
-)
+setup(name='Markdown',
+      version=version,
+      url='https://pythonhosted.org/Markdown/',
+      download_url='http://pypi.python.org/packages/source/M/Markdown/Markdown-%s.tar.gz' % version,
+      description='Python implementation of Markdown.',
+      long_description=long_description,
+      author='Manfred Stienstra, Yuri takhteyev and Waylan limberg',
+      author_email='waylan.limberg [at] icloud.com',
+      maintainer='Waylan Limberg',
+      maintainer_email='waylan.limberg [at] icloud.com',
+      license='BSD License',
+      packages=['markdown', 'markdown.extensions'],
+      scripts=['bin/%s' % SCRIPT_NAME],
+      cmdclass={'install_scripts': md_install_scripts,
+                'build_docs': build_docs,
+                'build': md_build
+                },
+      classifiers=['Development Status :: %s' % DEVSTATUS,
+                   'License :: OSI Approved :: BSD License',
+                   'Operating System :: OS Independent',
+                   'Programming Language :: Python',
+                   'Programming Language :: Python :: 2',
+                   'Programming Language :: Python :: 2.7',
+                   'Programming Language :: Python :: 3',
+                   'Programming Language :: Python :: 3.2',
+                   'Programming Language :: Python :: 3.3',
+                   'Programming Language :: Python :: 3.4',
+                   'Topic :: Communications :: Email :: Filters',
+                   'Topic :: Internet :: WWW/HTTP :: Dynamic Content :: CGI Tools/Libraries',
+                   'Topic :: Internet :: WWW/HTTP :: Site Management',
+                   'Topic :: Software Development :: Documentation',
+                   'Topic :: Software Development :: Libraries :: Python Modules',
+                   'Topic :: Text Processing :: Filters',
+                   'Topic :: Text Processing :: Markup :: HTML'
+                   ]
+      )

@@ -4,8 +4,9 @@
 import markdown
 
 # Global Vars
-SUBSCRIPT_RE   = r'(\~)(.+?)(\~)'  
-SUPERSCRIPT_RE = r'(\^)(.+?)(\^)' 
+SUBSCRIPT_RE = r'(\~)(.+?)(\~)'
+SUPERSCRIPT_RE = r'(\^)(.+?)(\^)'
+
 
 class SubSuperscriptPattern(markdown.inlinepatterns.Pattern):
     """ Return a sub or superscript Element"""
@@ -20,6 +21,7 @@ class SubSuperscriptPattern(markdown.inlinepatterns.Pattern):
         el.text = markdown.util.AtomicString(text)
         return el
 
+
 class SubSuperscriptExtension(markdown.Extension):
     """ Subscript and superscript Extension for Python-Markdown. """
 
@@ -28,6 +30,6 @@ class SubSuperscriptExtension(markdown.Extension):
         md.inlinePatterns['subscript'] = SubSuperscriptPattern(SUBSCRIPT_RE, md, "sub")
         md.inlinePatterns['superscript'] = SubSuperscriptPattern(SUPERSCRIPT_RE, md, "sup")
 
+
 def makeExtension(configs=None):
     return SubSuperscriptExtension(configs=configs)
-

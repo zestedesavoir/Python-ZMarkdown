@@ -18,4 +18,3 @@ class KbdExtension(markdown.extensions.Extension):
 
 def makeExtension(configs={}):
     return KbdExtension(configs=dict(configs))
-
