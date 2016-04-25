@@ -46,10 +46,11 @@ from __future__ import unicode_literals
 from . import util
 from . import odict
 import re
+
 try:  # pragma: no cover
-    from urllib.parse import urlparse, urlunparse
+    from urllib.parse import urlparse
 except ImportError:  # pragma: no cover
-    from urlparse import urlparse, urlunparse
+    from urlparse import urlparse
 try:  # pragma: no cover
     from html import entities
 except ImportError:  # pragma: no cover
@@ -64,12 +65,8 @@ def build_inlinepatterns(md_instance, **kwargs):
     inlinePatterns["reference"] = ReferencePattern(REFERENCE_RE, md_instance)
     inlinePatterns["link"] = LinkPattern(LINK_RE, md_instance)
     inlinePatterns["image_link"] = ImagePattern(IMAGE_LINK_RE, md_instance)
-    inlinePatterns["image_reference"] = ImageReferencePattern(
-        IMAGE_REFERENCE_RE, md_instance
-    )
-    inlinePatterns["short_reference"] = ReferencePattern(
-        SHORT_REF_RE, md_instance
-    )
+    inlinePatterns["image_reference"] = ImageReferencePattern(IMAGE_REFERENCE_RE, md_instance)
+    inlinePatterns["short_reference"] = ReferencePattern(SHORT_REF_RE, md_instance)
     inlinePatterns["autolink"] = AutolinkPattern(AUTOLINK_RE, md_instance)
     inlinePatterns["automail"] = AutomailPattern(AUTOMAIL_RE, md_instance)
     inlinePatterns["linebreak"] = SubstituteTagPattern(LINE_BREAK_RE, 'br')
@@ -87,6 +84,7 @@ def build_inlinepatterns(md_instance, **kwargs):
         inlinePatterns["emphasis2"] = SimpleTagPattern(EMPHASIS_2_RE, 'em')
     return inlinePatterns
 
+
 """
 The actual regular expressions for patterns
 -----------------------------------------------------------------------------
@@ -95,8 +93,8 @@ The actual regular expressions for patterns
 NOBRACKET = r'[^\]\[]*'
 BRK = (
     r'\[('
-    + (NOBRACKET + r'(\[')*6
-    + (NOBRACKET + r'\])*')*6
+    + (NOBRACKET + r'(\[') * 6
+    + (NOBRACKET + r'\])*') * 6
     + NOBRACKET + r')\]'
 )
 NOIMG = r'(?<!\!)'
@@ -126,8 +124,7 @@ SMART_EMPHASIS_RE = r'(?<!\w)(_)(?!_)(.+?)(?<!_)\2(?!\w)'
 EMPHASIS_2_RE = r'(_)(.+?)\2'
 
 # [text](url) or [text](<url>) or [text](url "title")
-LINK_RE = NOIMG + BRK + \
-    r'''\(\s*(<.*?>|((?:(?:\(.*?\))|[^\(\)]))*?)\s*((['"])(.*?)\12\s*)?\)'''
+LINK_RE = NOIMG + BRK + r'''\(\s*(<.*?>|((?:(?:\(.*?\))|[^\(\)]))*?)\s*((['"])(.*?)\12\s*)?\)'''
 
 # ![alttxt](http://x.com/) or ![alttxt](<http://x.com/>)
 IMAGE_LINK_RE = r'\!' + BRK + r'\s*\((<.*?>|([^")]+"[^"]*"|[^\)]*))\)'
@@ -162,8 +159,7 @@ LINE_BREAK_RE = r'  \n'
 
 def dequote(string):
     """Remove quotes from around a string."""
-    if ((string.startswith('"') and string.endswith('"'))
-       or (string.startswith("'") and string.endswith("'"))):
+    if ((string.startswith('"') and string.endswith('"')) or (string.startswith("'") and string.endswith("'"))):
         return string[1:-1]
     else:
         return string
@@ -174,8 +170,10 @@ ATTR_RE = re.compile("\{@([^\}]*)=([^\}]*)}")  # {@id=123}
 
 def handleAttributes(text, parent):
     """Set values of an element based on attribute definitions ({@id=123})."""
+
     def attributeCallback(match):
         parent.set(match.group(1), match.group(2).replace('\n', ' '))
+
     return ATTR_RE.sub(attributeCallback, text)
 
 
@@ -255,11 +253,13 @@ class Pattern(object):
                 else:
                     # An etree Element - return text content only
                     return ''.join(itertext(value))
+
         return util.INLINE_PLACEHOLDER_RE.sub(get_stash, text)
 
 
 class SimpleTextPattern(Pattern):
     """ Return a simple text of group(2) of a Pattern. """
+
     def handleMatch(self, m):
         return m.group(2)
 
@@ -281,6 +281,7 @@ class SimpleTagPattern(Pattern):
     of a Pattern.
 
     """
+
     def __init__(self, pattern, tag):
         Pattern.__init__(self, pattern)
         self.tag = tag
@@ -293,12 +294,14 @@ class SimpleTagPattern(Pattern):
 
 class SubstituteTagPattern(SimpleTagPattern):
     """ Return an element of type `tag` with no children. """
+
     def handleMatch(self, m):
         return util.etree.Element(self.tag)
 
 
 class BacktickPattern(Pattern):
     """ Return a `<code>` element containing the matching text. """
+
     def __init__(self, pattern):
         Pattern.__init__(self, pattern)
         self.tag = "code"
@@ -315,6 +318,7 @@ class DoubleTagPattern(SimpleTagPattern):
     Useful for strong emphasis etc.
 
     """
+
     def handleMatch(self, m):
         tag1, tag2 = self.tag.split(",")
         el1 = util.etree.Element(tag1)
@@ -327,6 +331,7 @@ class DoubleTagPattern(SimpleTagPattern):
 
 class HtmlPattern(Pattern):
     """ Store raw inline html and return a placeholder. """
+
     def handleMatch(self, m):
         rawhtml = self.unescape(m.group(2))
         place_holder = self.markdown.htmlStash.store(rawhtml)
@@ -350,10 +355,12 @@ class HtmlPattern(Pattern):
 
         return util.INLINE_PLACEHOLDER_RE.sub(get_stash, text)
 
+
 try:
     # Python2
     from urlparse import urlsplit, urlunsplit
     import urllib
+
     def url_fix(s, charset='utf-8'):
         scheme, netloc, path, qs, anchor = urlsplit(s)
         path = urllib.quote(path.encode("utf-8"))
@@ -373,8 +380,10 @@ except ImportError:
         qs = quote_plus(qs, ':&=')
         return unicode(urlunsplit((scheme, netloc, path, qs, anchor)))
 
+
 class LinkPattern(Pattern):
     """ Return a link element from the given match. """
+
     def handleMatch(self, m):
         el = util.etree.Element("a")
         el.text = m.group(2)
@@ -431,7 +440,7 @@ class LinkPattern(Pattern):
             # This should not happen. Treat as suspect.
             return ''
 
-        #for part in url[2:]:
+        # for part in url[2:]:
         #    if ":" in part:
         #        # A colon in "path", "parameters", "query"
         #        # or "fragment" is suspect.
@@ -443,6 +452,7 @@ class LinkPattern(Pattern):
 
 class ImagePattern(LinkPattern):
     """ Return a img element from the given match. """
+
     def handleMatch(self, m):
         el = util.etree.Element("img")
         src_parts = m.group(9).split()
@@ -502,6 +512,7 @@ class ReferencePattern(LinkPattern):
 
 class ImageReferencePattern(ReferencePattern):
     """ Match to a stored reference and return img element. """
+
     def makeTag(self, href, title, text):
         el = util.etree.Element("img")
         el.set("src", self.sanitize_url(href))
@@ -517,6 +528,7 @@ class ImageReferencePattern(ReferencePattern):
 
 class AutolinkPattern(Pattern):
     """ Return a link Element given an autolink (`<http://example/com>`). """
+
     def handleMatch(self, m):
         el = util.etree.Element("a")
         el.set('href', self.unescape(m.group(2)))
@@ -528,6 +540,7 @@ class AutomailPattern(Pattern):
     """
     Return a mailto link Element given an automail link (`<foo@example.com>`).
     """
+
     def handleMatch(self, m):
         el = util.etree.Element('a')
         email = self.unescape(m.group(2))

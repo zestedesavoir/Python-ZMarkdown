@@ -2,8 +2,8 @@
 
 import markdown
 
-class MathJaxPattern(markdown.inlinepatterns.Pattern):
 
+class MathJaxPattern(markdown.inlinepatterns.Pattern):
     def __init__(self):
         markdown.inlinepatterns.Pattern.__init__(self, r'(?<!\\)(?P<St>\$\$?)(.+?)(?<!\\)(?P=St)')
 
@@ -19,10 +19,12 @@ class MathJaxPattern(markdown.inlinepatterns.Pattern):
             node.text = markdown.util.AtomicString("$$" + m.group(3) + "$$")
             return dnode
 
+
 class MathJaxExtension(markdown.Extension):
     def extendMarkdown(self, md, md_globals):
         # Needs to come before escape matching because \ is pretty important in LaTeX
         md.inlinePatterns.add('mathjax', MathJaxPattern(), '<escape')
+
 
 def makeExtension(configs=None):
     return MathJaxExtension(configs)

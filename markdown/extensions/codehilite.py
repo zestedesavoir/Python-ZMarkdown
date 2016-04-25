@@ -24,6 +24,7 @@ try:
     from pygments import highlight
     from pygments.lexers import get_lexer_by_name, guess_lexer
     from pygments.formatters import get_formatter_by_name
+
     pygments = True
 except ImportError:
     pygments = False
@@ -49,11 +50,11 @@ def parse_hl_lines(expr):
                 listsHL.append(val)
             except ValueError:
                 pass
-        elif len(lex) ==2:
+        elif len(lex) == 2:
             try:
                 valMin = int(lex[0])
                 valMax = int(lex[1])
-                for val in range(valMin, valMax+1):
+                for val in range(valMin, valMax + 1):
                     listsHL.append(val)
             except ValueError:
                 pass
@@ -91,8 +92,8 @@ class CodeHilite(object):
     """
 
     def __init__(self, src=None, linenums=None, guess_lang=True,
-                css_class="codehilite", lang=None, style='default',
-                noclasses=False, tab_length=4, hl_lines=None, linenostart=1, use_pygments=True):
+                 css_class="codehilite", lang=None, style='default',
+                 noclasses=False, tab_length=4, hl_lines=None, linenostart=1, use_pygments=True):
         self.src = src
         self.lang = lang
         self.linenums = linenums
@@ -138,7 +139,7 @@ class CodeHilite(object):
                                               style=self.style,
                                               noclasses=self.noclasses,
                                               hl_lines=self.hl_lines,
-                                              linenostart = self.linenostart)
+                                              linenostart=self.linenostart)
             return highlight(self.src, lexer, formatter)
         else:
             # just escape and build markup usable by JS highlighting libs
@@ -191,7 +192,7 @@ class CodeHilite(object):
             (hl_lines[ ]*=[ ]*(?P<quot>"|')(?P<hl_lines>.*?)(?P=quot))?
             \s*
             (linenostart[ ]*=[ ]*(?P<linenostart>.*?))?
-            ''',  re.VERBOSE)
+            ''', re.VERBOSE)
         # search first line for shebang
         m = c.search(fl)
         if m:
@@ -230,16 +231,14 @@ class HiliteTreeprocessor(Treeprocessor):
         blocks = root.iter('pre')
         for block in blocks:
             if len(block) == 1 and block[0].tag == 'code':
-                code = CodeHilite(
-                    block[0].text,
-                    linenums=self.config['linenums'],
-                    guess_lang=self.config['guess_lang'],
-                    css_class=self.config['css_class'],
-                    style=self.config['pygments_style'],
-                    noclasses=self.config['noclasses'],
-                    tab_length=self.markdown.tab_length,
-                    use_pygments=self.config['use_pygments']
-                )
+                code = CodeHilite(block[0].text,
+                                  linenums=self.config['linenums'],
+                                  guess_lang=self.config['guess_lang'],
+                                  css_class=self.config['css_class'],
+                                  style=self.config['pygments_style'],
+                                  noclasses=self.config['noclasses'],
+                                  tab_length=self.markdown.tab_length,
+                                  use_pygments=self.config['use_pygments'])
                 placeholder = self.markdown.htmlStash.store(code.hilite(),
                                                             safe=True)
                 # Clear codeblock in etree instance
@@ -273,7 +272,7 @@ class CodeHiliteExtension(Extension):
                              'Use Pygments to Highlight code blocks. '
                              'Disable if using a JavaScript library. '
                              'Default: True']
-            }
+        }
 
         super(CodeHiliteExtension, self).__init__(*args, **kwargs)
 
