@@ -92,10 +92,10 @@ The actual regular expressions for patterns
 
 NOBRACKET = r'[^\]\[]*'
 BRK = (
-    r'\[('
-    + (NOBRACKET + r'(\[') * 6
-    + (NOBRACKET + r'\])*') * 6
-    + NOBRACKET + r')\]'
+    r'\[(' +
+    (NOBRACKET + r'(\[') * 6 +
+    (NOBRACKET + r'\])*') * 6 +
+    NOBRACKET + r')\]'
 )
 NOIMG = r'(?<!\!)'
 
