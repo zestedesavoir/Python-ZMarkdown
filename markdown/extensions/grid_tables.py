@@ -503,10 +503,11 @@ class GridTableProcessor(markdown.blockprocessors.BlockProcessor):
                 rows.append(r.strip())
             elif Started:
                 InTable = False
-        val = (len(rows) > 2 and rows[0][:2] == "+-" and rows[0][-2:] == "-+"
-               and rows[1][0] == '|' and rows[1][-1] == '|'
-               and rows[-2][0] == '|' and rows[-2][-1] == '|'
-               and rows[-1][:2] == "+-" and rows[-1][-2:] == "-+")
+        val = (len(rows) > 2 and
+               rows[0][:2] == "+-" and rows[0][-2:] == "-+" and
+               rows[1][0] == '|' and rows[1][-1] == '|' and
+               rows[-2][0] == '|' and rows[-2][-1] == '|' and
+               rows[-1][:2] == "+-" and rows[-1][-2:] == "-+")
         return val
 
     def run(self, parent, blocks):
@@ -614,7 +615,7 @@ class GridTableProcessor(markdown.blockprocessors.BlockProcessor):
             if len(list(row.get_all_cells())) != 0:
                 tr = etree.SubElement(subparent, 'tr')
             for cell in row.get_all_cells():
-                if not cell in rendered:
+                if cell not in rendered:
                     if row.is_header:
                         cell_element = etree.SubElement(tr, header_cell_tag)
                     else:

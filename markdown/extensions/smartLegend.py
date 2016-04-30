@@ -63,11 +63,15 @@ class EquationParser(InFigureParser):
         if element is None:
             return False
         lelems = list(element.iter())
-        return ((type == "unknown" or type == "Equation")
-                and element.tag == "p"
-                and (element.text is None or element.text.strip() == "")
-                and (len(lelems) == 1 or (len(lelems) == 2 and lelems[0] is element))
-                and lelems[-1].tag == "mathjax")
+        return ((type == "unknown" or type == "Equation") and
+                element.tag == "p" and
+                (element.text is None or element.text.strip() == "") and
+                (
+                    len(lelems) == 1 or
+                    (len(lelems) == 2 and
+                     lelems[0] is element)
+                ) and
+                lelems[-1].tag == "mathjax")
 
     def transform(self, parent, element, legend, index):
         InFigureParser.transform(self, parent, element, legend, index, True)
