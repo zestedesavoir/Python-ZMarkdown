@@ -10,7 +10,8 @@ except ImportError as e:
         "Markdown tests. Run `pip install nose` to install the latest version."
     e.args = (msg,) + e.args[1:]
     raise
-from .plugins import HtmlOutput, Markdown, MarkdownSyntaxError
+
+from .plugins import Markdown, MarkdownSyntaxError
 try:
     import tidylib
 except ImportError:
@@ -181,4 +182,4 @@ def generate_all():
 
 
 def run():
-    nose.main(addplugins=[HtmlOutput(), Markdown()])
+    nose.main(addplugins=[Markdown()])

@@ -47,6 +47,13 @@ from . import util
 from . import odict
 import re
 
+import six
+
+
+if six.PY3:
+    unicode = str
+
+
 try:  # pragma: no cover
     from urllib.parse import urlparse
 except ImportError:  # pragma: no cover
