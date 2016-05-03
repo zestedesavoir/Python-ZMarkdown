@@ -424,10 +424,10 @@ class LinkPattern(Pattern):
         # colon in "path", "parameters" and "query" are problematic if no scheme is specified.
         if scheme == "":
             for part in url[2:]:
-               if ":" in part:
-                   # A colon in "path", "parameters", "query"
-                   # or "fragment" is suspect
-                   return ''
+                if ":" in part:
+                    # A colon in "path", "parameters", "query"
+                    # or "fragment" is suspect
+                    return ''
 
         # Url passes all tests. Return url as-is.
         return base_url
