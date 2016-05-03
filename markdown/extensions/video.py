@@ -52,7 +52,7 @@ class VideoExtension(markdown.Extension):
             r'https?://youtu\.be/(?P<youtubeid>\S[^?&/]+)?')
         if self.config["jsfiddle"][0]:
             self.add_inline(md, 'jsfiddle', JsFiddle,
-                r'https?://(www.|)jsfiddle\.net/(?P<jsfiddleid>[a-z0-9]+)/(?P<jsfiddlerev>[0-9]+)/?')
+                r'https?://(www.|)jsfiddle\.net(/(?P<jsfiddleuser>\w+))?/(?P<jsfiddleid>\w+)(/(?P<jsfiddlerev>[0-9]+)|)/?')
             
 
 class VideoBProcessor(BlockProcessor):
@@ -145,7 +145,8 @@ class JsFiddle(object):
     def __init__(self, config):
         self.config = config 
     def handleMatch(self, m):
-        url =  "https://jsfiddle.net/{}/{}/embedded/result,js,html,css/".format(m.group('jsfiddleid'), m.group('jsfiddlerev'))
+        fields = (m.group('jsfiddleuser'),m.group('jsfiddleid'), m.group('jsfiddlerev'))
+        url =  "https://jsfiddle.net/{}/embedded/result,js,html,css/".format("/".join([t for t in fields if t is not None]))
 
         width = self.config['jsfiddle_width'][0]
         height = self.config['jsfiddle_height'][0]
