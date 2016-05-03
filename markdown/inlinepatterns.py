@@ -363,31 +363,6 @@ class HtmlPattern(Pattern):
         return util.INLINE_PLACEHOLDER_RE.sub(get_stash, text)
 
 
-try:
-    # Python2
-    from urlparse import urlsplit, urlunsplit
-    import urllib
-
-    def url_fix(s, charset='utf-8'):
-        scheme, netloc, path, qs, anchor = urlsplit(s)
-        path = urllib.quote(path.encode("utf-8"))
-        qs = urllib.quote_plus(qs, ':&=')
-        return urlunsplit((scheme, netloc, path, qs, anchor)).decode(charset)
-
-except ImportError:
-    # Python 3
-    from urllib.parse import urlsplit
-    from urllib.parse import urlunsplit
-    from urllib.parse import quote
-    from urllib.parse import quote_plus
-
-    def url_fix(s):
-        scheme, netloc, path, qs, anchor = urlsplit(s)
-        path = quote(path, '/%')
-        qs = quote_plus(qs, ':&=')
-        return unicode(urlunsplit((scheme, netloc, path, qs, anchor)))
-
-
 class LinkPattern(Pattern):
     """ Return a link element from the given match. """
 
@@ -436,7 +411,6 @@ class LinkPattern(Pattern):
         except ValueError:  # pragma: no cover
             # Bad url - so bad it couldn't be parsed.
             return ''
-
         locless_schemes = ['', 'mailto', 'news']
         allowed_schemes = locless_schemes + ['http', 'https', 'ftp', 'ftps']
         if scheme not in allowed_schemes:
@@ -447,14 +421,16 @@ class LinkPattern(Pattern):
             # This should not happen. Treat as suspect.
             return ''
 
-        # for part in url[2:]:
-        #    if ":" in part:
-        #        # A colon in "path", "parameters", "query"
-        #        # or "fragment" is suspect.
-        #        return ''
+        # colon in "path", "parameters" and "query" are problematic if no scheme is specified.
+        if scheme == "":
+            for part in url[2:]:
+               if ":" in part:
+                   # A colon in "path", "parameters", "query"
+                   # or "fragment" is suspect
+                   return ''
 
         # Url passes all tests. Return url as-is.
-        return url_fix(base_url)
+        return base_url
 
 
 class ImagePattern(LinkPattern):

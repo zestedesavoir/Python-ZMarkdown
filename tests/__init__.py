@@ -106,13 +106,15 @@ class CheckSyntax(object):
             raise nose.plugins.skip.SkipTest('Test skipped per config.')
         input_file = file + config.get(cfg_section, 'input_ext')
         with codecs.open(input_file, encoding="utf-8") as f:
-            input = f.read().strip()
+            input = f.read()
         output_file = file + config.get(cfg_section, 'output_ext')
         with codecs.open(output_file, encoding="utf-8") as f:
             # Normalize line endings
             # (on windows, git may have altered line endings).
-            expected_output = f.read().replace("\r\n", "\n").strip()
+            expected_output = f.read().replace("\r\n", "\n")
         output = markdown.markdown(input, **config.get_args(file))
+        expected_output = expected_output.strip()
+        output = output.strip()
         if tidylib and config.get(cfg_section, 'normalize'):
             # Normalize whitespace with tidylib before comparing.
             expected_output = normalize(expected_output)

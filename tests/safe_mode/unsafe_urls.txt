@@ -25,3 +25,6 @@ These should work regardless:
 [email](mailto:foo@bar.com)
 [news scheme](news:some.news.group.com)
 [http link](http://example.com)
+[http link 2](https://fr.wikipedia.org/wiki/Wikip%C3%A9dia:Accueil_principal)
+[asdf](https://www.wolframalpha.com/input/?i=5−x)
+[cdt](https://fr.wikipedia.org/wiki/Compactifi%C3%A9_d%27Alexandrov)
