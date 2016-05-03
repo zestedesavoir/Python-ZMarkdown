@@ -1,6 +1,9 @@
 Python-ZMarkdown
 =================
 
+![Tests](https://travis-ci.org/zestedesavoir/Python-ZMarkdown.svg?branch=master-zds)
+[![Coverage Status](https://coveralls.io/repos/github/zestedesavoir/Python-ZMarkdown/badge.svg?branch=new_release)](https://coveralls.io/github/zestedesavoir/Python-ZMarkdown?branch=master-zds)
+
 About
 -----
 
@@ -10,36 +13,7 @@ Modification
 ------------
 
 Main modifications :
-- A `master-zds` branch with all modification (`master` will remain updated with upstream)
+- A `master-zds` branch with all modification
 - Add range support in codehilite's `hl_lines` option
 - Add `linenostart` option in codehilite to defining the starting number.
-
-Original Readme
----------------
-
-This is a Python implementation of John Gruber's [Markdown][]. 
-It is almost completely compliant with the reference implementation,
-though there are a few known issues. See [Features][] for information 
-on what exactly is supported and what is not. Additional features are 
-supported by the [Available Extensions][].
-
-[Python-Markdown]: https://pythonhosted.org/Markdown/
-[Markdown]: http://daringfireball.net/projects/markdown/
-[Features]: https://pythonhosted.org/Markdown/index.html#Features
-[Available Extensions]: https://pythonhosted.org/Markdown/extensions/index.html
-
-
-Documentation
--------------
-
-Installation and usage documentation is available in the `docs/` directory
-of the distribution and on the project website at 
-<https://pythonhosted.org/Markdown/>.
-
-Support
--------
-
-You may ask for help and discuss various other issues on the [mailing list][] and report bugs on the [bug tracker][].
-
-[mailing list]: http://lists.sourceforge.net/lists/listinfo/python-markdown-discuss
-[bug tracker]: http://github.com/waylan/Python-Markdown/issues 
+- TODO
