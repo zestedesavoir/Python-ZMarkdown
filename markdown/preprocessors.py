@@ -34,6 +34,7 @@ class Preprocessor(util.Processor):
     Preprocessors must extend markdown.Preprocessor.
 
     """
+
     def run(self, lines):
         """
         Each subclass of Preprocessor should override the `run` method, which
@@ -88,9 +89,7 @@ class HtmlBlockPreprocessor(Preprocessor):
                             attrs[ma.group('attr').strip()] = ""
                     elif ma.group('attr1'):
                         if ma.group('value1'):
-                            attrs[ma.group('attr1').strip()] = ma.group(
-                                'value1'
-                            )
+                            attrs[ma.group('attr1').strip()] = ma.group('value1')
                         else:
                             attrs[ma.group('attr1').strip()] = ""
                     elif ma.group('attr2'):
@@ -98,7 +97,7 @@ class HtmlBlockPreprocessor(Preprocessor):
             return tag, len(m.group(0)), attrs
         else:
             tag = block[1:].split(">", 1)[0].lower()
-            return tag, len(tag)+2, {}
+            return tag, len(tag) + 2, {}
 
     def _recursive_tagfind(self, ltag, rtag, start_index, block):
         while 1:
@@ -121,9 +120,7 @@ class HtmlBlockPreprocessor(Preprocessor):
     def _get_right_tag(self, left_tag, left_index, block):
         for p in self.right_tag_patterns:
             tag = p % left_tag
-            i = self._recursive_tagfind(
-                "<%s" % left_tag, tag, left_index, block
-            )
+            i = self._recursive_tagfind("<%s" % left_tag, tag, left_index, block)
             if i > 2:
                 return tag.lstrip("<").rstrip(">"), i
         return block.rstrip()[-left_index:-1].lower(), len(block)
@@ -162,25 +159,21 @@ class HtmlBlockPreprocessor(Preprocessor):
             if self.left_tag_re.match(item):
                 left_tag, left_index, attrs = \
                     self._get_left_tag(''.join(items[i:]))
-                right_tag, data_index = self._get_right_tag(
-                    left_tag, left_index, ''.join(items[i:]))
+                right_tag, data_index = self._get_right_tag(left_tag, left_index, ''.join(items[i:]))
                 right_listindex = \
                     self._stringindex_to_listindex(data_index, items[i:]) + i
                 if 'markdown' in attrs.keys():
                     items[i] = items[i][left_index:]  # remove opening tag
-                    placeholder = self.markdown.htmlStash.store_tag(
-                        left_tag, attrs, i + 1, right_listindex + 1)
+                    placeholder = self.markdown.htmlStash.store_tag(left_tag, attrs, i + 1, right_listindex + 1)
                     items.insert(i, placeholder)
                     if len(items) - right_listindex <= 1:  # last nest, no tail
                         right_listindex -= 1
-                    items[right_listindex] = items[right_listindex][
-                        :-len(right_tag) - 2]  # remove closing tag
+                    items[right_listindex] = items[right_listindex][:-len(right_tag) - 2]  # remove closing tag
                 else:  # raw html
                     if len(items) - right_listindex <= 1:  # last element
                         right_listindex -= 1
                     offset = 1 if i == right_listindex else 0
-                    placeholder = self.markdown.htmlStash.store('\n\n'.join(
-                        items[i:right_listindex + offset]))
+                    placeholder = self.markdown.htmlStash.store('\n\n'.join(items[i:right_listindex + offset]))
                     del items[i:right_listindex + offset]
                     items.insert(i, placeholder)
         return items
@@ -216,14 +209,11 @@ class HtmlBlockPreprocessor(Preprocessor):
                                                                 block)
                     # keep checking conditions below and maybe just append
 
-                    if data_index < len(block) \
-                       and (util.isBlockLevel(left_tag)
-                       or left_tag == '--'):
+                    if data_index < len(block) and (util.isBlockLevel(left_tag) or left_tag == '--'):
                         text.insert(0, block[data_index:])
                         block = block[:data_index]
 
-                    if not (util.isBlockLevel(left_tag)
-                       or block[1] in ["!", "?", "@", "%"]):
+                    if not (util.isBlockLevel(left_tag) or block[1] in ["!", "?", "@", "%"]):
                         new_blocks.append(block)
                         continue
 
@@ -239,19 +229,16 @@ class HtmlBlockPreprocessor(Preprocessor):
                                               store_tag(left_tag, attrs, 0, 2))
                             new_blocks.extend([block])
                         else:
-                            new_blocks.append(
-                                self.markdown.htmlStash.store(block.strip()))
+                            new_blocks.append(self.markdown.htmlStash.store(block.strip()))
                         continue
                     else:
                         # if is block level tag and is not complete
-                        if (not self._equal_tags(left_tag, right_tag)) and \
-                           (util.isBlockLevel(left_tag) or left_tag == "--"):
+                        if ((not self._equal_tags(left_tag, right_tag)) and (
+                                util.isBlockLevel(left_tag) or left_tag == "--")):
                             items.append(block.strip())
                             in_tag = True
                         else:
-                            new_blocks.append(
-                                self.markdown.htmlStash.store(block.strip())
-                            )
+                            new_blocks.append(self.markdown.htmlStash.store(block.strip()))
                         continue
 
                 else:
@@ -278,18 +265,14 @@ class HtmlBlockPreprocessor(Preprocessor):
                             right_index = len(items) + 3
                         else:
                             right_index = len(items) + 2
-                        new_blocks.append(self.markdown.htmlStash.store_tag(
-                            left_tag, attrs, 0, right_index))
+                        new_blocks.append(self.markdown.htmlStash.store_tag(left_tag, attrs, 0, right_index))
                         placeholderslen = len(self.markdown.htmlStash.tag_data)
-                        new_blocks.extend(
-                            self._nested_markdown_in_html(items))
-                        nests = len(self.markdown.htmlStash.tag_data) - \
-                            placeholderslen
+                        new_blocks.extend(self._nested_markdown_in_html(items))
+                        nests = len(self.markdown.htmlStash.tag_data) - placeholderslen
                         self.markdown.htmlStash.tag_data[-1 - nests][
                             'right_index'] += nests - 2
                     else:
-                        new_blocks.append(
-                            self.markdown.htmlStash.store('\n\n'.join(items)))
+                        new_blocks.append(self.markdown.htmlStash.store('\n\n'.join(items)))
                     items = []
 
         if items:
@@ -300,17 +283,14 @@ class HtmlBlockPreprocessor(Preprocessor):
                     right_index = len(items) + 3
                 else:
                     right_index = len(items) + 2
-                new_blocks.append(
-                    self.markdown.htmlStash.store_tag(
-                        left_tag, attrs, 0, right_index))
+                new_blocks.append(self.markdown.htmlStash.store_tag(left_tag, attrs, 0, right_index))
                 placeholderslen = len(self.markdown.htmlStash.tag_data)
                 new_blocks.extend(self._nested_markdown_in_html(items))
                 nests = len(self.markdown.htmlStash.tag_data) - placeholderslen
                 self.markdown.htmlStash.tag_data[-1 - nests][
                     'right_index'] += nests - 2
             else:
-                new_blocks.append(
-                    self.markdown.htmlStash.store('\n\n'.join(items)))
+                new_blocks.append(self.markdown.htmlStash.store('\n\n'.join(items)))
             new_blocks.append('\n')
 
         new_text = "\n\n".join(new_blocks)
@@ -321,9 +301,7 @@ class ReferencePreprocessor(Preprocessor):
     """ Remove reference definitions from text and store for later use. """
 
     TITLE = r'[ ]*(\"(.*)\"|\'(.*)\'|\((.*)\))[ ]*'
-    RE = re.compile(
-        r'^[ ]{0,3}\[([^\]]*)\]:\s*([^ ]*)[ ]*(%s)?$' % TITLE, re.DOTALL
-    )
+    RE = re.compile(r'^[ ]{0,3}\[([^\]]*)\]:\s*([^ ]*)[ ]*(%s)?$' % TITLE, re.DOTALL)
     TITLE_RE = re.compile(r'^%s$' % TITLE)
 
     def run(self, lines):

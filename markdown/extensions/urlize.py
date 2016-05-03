@@ -41,14 +41,16 @@ import markdown
 
 # Global Vars
 URLIZE_RE = r'(^|(?<=\s))({0})((?=\s)|$)'.format("|".join((
-    # mail adress :
-    r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
+    # mail adress (two lines):
+    r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*"
+    r"@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
     # Anything with protocol between < >
     r"<(?:f|ht)tps?://[^>]*>",
     # with protocol : any valid domain match
     r"((?:f|ht)tps?://)([\da-z\.-]+)\.([a-z\.]{2,6})[/\w\.$%&_?#=()-]*\/?",
     # without protocol, only somes specified protocols match
     r"((?:f|ht)tps?://)?([\da-z\.-]+)\.(?:com|net|org|fr)[/\w\.$%&_?#=()-]*\/?")))
+
 
 class CorrectURLProcessor(markdown.treeprocessors.Treeprocessor):
     def __init__(self):
@@ -57,12 +59,19 @@ class CorrectURLProcessor(markdown.treeprocessors.Treeprocessor):
     def run(self, node):
 
         for child in node.getiterator():
-            if child.tag == 'a' and 'href' in child.attrib and  child.attrib['href'].split('://')[0] not in ('http','https','ftp') and not child.attrib['href'].startswith('#') and not child.attrib['href'].startswith('/') and not child.attrib['href'].startswith('mailto:'):
+            if (child.tag == 'a' and
+                    'href' in child.attrib and
+                    child.attrib['href'].split('://')[0] not in ('http', 'https', 'ftp') and
+                    not child.attrib['href'].startswith('#') and
+                    not child.attrib['href'].startswith('/') and
+                    not child.attrib['href'].startswith('mailto:')):
                 child.attrib['href'] = 'http://' + child.attrib['href']
         return node
 
+
 class UrlizePattern(markdown.inlinepatterns.Pattern):
     """ Return a link Element given an autolink (`http://example/com`). """
+
     def handleMatch(self, m):
         url = m.group(3)
 
@@ -71,8 +80,8 @@ class UrlizePattern(markdown.inlinepatterns.Pattern):
 
         text = url
 
-        if not url.split('://')[0] in ('http','https','ftp'):
-            if '@' in url and not '/' in url:
+        if not url.split('://')[0] in ('http', 'https', 'ftp'):
+            if '@' in url and '/' not in url:
                 url = 'mailto:' + url
             else:
                 url = 'http://' + url
@@ -82,6 +91,7 @@ class UrlizePattern(markdown.inlinepatterns.Pattern):
         el.text = markdown.util.AtomicString(text)
         return el
 
+
 class UrlizeExtension(markdown.Extension):
     """ Urlize Extension for Python-Markdown. """
 
@@ -90,9 +100,12 @@ class UrlizeExtension(markdown.Extension):
         md.inlinePatterns['autolink'] = UrlizePattern(URLIZE_RE, md)
         md.treeprocessors.add('CorrectURLProcessor', CorrectURLProcessor(), '_end')
 
+
 def makeExtension(configs=None):
     return UrlizeExtension(configs=configs)
 
+
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod()

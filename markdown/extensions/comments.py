@@ -7,26 +7,25 @@ from markdown.extensions import Extension
 
 
 class CommentsExtension(Extension):
+    def __init__(self, config={}):
+        self.config = {"START_TAG": "<--COMMENTS",
+                       "END_TAG": "COMMENTS-->"}
 
-    def __init__(self,config={}):
-        self.config={"START_TAG" : "<--COMMENTS", 
-                     "END_TAG"   : "COMMENTS-->"}
-        
         for key, value in config.items():
             self.config[key] = value
-    
+
     def extendMarkdown(self, md, md_globals):
         md.registerExtension(self)
         md.preprocessors.add("comments", CommentsProcessor(md, self.config), ">fenced_code_block")
 
+
 class CommentsProcessor(Preprocessor):
-    
     def __init__(self, md, config={}):
         Preprocessor.__init__(self, md)
-        
+
         StaEsc = re.escape(config["START_TAG"])
         EndEsc = re.escape(config["END_TAG"])
-        
+
         self.RE = re.compile(StaEsc + r'.*?' + EndEsc, re.MULTILINE | re.DOTALL)
 
     def run(self, lines):
@@ -38,5 +37,3 @@ class CommentsProcessor(Preprocessor):
             else:
                 break
         return text.split("\n")
-
-

@@ -49,29 +49,28 @@ from .serializers import to_html_string, to_xhtml_string
 
 __all__ = ['Markdown', 'markdown', 'markdownFromFile']
 
-
 logger = logging.getLogger('MARKDOWN')
 
 
 class Markdown(object):
     """Convert Markdown to HTML."""
 
-    doc_tag = "div"     # Element used to wrap document - later removed
+    doc_tag = "div"  # Element used to wrap document - later removed
 
     option_defaults = {
         'html_replacement_text': '[HTML_REMOVED]',
-        'tab_length':            4,
-        'enable_attributes':     True,
-        'smart_emphasis':        True,
-        'lazy_ol':               True,
-        'inline':                False,
+        'tab_length': 4,
+        'enable_attributes': True,
+        'smart_emphasis': True,
+        'lazy_ol': True,
+        'inline': False,
     }
 
     output_formats = {
-        'html':   to_html_string,
-        'html4':  to_html_string,
-        'html5':  to_html_string,
-        'xhtml':  to_xhtml_string,
+        'html': to_html_string,
+        'html4': to_html_string,
+        'html5': to_html_string,
+        'xhtml': to_xhtml_string,
         'xhtml1': to_xhtml_string,
         'xhtml5': to_xhtml_string,
     }
@@ -118,7 +117,7 @@ class Markdown(object):
         for c, arg in enumerate(args):
             if pos[c] not in kwargs:
                 kwargs[pos[c]] = arg
-            if c+1 == len(pos):  # pragma: no cover
+            if c + 1 == len(pos):  # pragma: no cover
                 # ignore any additional args
                 break
         if len(args):
@@ -148,7 +147,6 @@ class Markdown(object):
         self.set_output_format(kwargs.get('output_format', 'xhtml1'))
         self.reset()
 
-
     def build_parser(self):
         """ Build the parser from the various parts. """
         self.preprocessors = build_preprocessors(self)
@@ -174,14 +172,12 @@ class Markdown(object):
                 ext = self.build_extension(ext, configs.get(ext, {}))
             if isinstance(ext, Extension):
                 ext.extendMarkdown(self, globals())
-                logger.debug(
-                    'Successfully loaded extension "%s.%s".'
-                    % (ext.__class__.__module__, ext.__class__.__name__)
-                )
+                logger.debug('Successfully loaded extension "%s.%s".'
+                             % (ext.__class__.__module__, ext.__class__.__name__)
+                             )
             elif ext is not None:
-                raise TypeError(
-                    'Extension "%s.%s" must be of type: "markdown.Extension"'
-                    % (ext.__class__.__module__, ext.__class__.__name__))
+                raise TypeError('Extension "%s.%s" must be of type: "markdown.Extension"'
+                                % (ext.__class__.__module__, ext.__class__.__name__))
 
         return self
 
@@ -198,7 +194,7 @@ class Markdown(object):
         # Parse extensions config params (ignore the order)
         pos = ext_name.find("(")  # find the first "("
         if pos > 0:
-            ext_args = ext_name[pos+1:-1]
+            ext_args = ext_name[pos + 1:-1]
             ext_name = ext_name[:pos]
             pairs = [x.split("=") for x in ext_args.split(",")]
             configs.update([(x.strip(), y.strip()) for (x, y) in pairs])
@@ -218,13 +214,12 @@ class Markdown(object):
         try:
             # Assume string uses dot syntax (`path.to.some.module`)
             module = importlib.import_module(ext_name)
-            logger.debug(
-                'Successfuly imported extension module "%s".' % ext_name
-            )
+            logger.debug('Successfuly imported extension module "%s".' % ext_name)
             # For backward compat (until deprecation)
             # check that this is an extension.
-            if ('.' not in ext_name and not (hasattr(module, 'makeExtension')
-               or (class_name and hasattr(module, class_name)))):
+            if ('.' not in ext_name and not
+                    (hasattr(module, 'makeExtension') or
+                     (class_name and hasattr(module, class_name)))):
                 # We have a name conflict
                 # eg: extensions=['tables'] and PyTables is installed
                 raise ImportError
@@ -233,10 +228,7 @@ class Markdown(object):
             module_name = '.'.join(['markdown.extensions', ext_name])
             try:
                 module = importlib.import_module(module_name)
-                logger.debug(
-                    'Successfuly imported extension module "%s".' %
-                    module_name
-                )
+                logger.debug('Successfuly imported extension module "%s".' % module_name)
                 warnings.warn('Using short names for Markdown\'s builtin '
                               'extensions is deprecated. Use the '
                               'full path to the extension with Python\'s dot '
@@ -251,9 +243,7 @@ class Markdown(object):
                 module_name_old_style = '_'.join(['mdx', ext_name])
                 try:
                     module = importlib.import_module(module_name_old_style)
-                    logger.debug(
-                        'Successfuly imported extension module "%s".' %
-                        module_name_old_style)
+                    logger.debug('Successfuly imported extension module "%s".' % module_name_old_style)
                     warnings.warn('Markdown\'s behavior of prepending "mdx_" '
                                   'to an extension name is deprecated. '
                                   'Use the full path to the '
@@ -266,8 +256,8 @@ class Markdown(object):
                                   DeprecationWarning)
                 except ImportError as e:
                     message = "Failed loading extension '%s' from '%s', '%s' " \
-                        "or '%s'" % (ext_name, ext_name, module_name,
-                                     module_name_old_style)
+                              "or '%s'" % (ext_name, ext_name, module_name,
+                                           module_name_old_style)
                     e.args = (message,) + e.args[1:]
                     raise
 
@@ -312,8 +302,8 @@ class Markdown(object):
             valid_formats = list(self.output_formats.keys())
             valid_formats.sort()
             message = 'Invalid Output Format: "%s". Use one of %s.' \
-                % (self.output_format,
-                   '"' + '", "'.join(valid_formats) + '"')
+                      % (self.output_format,
+                         '"' + '", "'.join(valid_formats) + '"')
             e.args = (message,) + e.args[1:]
             raise
         return self
@@ -369,8 +359,7 @@ class Markdown(object):
         output = self.serializer(root)
         if self.stripTopLevelTags:
             try:
-                start = output.index(
-                    '<%s>' % self.doc_tag) + len(self.doc_tag) + 2
+                start = output.index('<%s>' % self.doc_tag) + len(self.doc_tag) + 2
                 end = output.rindex('</%s>' % self.doc_tag)
                 output = output[start:end].strip()
             except ValueError:  # pragma: no cover

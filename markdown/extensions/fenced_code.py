@@ -24,7 +24,6 @@ import re
 
 
 class FencedCodeExtension(Extension):
-
     def extendMarkdown(self, md, md_globals):
         """ Add FencedBlockPreprocessor to the Markdown instance. """
         md.registerExtension(self)
@@ -72,10 +71,13 @@ class FencedBlockPreprocessor(Preprocessor):
             m = self.FENCED_BLOCK_RE.search(text)
             if m:
                 lang = ''
-                not_error_parse_lang = (not m.group('arglist') or (m.group('arglist') and len(m.group('arglist')) > 0 and m.group('arglist')[0] != "="))
+                not_error_parse_lang = (not m.group('arglist') or
+                                        (m.group('arglist') and
+                                         len(m.group('arglist')) > 0 and
+                                         m.group('arglist')[0] != "="))
                 if m.group('lang') and not_error_parse_lang:
                     lang = self.LANG_TAG % m.group('lang')
-                
+
                 al = None
                 if m.group('arglist'):
                     al = m.group('arglist')
@@ -96,15 +98,15 @@ class FencedBlockPreprocessor(Preprocessor):
                             linenost = mln.group('linenostart')
 
                     highliter = CodeHilite(m.group('code'),
-                            linenums=self.codehilite_conf['linenums'][0],
-                            guess_lang=self.codehilite_conf['guess_lang'][0],
-                            css_class=self.codehilite_conf['css_class'][0],
-                            style=self.codehilite_conf['pygments_style'][0],
-                            lang=(m.group('lang') or None),
-                            noclasses=self.codehilite_conf['noclasses'][0],
-                            hl_lines=parse_hl_lines(hll),
-                            linenostart=linenost
-                            )
+                                           linenums=self.codehilite_conf['linenums'][0],
+                                           guess_lang=self.codehilite_conf['guess_lang'][0],
+                                           css_class=self.codehilite_conf['css_class'][0],
+                                           style=self.codehilite_conf['pygments_style'][0],
+                                           lang=(m.group('lang') or None),
+                                           noclasses=self.codehilite_conf['noclasses'][0],
+                                           hl_lines=parse_hl_lines(hll),
+                                           linenostart=linenost
+                                           )
 
                     code = highliter.hilite()
                 else:

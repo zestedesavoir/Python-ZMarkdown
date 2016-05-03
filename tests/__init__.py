@@ -10,7 +10,8 @@ except ImportError as e:
         "Markdown tests. Run `pip install nose` to install the latest version."
     e.args = (msg,) + e.args[1:]
     raise
-from .plugins import HtmlOutput, Markdown, MarkdownSyntaxError
+
+from .plugins import Markdown, MarkdownSyntaxError
 try:
     import tidylib
 except ImportError:
@@ -78,15 +79,16 @@ def get_config(dir_name):
 def normalize(text):
     """ Normalize whitespace for a string of html using tidylib. """
     output, errors = tidylib.tidy_fragment(text, options={
-        'drop_empty_paras': 0,
-        'fix_backslash': 0,
-        'fix_bad_comments': 0,
-        'fix_uri': 0,
-        'join_styles': 0,
-        'lower_literals': 0,
-        'merge_divs': 0,
-        'output_xhtml': 1,
-        'quote_ampersand': 0,
+        'drop-empty-paras': 0,
+        'fix-backslash': 0,
+        'fix-bad-comments': 0,
+        'fix-uri': 0,
+        'join-styles': 0,
+        'lower-literals': 0,
+        'merge-divs': 0,
+        'merge-spans': 0,
+        'output-html': 0,
+        'quote-ampersand': 0,
         'newline': 'LF'
     })
     return output
@@ -111,6 +113,8 @@ class CheckSyntax(object):
             # (on windows, git may have altered line endings).
             expected_output = f.read().replace("\r\n", "\n")
         output = markdown.markdown(input, **config.get_args(file))
+        expected_output = expected_output.strip()
+        output = output.strip()
         if tidylib and config.get(cfg_section, 'normalize'):
             # Normalize whitespace with tidylib before comparing.
             expected_output = normalize(expected_output)
@@ -125,7 +129,8 @@ class CheckSyntax(object):
             output.splitlines(True),
             output_file,
             'actual_output.html',
-            n=3
+            n=3,
+            lineterm="\n"
         )]
         if diff:
             raise MarkdownSyntaxError(
@@ -179,4 +184,4 @@ def generate_all():
 
 
 def run():
-    nose.main(addplugins=[HtmlOutput(), Markdown()])
+    nose.main(addplugins=[Markdown()])

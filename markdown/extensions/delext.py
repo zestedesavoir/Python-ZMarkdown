@@ -14,7 +14,7 @@ Usage
 -----
 
     >>> import markdown
-    >>> src = """This is ++added content++ and this is ~~deleted content~~""" 
+    >>> src = """This is ++added content++ and this is ~~deleted content~~"""
     >>> html = markdown.markdown(src, ['del_ins'])
     >>> print(html)
     <p>This is <ins>added content</ins> and this is <del>deleted content</del>
@@ -33,14 +33,12 @@ Copyright
 2011, 2012 [The active archives contributors](http://activearchives.org/)
 All rights reserved.
 
-This software is released under the modified BSD License. 
+This software is released under the modified BSD License.
 See LICENSE.md for details.
 '''
 
-
 import markdown
 from markdown.inlinepatterns import SimpleTagPattern
-
 
 DEL_RE = r"(\~\~)(.+?)(\~\~)"
 
@@ -59,4 +57,5 @@ def makeExtension(configs={}):
 
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod()

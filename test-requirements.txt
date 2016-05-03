@@ -1,4 +1,6 @@
-nose
+six
+nose==1.3.7
 coverage
-pyyaml
-pytidylib
+pyyaml==3.11
+pytidylib==0.2.4
+pygments==2.1.3

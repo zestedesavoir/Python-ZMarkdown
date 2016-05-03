@@ -65,7 +65,7 @@ class BlockProcessor:
         newtext = []
         lines = text.split('\n')
         for line in lines:
-            if line.startswith(' '*self.tab_length):
+            if line.startswith(' ' * self.tab_length):
                 newtext.append(line[self.tab_length:])
             elif not line.strip():
                 newtext.append('')
@@ -77,8 +77,8 @@ class BlockProcessor:
         """ Remove a tab from front of lines but allowing dedented lines. """
         lines = text.split('\n')
         for i in range(len(lines)):
-            if lines[i].startswith(' '*self.tab_length*level):
-                lines[i] = lines[i][self.tab_length*level:]
+            if lines[i].startswith(' ' * self.tab_length * level):
+                lines[i] = lines[i][self.tab_length * level:]
         return '\n'.join(lines)
 
     def test(self, parent, block):
@@ -145,11 +145,11 @@ class ListIndentProcessor(BlockProcessor):
         self.INDENT_RE = re.compile(r'^(([ ]{%s})+)' % self.tab_length)
 
     def test(self, parent, block):
-        return block.startswith(' '*self.tab_length) and \
-            not self.parser.state.isstate('detabbed') and \
-            (parent.tag in self.ITEM_TYPES or
-                (len(parent) and parent[-1] is not None and
-                    (parent[-1].tag in self.LIST_TYPES)))
+        return (block.startswith(' ' * self.tab_length) and
+                not self.parser.state.isstate('detabbed') and
+                (parent.tag in self.ITEM_TYPES or
+                 (len(parent) and parent[-1] is not None and
+                  (parent[-1].tag in self.LIST_TYPES))))
 
     def run(self, parent, blocks):
         block = blocks.pop(0)
@@ -197,7 +197,7 @@ class ListIndentProcessor(BlockProcessor):
         # Get indent level
         m = self.INDENT_RE.match(block)
         if m:
-            indent_level = len(m.group(1))/self.tab_length
+            indent_level = len(m.group(1)) / self.tab_length
         else:
             indent_level = 0
         if self.parser.state.isstate('list'):
@@ -210,7 +210,7 @@ class ListIndentProcessor(BlockProcessor):
         while indent_level > level:
             child = self.lastChild(parent)
             if (child is not None and
-               (child.tag in self.LIST_TYPES or child.tag in self.ITEM_TYPES)):
+                    (child.tag in self.LIST_TYPES or child.tag in self.ITEM_TYPES)):
                 if child.tag in self.LIST_TYPES:
                     level += 1
                 parent = child
@@ -225,22 +225,19 @@ class CodeBlockProcessor(BlockProcessor):
     """ Process code blocks. """
 
     def test(self, parent, block):
-        return block.startswith(' '*self.tab_length)
+        return block.startswith(' ' * self.tab_length)
 
     def run(self, parent, blocks):
         sibling = self.lastChild(parent)
         block = blocks.pop(0)
         theRest = ''
-        if (sibling is not None and sibling.tag == "pre"
-           and len(sibling) and sibling[0].tag == "code"):
+        if (sibling is not None and sibling.tag == "pre" and len(sibling) and sibling[0].tag == "code"):
             # The previous block was a code block. As blank lines do not start
             # new code blocks, append this block to the previous, adding back
             # linebreaks removed from the split into a list.
             code = sibling[0]
             block, theRest = self.detab(block)
-            code.text = util.AtomicString(
-                '%s\n%s\n' % (code.text, block.rstrip())
-            )
+            code.text = util.AtomicString('%s\n%s\n' % (code.text, block.rstrip()))
         else:
             # This is a new codeblock. Create the elements and insert text.
             pre = util.etree.SubElement(parent, 'pre')
@@ -255,7 +252,6 @@ class CodeBlockProcessor(BlockProcessor):
 
 
 class BlockQuoteProcessor(BlockProcessor):
-
     RE = re.compile(r'(^|\n)[ ]{0,3}>[ ]?(.*)')
 
     def test(self, parent, block):
@@ -270,7 +266,7 @@ class BlockQuoteProcessor(BlockProcessor):
             self.parser.parseBlocks(parent, [before])
             # Remove ``> `` from begining of each line.
             block = '\n'.join(
-                [self.clean(line) for line in block[m.start():].split('\n')]
+                    [self.clean(line) for line in block[m.start():].split('\n')]
             )
         sibling = self.lastChild(parent)
         if sibling is not None and sibling.tag == "blockquote":
@@ -367,7 +363,7 @@ class OListProcessor(BlockProcessor):
         # Loop through items in block, recursively parsing each with the
         # appropriate parent.
         for item in items:
-            if item.startswith(' '*self.tab_length):
+            if item.startswith(' ' * self.tab_length):
                 # Item is indented. Parse with last item as parent
                 self.parser.parseBlocks(lst[-1], [item])
             else:
@@ -392,7 +388,7 @@ class OListProcessor(BlockProcessor):
                 items.append(m.group(3))
             elif self.INDENT_RE.match(line):
                 # This is an indented (possibly nested) item.
-                if items[-1].startswith(' '*self.tab_length):
+                if items[-1].startswith(' ' * self.tab_length):
                     # Previous item was indented. Append to that item.
                     items[-1] = '%s\n%s' % (items[-1], line)
                 else:
@@ -408,7 +404,7 @@ class UListProcessor(OListProcessor):
 
     TAG = 'ul'
     RE = re.compile(r'^[ ]{0,3}[*+-][ ]+(.*)')
-    SIBLING_TAGS = ['ul',]
+    SIBLING_TAGS = ['ul', ]
 
 
 class HashHeaderProcessor(BlockProcessor):
@@ -425,7 +421,7 @@ class HashHeaderProcessor(BlockProcessor):
         m = self.RE.search(block)
         if m:
             before = block[:m.start()]  # All lines before header
-            after = block[m.end():]     # All lines after header
+            after = block[m.end():]  # All lines after header
             if before:
                 # As the header was not the first line of the block and the
                 # lines before the header must be parsed first,
@@ -518,12 +514,9 @@ class EmptyBlockProcessor(BlockProcessor):
                 # Add remaining lines to master blocks for later.
                 blocks.insert(0, theRest)
         sibling = self.lastChild(parent)
-        if (sibling is not None and sibling.tag == 'pre'
-           and len(sibling) and sibling[0].tag == 'code'):
+        if (sibling is not None and sibling.tag == 'pre' and len(sibling) and sibling[0].tag == 'code'):
             # Last block is a codeblock. Append to preserve whitespace.
-            sibling[0].text = util.AtomicString(
-                '%s%s' % (sibling[0].text, filler)
-            )
+            sibling[0].text = util.AtomicString('%s%s' % (sibling[0].text, filler))
 
 
 class ParagraphProcessor(BlockProcessor):
