@@ -1,0 +1,116 @@
+<h3>Bloc de code</h3>
+<p>Il n'est pas rare d'illustrer son propos d'un petit exemple de code :</p>
+<figure><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="ch">#!/usr/bin/env python3</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hello, World!&quot;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table>
+
+<figcaption><p>Mon exemple de code</p></figcaption></figure><p>Pour cela, il existe plusieurs solutions.</p>
+<p>Première solution : entourer votre code d'au moins trois accents graves ``` (<kbd>Alt Gr</kbd> + <kbd>7</kbd>), avant et après : </p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>```
+#!/usr/bin/env python3
+
+print(&quot;Hello, World!&quot;)
+```
+</pre></div>
+</td></tr></table>
+
+<p>Le langage utilisé sera détecté automatiquement et donc coloré en conséquence. Si tel n'est pas le cas, vous pouvez forcer le langage en l'indiquant à la suite des caractères ouvrants :</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>```python
+#!/usr/bin/env python3
+
+print(&quot;Hello, World!&quot;)
+```
+</pre></div>
+</td></tr></table>
+
+<p>La liste des langages supportés est celle de <strong>pygment</strong>, vous la trouverez <a href="http://pygments.org/languages" title="Langages pygment">ici</a>. Les mots-clés à insérer pour déclencher la coloration sont les « short names » disponibles sur <a href="http://pygments.org/docs/lexers" title="Mots-clé pygment">cette page</a>.</p>
+<p>Seconde solution, faites précéder chaque ligne de quatre espaces ou bien d'une tabulation :</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>    #!/usr/bin/env python3
+
+    print(&quot;Hello, World!&quot;)
+</pre></div>
+</td></tr></table>
+
+<p>Pour forcer le langage, utilisez cette fois trois symboles de deux-points de suite :</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>    :::python
+    #!/usr/bin/env python3
+
+    print(&quot;Hello, World!&quot;)
+</pre></div>
+</td></tr></table>
+
+<p>Là encore, vous pouvez mettre une légende à votre bloc de code en ajoutant, juste en dessous du bloc, une ligne <code>Code:Votre légende</code>.</p>
+<h3>Mise en évidence de lignes de code</h3>
+<p>Mettre en évidence une portion de code permet d'appuyer votre explication :</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="hll"><span class="k">use</span> <span class="n">strict</span><span class="p">;</span>
+</span><span class="k">use</span> <span class="n">warnings</span><span class="p">;</span>
+
+<span class="hll"><span class="k">print</span> <span class="s">&quot;Comment vous appelez-vous ? &quot;</span><span class="p">;</span>
+</span><span class="hll"><span class="k">my</span> <span class="nv">$nom</span> <span class="o">=</span> <span class="o">&lt;&gt;</span><span class="p">;</span> <span class="c1"># Récupération du nom de l&#39;utilisateur</span>
+</span><span class="hll"><span class="nb">chomp</span> <span class="nv">$nom</span><span class="p">;</span>   <span class="c1"># Retrait du saut de ligne</span>
+</span><span class="k">print</span> <span class="s">&quot;Bonjour, $nom !\n&quot;</span><span class="p">;</span>
+</pre></div>
+</td></tr></table>
+
+<p>Après le nom du langage, indiquez simplement les lignes à surligner avec la mention <code>hl_lines</code>. Vous pouvez surligner les lignes unes à unes ou par groupes. Le syntaxe est la suivante :</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>```perl hl_lines=&quot;1 4-6&quot;
+use strict;
+use warnings;
+
+print &quot;Comment vous appelez-vous ? &quot;;
+my $nom = &lt;&gt;; # Récupération du nom de l&#39;utilisateur
+chomp $nom;   # Retrait du saut de ligne
+print &quot;Bonjour, $nom !\n&quot;;
+```
+</pre></div>
+</td></tr></table>
+
+<h3>Début de la numérotation</h3>
+<p>Il est possible de spécifier le début de numération. Par exemple :</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>10
+11
+12
+13</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="hll"><span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">truc</span><span class="p">):</span>      <span class="c1"># Cette ligne est en évidence et est numérotée 10</span>
+</span>    <span class="k">print</span> <span class="n">truc</span>         <span class="c1"># Cette ligne est numéroté 11</span>
+                         <span class="c1"># Cette ligne est numéroté 12</span>
+<span class="hll"><span class="n">test</span><span class="p">(</span><span class="s2">&quot;coucou&quot;</span><span class="p">)</span>     <span class="c1"># Cette ligne est en évidence et est numérotée 13</span>
+</span></pre></div>
+</td></tr></table>
+
+<p>On utilise le mot-clé <code>linenostart</code> de la même façon que le <code>hl_lines</code> vu précédemment.</p>
+<h3>Code inline</h3>
+<p>Enfin, si vous souhaitez insérer un petit élément de code dans votre phrase (comme <code>print</code> par exemple), alors un seul accent grave autour du mot suffira :</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>comme `print` par exemple
+</pre></div>
+</td></tr></table>
