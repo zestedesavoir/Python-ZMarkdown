@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/264_techniques-avancees__1527_les-vues-generiques__4969_lister-et-afficher-des-donnees.txt

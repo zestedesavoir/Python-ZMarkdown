@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/744_la-communication-avec-arduino__3427_envoyer-et-recevoir-des-donnees-sur-la-voie-serie__10742_preparer-la-voie-serie.txt

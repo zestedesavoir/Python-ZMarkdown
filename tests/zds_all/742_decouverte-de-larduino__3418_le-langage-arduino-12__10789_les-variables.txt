@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/742_decouverte-de-larduino__3418_le-langage-arduino-12__10789_les-variables.txt

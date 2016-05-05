@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/265_des-outils-supplementaires__1535_linternationalisation__4992_traduire-les-chaines-dans-nos-vues-et-modeles.txt

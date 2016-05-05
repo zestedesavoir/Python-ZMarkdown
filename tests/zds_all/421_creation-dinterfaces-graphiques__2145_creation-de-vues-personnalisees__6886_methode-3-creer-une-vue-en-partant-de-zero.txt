@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/421_creation-dinterfaces-graphiques__2145_creation-de-vues-personnalisees__6886_methode-3-creer-une-vue-en-partant-de-zero.txt

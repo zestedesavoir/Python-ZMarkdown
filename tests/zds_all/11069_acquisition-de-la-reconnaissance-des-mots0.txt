@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/11069_acquisition-de-la-reconnaissance-des-mots0.txt

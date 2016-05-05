@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/reglages-du-mode-mathematique__gestion-des-mathematiques-hors-texte0.txt

@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/685_animation-et-rigging__3218_friendly-control-symetrie-et-generation-dun-squelette__10093_renommer-les-joints-et-placer-les-friendly-control.txt

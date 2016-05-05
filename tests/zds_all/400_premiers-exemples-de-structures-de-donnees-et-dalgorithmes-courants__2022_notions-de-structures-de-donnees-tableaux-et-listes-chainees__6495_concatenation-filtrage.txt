@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/400_premiers-exemples-de-structures-de-donnees-et-dalgorithmes-courants__2022_notions-de-structures-de-donnees-tableaux-et-listes-chainees__6495_concatenation-filtrage.txt

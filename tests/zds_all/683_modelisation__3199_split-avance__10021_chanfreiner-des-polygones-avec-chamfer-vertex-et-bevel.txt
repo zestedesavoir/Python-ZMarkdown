@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/683_modelisation__3199_split-avance__10021_chanfreiner-des-polygones-avec-chamfer-vertex-et-bevel.txt

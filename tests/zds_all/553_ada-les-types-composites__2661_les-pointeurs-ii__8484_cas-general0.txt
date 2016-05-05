@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/553_ada-les-types-composites__2661_les-pointeurs-ii__8484_cas-general0.txt

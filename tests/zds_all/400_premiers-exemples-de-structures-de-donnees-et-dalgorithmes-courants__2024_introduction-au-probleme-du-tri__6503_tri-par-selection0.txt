@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/400_premiers-exemples-de-structures-de-donnees-et-dalgorithmes-courants__2024_introduction-au-probleme-du-tri__6503_tri-par-selection0.txt

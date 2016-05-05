@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/364_lassemblage-des-composants__1928_carte-mere-processeur-et-memoire-vive__6184_fixation-de-la-carte-mere-dans-le-boitier.txt

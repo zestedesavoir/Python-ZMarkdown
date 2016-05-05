@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/555_ada-et-gtk-la-programmation-evenementielle__2680_les-widgets-i__8559_les-zones-de-saisie0.txt

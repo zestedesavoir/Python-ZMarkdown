@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/558_java-et-la-programmation-evenementielle__2718_mieux-structurer-son-code-le-pattern-mvc__8684_premiers-pas0.txt

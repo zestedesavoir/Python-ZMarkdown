@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/603_techniques-avancees__2874_un-eclairage-complexe__9076_ambient-occlusion.txt

@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/709_les-bases__3294_decouvrez-le-langage-avec-ghci__10293_listes-chaines-de-caracteres0.txt

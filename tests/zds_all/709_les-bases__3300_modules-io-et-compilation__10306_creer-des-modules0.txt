@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/709_les-bases__3300_modules-io-et-compilation__10306_creer-des-modules0.txt

@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/series-numeriques__14920_un-exemple-les-series-geometriques.txt

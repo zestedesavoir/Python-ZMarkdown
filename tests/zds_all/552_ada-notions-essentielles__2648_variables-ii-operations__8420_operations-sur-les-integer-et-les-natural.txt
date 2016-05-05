@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/552_ada-notions-essentielles__2648_variables-ii-operations__8420_operations-sur-les-integer-et-les-natural.txt

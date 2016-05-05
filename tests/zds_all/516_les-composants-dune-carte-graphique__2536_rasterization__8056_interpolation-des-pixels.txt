@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/516_les-composants-dune-carte-graphique__2536_rasterization__8056_interpolation-des-pixels.txt

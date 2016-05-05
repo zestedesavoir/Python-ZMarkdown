@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/712_aspect-mathematique__3319_quelques-exercices-dapplication__10374_hauteur-dun-triangle.txt

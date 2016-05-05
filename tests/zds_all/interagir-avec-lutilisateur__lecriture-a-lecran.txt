@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/interagir-avec-lutilisateur__lecriture-a-lecran.txt

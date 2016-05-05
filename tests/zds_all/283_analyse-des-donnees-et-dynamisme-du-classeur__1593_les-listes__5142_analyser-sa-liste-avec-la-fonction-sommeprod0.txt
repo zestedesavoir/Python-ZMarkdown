@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/283_analyse-des-donnees-et-dynamisme-du-classeur__1593_les-listes__5142_analyser-sa-liste-avec-la-fonction-sommeprod0.txt

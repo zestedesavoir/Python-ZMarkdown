@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/421_creation-dinterfaces-graphiques__2143_des-widgets-plus-avances-et-des-boites-de-dialogue__6877_plus-complexe-les-adaptateurs-personnalises.txt

@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/sommes-partielles__15094_suites-geometriques.txt

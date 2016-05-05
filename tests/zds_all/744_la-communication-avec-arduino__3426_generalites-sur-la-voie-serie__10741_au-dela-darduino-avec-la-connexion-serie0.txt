@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/744_la-communication-avec-arduino__3426_generalites-sur-la-voie-serie__10741_au-dela-darduino-avec-la-connexion-serie0.txt

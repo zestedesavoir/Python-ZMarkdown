@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/516_les-composants-dune-carte-graphique__2539_elimination-precoce-des-pixels-caches__8067_early-z.txt

@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/12378_verifier-le-type-de-votre-classe.txt

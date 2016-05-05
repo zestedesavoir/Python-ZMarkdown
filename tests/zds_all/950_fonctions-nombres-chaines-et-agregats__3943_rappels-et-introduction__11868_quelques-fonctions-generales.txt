@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/950_fonctions-nombres-chaines-et-agregats__3943_rappels-et-introduction__11868_quelques-fonctions-generales.txt

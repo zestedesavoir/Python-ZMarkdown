@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/radical-du-preterit__indicatif-preterit0.txt

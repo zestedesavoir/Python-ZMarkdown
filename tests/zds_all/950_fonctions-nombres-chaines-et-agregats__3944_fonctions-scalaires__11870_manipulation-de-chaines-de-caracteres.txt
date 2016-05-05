@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/950_fonctions-nombres-chaines-et-agregats__3944_fonctions-scalaires__11870_manipulation-de-chaines-de-caracteres.txt

@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/215_premiers-pas-avec-java-ee__1307_transmission-de-donnees__4230_donnees-issues-du-serveur-les-attributs0.txt

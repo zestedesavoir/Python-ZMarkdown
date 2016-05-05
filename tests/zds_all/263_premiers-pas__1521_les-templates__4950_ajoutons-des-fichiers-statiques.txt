@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/263_premiers-pas__1521_les-templates__4950_ajoutons-des-fichiers-statiques.txt

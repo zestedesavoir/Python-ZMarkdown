@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/554_ada-notions-avancees-et-programmation-orientee-objet__2670_la-programmation-modulaire-v-polymorphisme-abstraction-et-heritage-multiple__8523_heritage-multiple0.txt

@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/620_premiers-pas__2967_jouons-avec-les-fichiers-et-les-dossiers__9296_le-copier-coller.txt

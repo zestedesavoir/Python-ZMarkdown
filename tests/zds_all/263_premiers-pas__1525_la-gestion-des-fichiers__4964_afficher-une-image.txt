@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/263_premiers-pas__1525_la-gestion-des-fichiers__4964_afficher-une-image.txt

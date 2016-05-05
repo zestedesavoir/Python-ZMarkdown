@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/603_techniques-avancees__2873_obtenir-des-materiaux-realistes__9072_combiner-les-textures.txt

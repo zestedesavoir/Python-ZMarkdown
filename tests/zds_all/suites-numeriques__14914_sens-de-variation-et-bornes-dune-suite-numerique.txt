@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/suites-numeriques__14914_sens-de-variation-et-bornes-dune-suite-numerique.txt

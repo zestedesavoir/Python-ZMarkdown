@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/743_gestion-des-entrees-sorties__3424_afficheurs-7-segments__10769_utilisation-du-decodeur-bcd.txt

@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/977_equations-a-une-inconnue__4042_equations-du-premier-degre__12241_la-resolution.txt

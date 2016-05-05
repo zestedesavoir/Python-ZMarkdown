@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/547_la-programmation-orientee-objet__2628_notions-avancees-de-la-poo__8352_les-classes-dynamiques.txt
