@@ -1,0 +1,150 @@
+<h3>Des tableaux simples</h3>
+<p>Pour faire un tableau, la façon la plus simple est encore de le dessiner, à l'aide de barres verticales et de tirets :</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>Nom     |   Age
+------|-----
+Fred |   39
+Sam |   38
+Alice  |   35
+Mathilde  | 35
+</pre></div>
+</td></tr></table>
+
+<p>L'exemple ci-dessus donnera donc :</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr>
+<th>Nom</th>
+<th>Age</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fred</td>
+<td>39</td>
+</tr>
+<tr>
+<td>Sam</td>
+<td>38</td>
+</tr>
+<tr>
+<td>Alice</td>
+<td>35</td>
+</tr>
+<tr>
+<td>Mathilde</td>
+<td>35</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Cette syntaxe est simple mais elle a ses limites : il est impossible de revenir à la ligne dans une cellule ou bien de fusionner des lignes ou des colonnes. Si vous avez vraiment besoin de faire cela, il vous faudra utiliser une autre syntaxe de tableau, plus lourde mais plus complète, comme nous allons le voir à présent.</p>
+<h3>Tableaux complexes</h3>
+<p>Pour des tableaux plus complexes, dans lesquels vous pourrez notamment revenir à la ligne dans une cellule et fusionner des lignes ou colonnes, il vous faut utiliser la syntaxe dite « grid-table » :</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>+-------+----------+------+
+| Table Headings   | Here |
++-------+----------+------+
+| Sub   | Headings | Too  |
++=======+==========+======+
+| cell  | column spanning |
++ spans +----------+------+
+| rows  | normal   | cell |
++-------+----------+------+
+| multi | cells can be    |
+| line  | *formatted*     |
+|       | **paragraphs**  |
+| cells |                 |
+| too   |                 |
++-------+-----------------+
+</pre></div>
+</td></tr></table>
+
+<p>Ce qui vous donnera :</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr>
+<th colspan="2" rowspan="1">
+<p>Table Headings</p>
+</th>
+<th colspan="1" rowspan="1">
+<p>Here</p>
+</th>
+</tr>
+<tr>
+<th colspan="1" rowspan="1">
+<p>Sub</p>
+</th>
+<th colspan="1" rowspan="1">
+<p>Headings</p>
+</th>
+<th colspan="1" rowspan="1">
+<p>Too</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="1" rowspan="2">
+<p>cell
+spans
+rows</p>
+</td>
+<td colspan="2" rowspan="1">
+<p>column spanning</p>
+</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">
+<p>normal</p>
+</td>
+<td colspan="1" rowspan="1">
+<p>cell</p>
+</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">
+<p>multi
+line</p>
+<p>cells
+too</p>
+</td>
+<td colspan="2" rowspan="1">
+<p>cells can be
+<em>formatted</em>
+<strong>paragraphs</strong></p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3>Légendes de tableaux</h3>
+<p>Quelle que soit la syntaxe utilisée, vous pouvez indiquer une légende à votre tableau en ajoutant une ligne <code>Table: Ma légende</code> juste en dessous du tableau.</p>
+<p>Le mot « Table » est optionnel, pas les deux-points. Il peut y avoir un espace entre « Table » et les deux-points.</p>
+<h3>Lignes horizontales</h3>
+<p>Pour tracer une ligne horizontale, le principe est le même : <em>dessinez-là</em>. La syntaxe est cette fois bien plus simple puisqu'elle n'est constituée que de trois tirets (ou plus, ça ne change rien au résultat) :</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>------
+</pre></div>
+</td></tr></table>
+
+<p>Voici le résultat :</p>
+<hr>

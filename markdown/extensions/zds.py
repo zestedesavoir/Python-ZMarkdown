@@ -132,5 +132,5 @@ class ZdsExtension(Extension):
             md.inlinePatterns.pop("linebreak")
 
 
-def makeExtension(configs={}):
-    return ZdsExtension(configs=dict(configs))
+def makeExtension(*args, **kwargs):
+    return ZdsExtension(*args, **kwargs)
