@@ -11,8 +11,8 @@ class AlignProcessor(BlockProcessor):
 
     def __init__(self, parser):
         BlockProcessor.__init__(self, parser)
-        
-        exprs = (( "->", "right"), ("<-", "center"))
+
+        exprs = (("->", "right"), ("<-", "center"))
 
         self.REStart = re.compile(r'(^|\n)' + re.escape('->'))
         self._ending_re = [re.compile(re.escape(end_expr) + r'(\n|$)') for end_expr, _ in exprs]
@@ -100,6 +100,7 @@ class AlignExtension(markdown.extensions.Extension):
         """Modifies inline patterns."""
         md.registerExtension(self)
         md.parser.blockprocessors.add('align', AlignProcessor(md.parser), '_begin')
+
 
 def makeExtension(*args, **kwargs):
     return AlignExtension(*args, **kwargs)
