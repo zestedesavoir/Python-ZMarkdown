@@ -9,12 +9,14 @@ from markdown import util
 class AlignProcessor(BlockProcessor):
     """ Process Align. """
 
-    def __init__(self, parser, startExpr, endExpr, contentAlign):
+    def __init__(self, parser):
         BlockProcessor.__init__(self, parser)
+        
+        exprs = (( "->", "right"), ("<-", "center"))
 
-        self.REStart = re.compile(r'(^|\n)' + re.escape(startExpr))
-        self.REEnd = re.compile(re.escape(endExpr) + r'(\n|$)')
-        self.contentAlign = contentAlign
+        self.REStart = re.compile(r'(^|\n)' + re.escape('->'))
+        self._ending_re = [re.compile(re.escape(end_expr) + r'(\n|$)') for end_expr, _ in exprs]
+        self._kind_align = [kind_align for _, kind_align in exprs]
 
     def test(self, parent, block):
         return bool(self.REStart.search(block))
@@ -28,6 +30,7 @@ class AlignProcessor(BlockProcessor):
         StartBlock = (0, m.start(), m.end())
 
         EndBlock = (-1, -1, -1)
+        content_align = "left"
         for i in range(len(blocks)):
             if i == 0:
                 txt = FirstBlock[m.end() + 1:]
@@ -35,10 +38,15 @@ class AlignProcessor(BlockProcessor):
             else:
                 txt = blocks[i]
                 dec = 0
-
-            mEnd = self.REEnd.search(txt)
-            if mEnd:
+            # Test all ending aligns
+            t_ends = ((i, re_end.search(txt)) for i, re_end in enumerate(self._ending_re))
+            # Catch only matching re
+            t_ends = list(filter(lambda e: e[1] is not None, t_ends))
+            if len(t_ends) > 0:
+                # retrieve first matching re
+                selected_align, mEnd = min(t_ends, key=lambda e: e[1].start())
                 EndBlock = (i, mEnd.start() + dec, mEnd.end() + dec)
+                content_align = self._kind_align[selected_align]
                 break
 
         if EndBlock[0] < 0:
@@ -70,14 +78,14 @@ class AlignProcessor(BlockProcessor):
         if (sibling and
                 sibling.tag == "div" and
                 "align" in sibling.attrib and
-                sibling.attrib["align"] == self.contentAlign):
+                sibling.attrib["align"] == content_align):
             h = sibling
 
             if h.text:
                 h.text += '\n'
         else:
             h = util.etree.SubElement(parent, 'div')
-            h.set("align", self.contentAlign)
+            h.set("align", content_align)
 
         self.parser.parseChunk(h, Content)
 
@@ -91,9 +99,7 @@ class AlignExtension(markdown.extensions.Extension):
     def extendMarkdown(self, md, md_globals):
         """Modifies inline patterns."""
         md.registerExtension(self)
-        md.parser.blockprocessors.add('rightalign', AlignProcessor(md.parser, "->", "->", "right"), '_begin')
-        md.parser.blockprocessors.add('centeralign', AlignProcessor(md.parser, "->", "<-", "center"), '_begin')
+        md.parser.blockprocessors.add('align', AlignProcessor(md.parser), '_begin')
 
-
-def makeExtension(configs={}):
-    return AlignExtension(configs=dict(configs))
+def makeExtension(*args, **kwargs):
+    return AlignExtension(*args, **kwargs)
