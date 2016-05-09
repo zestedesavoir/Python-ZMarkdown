@@ -90,7 +90,9 @@ class AlignProcessor(BlockProcessor):
                 sibling.attrib["align"] == content_align):
             # If previous block is the same align content, merge it !
             h = sibling
-            if h.text:
+            if h.text:  # pragma: no cover
+                # This should never occur because there should never have content text outside of blocks html elements.
+                # this code come from other markdown processors, maybe this can happen because of this shitty ast.
                 h.text += '\n'
         else:
             h = util.etree.SubElement(parent, 'div')
