@@ -25,7 +25,9 @@ class AlignProcessor(BlockProcessor):
 
         FirstBlock = blocks[0]
         m = self.REStart.search(FirstBlock)
-        if not m:
+        if not m: # pragma: no cover
+            # Run should only be fired if test() return True, then this should never append
+            # Do not raise an exception because exception should never be generated.
             return False
         StartBlock = (0, m.start(), m.end())
 
@@ -50,7 +52,12 @@ class AlignProcessor(BlockProcessor):
                 break
 
         if EndBlock[0] < 0:
+            # Block not ended, do not transform
             return False
+        
+        # Split blocks into before/content aligned/ending
+        # There should never have before and ending because regex require that the expression is starting/ending the 
+        # block. This is set for security : if regex are updated the code should always work.
         Before = FirstBlock[:StartBlock[1]]
         Content = []
         After = blocks[EndBlock[0]][EndBlock[2]:]
@@ -71,7 +78,9 @@ class AlignProcessor(BlockProcessor):
 
         Content = "\n\n".join(Content)
 
-        if Before:
+        if Before: # pragma: no cover
+            # This should never occur because regex require that the expression is starting the block.
+            # Do not raise an exception because exception should never be generated.
             self.parser.parseBlocks(parent, [Before])
 
         sibling = self.lastChild(parent)
@@ -79,8 +88,8 @@ class AlignProcessor(BlockProcessor):
                 sibling.tag == "div" and
                 "align" in sibling.attrib and
                 sibling.attrib["align"] == content_align):
+            # If previous block is the same align content, merge it !
             h = sibling
-
             if h.text:
                 h.text += '\n'
         else:
@@ -89,7 +98,9 @@ class AlignProcessor(BlockProcessor):
 
         self.parser.parseChunk(h, Content)
 
-        if After:
+        if After: # pragma: no cover
+            # This should never occur because regex require that the expression is ending the block.
+            # Do not raise an exception because exception should never be generated.
             blocks.insert(0, After)
 
 

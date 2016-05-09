@@ -31,4 +31,11 @@ an other simple paragraph
 
 Containing two paragraph<-
 
+an other simple paragraph
+
+->A centered paragraph.<-
+->An other centered paragraph.<-
+
 a simple paragraph
+
+->A started block without end.
