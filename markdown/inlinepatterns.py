@@ -363,6 +363,54 @@ class HtmlPattern(Pattern):
         return util.INLINE_PLACEHOLDER_RE.sub(get_stash, text)
 
 
+MAIL_RE = (r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*"
+           r"@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+
+
+def sanitize_url(url):
+    """
+    Sanitize a url against xss attacks in "safe_mode".
+
+    Rather than specifically blacklisting `javascript:alert("XSS")` and all
+    its aliases (see <http://ha.ckers.org/xss.html>), we whitelist known
+    safe url formats. Most urls contain a network location, however some
+    are known not to (i.e.: mailto links). Script urls do not contain a
+    location. Additionally, for `javascript:...`, the scheme would be
+    "javascript" but some aliases will appear to `urlparse()` to have no
+    scheme. On top of that relative links (i.e.: "foo/bar.html") have no
+    scheme. Therefore we must check "path", "parameters", "query" and
+    "fragment" for any literal colons. We don't check "scheme" for colons
+    because it *should* never have any and "netloc" must allow the form:
+    `username:password@host:port`.
+
+    """
+    try:
+        scheme, netloc, path, params, query, fragment = spited_url = urlparse(url)
+    except ValueError:  # pragma: no cover
+        # Bad url - so bad it couldn't be parsed.
+        return ''
+    locless_schemes = ['', 'mailto', 'news']
+    allowed_schemes = locless_schemes + ['http', 'https', 'ftp', 'ftps']
+    if scheme not in allowed_schemes:
+        # Not a known (allowed) scheme. Not safe.
+        return ''
+
+    if netloc == '' and scheme not in locless_schemes:  # pragma: no cover
+        # This should not happen. Treat as suspect.
+        return ''
+
+    # colon in "path", "parameters" and "query" are problematic if no scheme is specified.
+    if scheme == "":
+        for part in spited_url[2:]:
+            if ":" in part:
+                # A colon in "path", "parameters", "query"
+                # or "fragment" is suspect
+                return ''
+
+    # Url passes all tests. Return url as-is.
+    return url
+
+
 class LinkPattern(Pattern):
     """ Return a link element from the given match. """
 
@@ -385,52 +433,10 @@ class LinkPattern(Pattern):
         return el
 
     def sanitize_url(self, url):
-        """
-        Sanitize a url against xss attacks in "safe_mode".
-
-        Rather than specifically blacklisting `javascript:alert("XSS")` and all
-        its aliases (see <http://ha.ckers.org/xss.html>), we whitelist known
-        safe url formats. Most urls contain a network location, however some
-        are known not to (i.e.: mailto links). Script urls do not contain a
-        location. Additionally, for `javascript:...`, the scheme would be
-        "javascript" but some aliases will appear to `urlparse()` to have no
-        scheme. On top of that relative links (i.e.: "foo/bar.html") have no
-        scheme. Therefore we must check "path", "parameters", "query" and
-        "fragment" for any literal colons. We don't check "scheme" for colons
-        because it *should* never have any and "netloc" must allow the form:
-        `username:password@host:port`.
-
-        """
         if not self.markdown.safeMode:
             # Return immediately bipassing parsing.
             return url
-
-        try:
-            base_url = url
-            scheme, netloc, path, params, query, fragment = url = urlparse(url)
-        except ValueError:  # pragma: no cover
-            # Bad url - so bad it couldn't be parsed.
-            return ''
-        locless_schemes = ['', 'mailto', 'news']
-        allowed_schemes = locless_schemes + ['http', 'https', 'ftp', 'ftps']
-        if scheme not in allowed_schemes:
-            # Not a known (allowed) scheme. Not safe.
-            return ''
-
-        if netloc == '' and scheme not in locless_schemes:  # pragma: no cover
-            # This should not happen. Treat as suspect.
-            return ''
-
-        # colon in "path", "parameters" and "query" are problematic if no scheme is specified.
-        if scheme == "":
-            for part in url[2:]:
-                if ":" in part:
-                    # A colon in "path", "parameters", "query"
-                    # or "fragment" is suspect
-                    return ''
-
-        # Url passes all tests. Return url as-is.
-        return base_url
+        return sanitize_url(url)
 
 
 class ImagePattern(LinkPattern):
