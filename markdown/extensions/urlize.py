@@ -1,111 +1,65 @@
-# From https://github.com/r0wb0t/markdown-urlize/blob/master/urlize.py
+# Inspired by https://github.com/r0wb0t/markdown-urlize/blob/master/urlize.py
 
-"""A more liberal autolinker
-
-Inspired by Django's urlize function.
-
-Positive examples:
-
->>> import markdown
->>> md = markdown.Markdown(extensions=['urlize'])
-
->>> md.convert('http://example.com/')
-u'<p><a href="http://example.com/">http://example.com/</a></p>'
-
->>> md.convert('go to http://example.com')
-u'<p>go to <a href="http://example.com">http://example.com</a></p>'
-
->>> md.convert('example.com')
-u'<p><a href="http://example.com">example.com</a></p>'
-
->>> md.convert('example.net')
-u'<p><a href="http://example.net">example.net</a></p>'
-
->>> md.convert('www.example.us')
-u'<p><a href="http://www.example.us">www.example.us</a></p>'
-
->>> md.convert('(www.example.us/path/?name=val)')
-u'<p>(<a href="http://www.example.us/path/?name=val">www.example.us/path/?name=val</a>)</p>'
-
->>> md.convert('go to <http://example.com> now!')
-u'<p>go to <a href="http://example.com">http://example.com</a> now!</p>'
-
-Negative examples:
-
->>> md.convert('del.icio.us')
-u'<p>del.icio.us</p>'
-
-"""
 from __future__ import unicode_literals
-import markdown
+from markdown.inlinepatterns import Pattern as InlinePattern, sanitize_url, MAIL_RE
+from markdown import Extension, util
+try:  # pragma: no cover
+    from urllib.parse import urlparse
+except ImportError:  # pragma: no cover
+    from urlparse import urlparse
+import re
 
-# Global Vars
-URLIZE_RE = r'(^|(?<=\s))({0})((?=\s)|$)'.format("|".join((
+# Global Vars. Do not catch ending dot
+URLIZE_RE = r'(^|(?<=\s))({0})(?=\.?(\s|$))'.format("|".join((
     # mail adress (two lines):
-    r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*"
-    r"@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
+    MAIL_RE,
     # Anything with protocol between < >
     r"<(?:f|ht)tps?://[^>]*>",
-    # with protocol : any valid domain match
-    r"((?:f|ht)tps?://)([\da-z\.-]+)\.([a-z\.]{2,6})[/\w\.$%&_?#=()-]*\/?",
+    # with protocol : any valid domain match.
+    r"((?:f|ht)tps?://)([\da-z\.-]+)\.([a-z\.]{1,5}[a-z])([/\w\.$%&_?#=()'-]*[/\w$%&_?#=()'-])?\/?",
     # without protocol, only somes specified protocols match
-    r"((?:f|ht)tps?://)?([\da-z\.-]+)\.(?:com|net|org|fr)[/\w\.$%&_?#=()-]*\/?")))
+    r"((?:f|ht)tps?://)?([\da-z\.-]+)\.(?:com|net|org|fr)([/\w\.$%&_?#=()'-]*[/\w$%&_?#=()'-])?\/?")))
 
 
-class CorrectURLProcessor(markdown.treeprocessors.Treeprocessor):
-    def __init__(self):
-        markdown.treeprocessors.Treeprocessor.__init__(self)
-
-    def run(self, node):
-
-        for child in node.getiterator():
-            if (child.tag == 'a' and
-                    'href' in child.attrib and
-                    child.attrib['href'].split('://')[0] not in ('http', 'https', 'ftp') and
-                    not child.attrib['href'].startswith('#') and
-                    not child.attrib['href'].startswith('/') and
-                    not child.attrib['href'].startswith('mailto:')):
-                child.attrib['href'] = 'http://' + child.attrib['href']
-        return node
-
-
-class UrlizePattern(markdown.inlinepatterns.Pattern):
+class UrlizePattern(InlinePattern):
     """ Return a link Element given an autolink (`http://example/com`). """
 
     def handleMatch(self, m):
+
+        print (m.groups())
         url = m.group(3)
 
         if url.startswith('<'):
             url = url[1:-1]
 
         text = url
+        is_url = re.match(MAIL_RE, url)
 
-        if not url.split('://')[0] in ('http', 'https', 'ftp'):
-            if '@' in url and '/' not in url:
+        if not is_url:
+            url = sanitize_url(url)
+
+        parts = urlparse(url)
+
+        # If no protocol (and not explicit relative link), add one
+        if parts[0] == "":
+            if is_url:
                 url = 'mailto:' + url
-            else:
+            elif not url.startswith("#") and not url.startswith("/"):
                 url = 'http://' + url
 
-        el = markdown.util.etree.Element("a")
+        el = util.etree.Element("a")
         el.set('href', url)
-        el.text = markdown.util.AtomicString(text)
+        el.text = util.AtomicString(text)
         return el
 
 
-class UrlizeExtension(markdown.Extension):
+class UrlizeExtension(Extension):
     """ Urlize Extension for Python-Markdown. """
 
     def extendMarkdown(self, md, md_globals):
         """ Replace autolink with UrlizePattern """
         md.inlinePatterns['autolink'] = UrlizePattern(URLIZE_RE, md)
-        md.treeprocessors.add('CorrectURLProcessor', CorrectURLProcessor(), '_end')
 
 
-def makeExtension(configs=None):
-    return UrlizeExtension(configs=configs)
-
-
-if __name__ == "__main__":
-    import doctest
-
-    doctest.testmod()
+def makeExtension(*args, **kwargs):
+    return UrlizeExtension(*args, **kwargs)
