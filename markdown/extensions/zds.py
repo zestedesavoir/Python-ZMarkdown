@@ -90,7 +90,7 @@ class ZdsExtension(Extension):
                                                                       "abbr",)})
 
             gridtable_ext = GridTableExtension()  # Grid Table support
-            comment_ext = CommentsExtension({"START_TAG": "<--COMMENT", "END_TAG": "COMMENT-->"})  # Comment support
+            comment_ext = CommentsExtension(start_tag="<--COMMENT", end_tag="COMMENT-->")  # Comment support
             legend_ext = SmartLegendExtension({"IGNORING_IMG": self.emoticons.values(),
                                                "PARENTS": ("div", "blockquote")})  # Smart Legend support
             dheader_ext = DownHeaderExtension({"OFFSET": 2})  # Offset header support

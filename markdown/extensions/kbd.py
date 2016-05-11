@@ -1,14 +1,14 @@
 #! /usr/bin/env python
 
-import markdown
+from markdown.extensions import Extension
 from markdown.inlinepatterns import SimpleTagPattern
 
-# Small extension to parse ||Touche|| in Kbd html tag (cgabard)
+# Small extension to parse ||Touche|| in Kbd html tag
 
 KBD_RE = r"(\|\|)(.+?)(\|\|)"
 
 
-class KbdExtension(markdown.extensions.Extension):
+class KbdExtension(Extension):
     """Adds kdb extension to Markdown class."""
 
     def extendMarkdown(self, md, md_globals):
@@ -16,5 +16,5 @@ class KbdExtension(markdown.extensions.Extension):
         md.inlinePatterns.add('kbd', SimpleTagPattern(KBD_RE, 'kbd'), '<not_strong')
 
 
-def makeExtension(configs={}):
-    return KbdExtension(configs=dict(configs))
+def makeExtension(*args, **kwargs):
+    return KbdExtension(*args, **kwargs)
