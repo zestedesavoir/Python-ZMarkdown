@@ -31,6 +31,7 @@ class VideoExtension(markdown.Extension):
         # Override defaults with user settings
         for key, value in kwargs.items():
             self.setConfig(key, value)
+
         if js_support:
             self.setConfig("jsfiddle", True)
 
