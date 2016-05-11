@@ -25,6 +25,7 @@ class VideoExtension(markdown.Extension):
             'jsfiddle_width': ['560', 'Width for jsfiddle'],
             'jsfiddle_height': ['560', 'Height for jsfiddle'],
         }
+
         self.config['youtube_short_width'] = self.config['youtube_width']
         self.config['youtube_short_height'] = self.config['youtube_height']
 
