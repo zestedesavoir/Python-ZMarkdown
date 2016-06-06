@@ -11,20 +11,19 @@ from markdown.util import etree
 
 
 class EmoticonExtension(markdown.Extension):
-    def __init__(self, configs):
+    def __init__(self, *args, **kwargs):
         self.config = {
-            'EMOTICONS': [{
+            'emoticons': [{
                 ":)": "test.png",
             }, 'A mapping from emoticon symbols to image names.'],
         }
 
-        for key, value in configs.items():
-            self.config[key][0] = value
+        markdown.Extension.__init__(self, *args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
         self.md = md
         EMOTICON_RE = u'(^|(?<=\s))(?P<emoticon>{0})((?=\s)|$)'.format(
-            '|'.join([re.escape(emoticon) for emoticon in self.getConfig('EMOTICONS').keys()]))
+            '|'.join([re.escape(emoticon) for emoticon in self.getConfig('emoticons').keys()]))
         md.inlinePatterns.add('emoticons', EmoticonPattern(EMOTICON_RE, self), "<linebreak")
 
 
@@ -39,10 +38,10 @@ class EmoticonPattern(Pattern):
         except IndexError:
             return None
         el = etree.Element('img')
-        el.set('src', '%s' % (self.emoticons.getConfig('EMOTICONS')[emoticon],))
+        el.set('src', '%s' % (self.emoticons.getConfig('emoticons')[emoticon],))
         el.set('alt', emoticon)
         return el
 
 
-def makeExtension(configs=None):
-    return EmoticonExtension(configs=configs)
+def makeExtension(*args, **kwargs):
+    return EmoticonExtension(*args, **kwargs)
