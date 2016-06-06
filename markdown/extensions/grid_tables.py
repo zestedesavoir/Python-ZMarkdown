@@ -1,780 +1,426 @@
 #!/usr/bin/env python
-"""
-Grid Tables Extension for Python-Markdown
-=========================================
-
-Add parsing of grid tables to Python-Markdown. These differ from simple tables
-in that they can contain multi-lined text and (in my opinion) are cleaner
-looking than simpe tables. They were inspired by reStructuredText's grid table
-syntax. This extension was loosely based on the 'table' extension for
-Python-Markdown by Waylan Limberg.
-
-An example of a grid table:
-
-    +---------------+---------------+-----------------+
-    | First Header  | Second Header | Third Header    |
-    +===============+===============+=================+
-    | A cell that   | A cell that spans multiple      |
-    | spans         | columns.                        |
-    | multiple rows +---------------+-----------------+
-    |               | One, two cell | Red & blue cell |
-    +---------------+---------------+-----------------+
-
-This should be generated as (but colspans and rowspans may not work at the moment):
-
-    <table>
-        <thead>
-            <tr>
-                <td>First Header</td>
-                <td>Second Header</td>
-                <td>Third Header</td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td rowspan="2">A cell that spans multiple rows</td>
-                <td colspan="2">A cell that spans multiple columns</td>
-            </tr>
-            <tr>
-                <td>One, two cell</td>
-                <td>Red & blue cell</td>
-            </tr>
-        </tbody>
-    </table>
-
-Licensed under GPLv3 by [Alexander Abbott aka Smartboy](http://smartboyssite.net)
-
-Links referenced during creation of this plugin:
-https://gist.github.com/1855764
-http://packages.python.org/Markdown/extensions/api.html
-https://github.com/waylan/Python-Markdown/blob/master/markdown/extensions/tables.py
-http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#grid-tables
-"""
 
 import markdown
 from markdown.util import etree
+from markdown.blockprocessors import BlockProcessor
 import re
+from functools import reduce
+from itertools import chain, tee, repeat
+from collections import namedtuple
+
+
+##################################
+# Python-ZMarkdown Extension API #
+##################################
 
 
 class GridTableExtension(markdown.Extension):
+    """
+    Add Grid-Table support.
+    """
+
     def extendMarkdown(self, md, md_globals):
         md.parser.blockprocessors.add('grid-table',
                                       GridTableProcessor(md.parser),
                                       '<hashheader')
 
 
-def makeExtension(configs={}):
-    return GridTableExtension(configs=configs)
-
-
-class GridTableCell(object):
-    """
-    A single cell in a grid table. A cell's boundaries are determined by a
-    starting point in the top left (start_row and start_col), as well as a
-    width and a height. It also has a colspan and rowspan count for cells that
-    span multiple rows or columns.
-    """
-
-    def __init__(self, start_row, start_col, width=1, height=1, colspan=1,
-                 rowspan=1, text=""):
-        self.text = text
-        self._start_row = max(0, start_row)
-        self._start_col = max(0, start_col)
-        self._width = max(1, width)
-        self._height = max(1, height)
-        self._colspan = max(1, colspan)
-        self._rowspan = max(1, rowspan)
-
-    def __str__(self):
-        """
-        For simplicity, the string representation is also the python code
-        representation.
-        """
-        return self.__repr__()
-
-    def __repr__(self):
-        """
-        This is the python representation of the cell. If ran with eval, the
-        output from this function would create a duplicate instance of this
-        class.
-        """
-        retval = "GridTableCell(start_row={}, start_col={}, width={}, "
-        retval += "height={}, colspan={}, rowspan={}, text={})"
-        return retval.format(repr(self._start_row), repr(self._start_col),
-                             repr(self._width), repr(self._height),
-                             repr(self._colspan), repr(self._rowspan),
-                             repr(self.text))
-
-    def __eq__(self, other):
-        """
-        Checks if another cell is equivalent to this one.
-        """
-        return (self.start_row == other.start_row and
-                self.start_col == other.start_col and
-                self.width == other.width and
-                self.height == other.height and
-                self.colspan == other.colspan and
-                self.rowspan == other.rowspan)
-
-    @property
-    def start_row(self):
-        """
-        Returns the starting row for the cell.
-        """
-        return self._start_row
-
-    @start_row.setter
-    def start_row(self, value):
-        """
-        Sets the starting row of the cell to either 0 or the value passed in,
-        depending on which is larger.
-        """
-        self._start_row = max(0, value)
-
-    @property
-    def start_col(self):
-        """
-        Returns the starting column for the cell.
-        """
-        return self._start_col
-
-    @start_col.setter
-    def start_col(self, value):
-        """
-        Sets the starting column of the cell to either 0 or the value passed
-        in, depending on which is larger.
-        """
-        self._start_col = max(0, value)
-
-    @property
-    def width(self):
-        """
-        Returns the width (in number of characters) of the cell.
-        """
-        return self._width
-
-    @width.setter
-    def width(self, value):
-        """
-        Sets the width (in number of characters) of the cell to either 1 or the
-        value passed in, depending on which is larger.
-        """
-        self._width = max(1, value)
-
-    @property
-    def height(self):
-        """
-        Returns the height (in number of characters) of the cell.
-        """
-        return self._height
-
-    @height.setter
-    def height(self, value):
-        """
-        Sets the height (in number of characters) of the cell to either 1 or
-        the value passed in, depending on which is larger.
-        """
-        self._height = max(1, value)
-
-    @property
-    def colspan(self):
-        """
-        Returns the number of columns that this cell spans.
-        """
-        return self._colspan
-
-    @colspan.setter
-    def colspan(self, value):
-        """
-        Sets the number of columns that this cell spans to either 1 or the
-        value passed in, depending on which is larger.
-        """
-        self._colspan = max(1, value)
-
-    @property
-    def rowspan(self):
-        """
-        Returns the number of rows that this cell spans.
-        """
-        return self._rowspan
-
-    @rowspan.setter
-    def rowspan(self, value):
-        """
-        Sets the number of rows that this cell spans to either 1 or the value
-        passed in, depending on which is larger.
-        """
-        self._rowspan = max(1, value)
-
-    @property
-    def end_row(self):
-        """
-        Returns the index of which row the cell ends at within the block. This
-        is changed by modifying either the starting row or the height of this
-        cell.
-        """
-        return self._start_row + self._height
-
-    @property
-    def end_col(self):
-        """
-        Returns the index of which column the cell ends at within the block.
-        This is changed by modifying either the starting column or the width of
-        this cell.
-        """
-        return self._start_col + self._width
-
-
-class GridTableRow(object):
-    """
-    A single row in a grid table, which can contain any number of cells. Cells
-    within a row may not start at the same index as where the row starts, since
-    they may span multiple columns.
-    """
-
-    def __init__(self, start_row, is_header=False):
-        self._cells = []
-        self._start_row = start_row
-        self._height = None
-        self.is_header = is_header
-
-    def add_cell(self, cell):
-        """
-        Adds a cell to the appropriate position in the row based on where its
-        left and right edges are. This returns false if a cell overlaps with
-        another cell in the row, otherwise it returns true.
-        """
-        for i in range(0, len(self._cells)):
-            if cell.start_col + cell.width <= self._cells[i].start_col:
-                if i > 0 and not self._cells[i - 1].start_col + self._cells[i - 1].width <= cell.start_col:
-                    return False
-                self._cells.insert(i, cell)
-                break
-        else:
-            if len(self._cells) > 0 and self._cells[-1].start_col + self._cells[-1].width > cell.start_col:
-                return False
-            self._cells.append(cell)
-        relative_height = cell.start_row + cell.height - self._start_row
-        if self._height is None or relative_height < self._height:
-            self._height = relative_height
-        return True
-
-    def get_all_cells(self):
-        """
-        A generator which returns all cells within the row. I use a generator
-        since I mainly use this in for loops, and it's more memory efficient
-        and code efficient with a generator.
-        """
-        for cell in self._cells:
-            yield cell
-
-    def get_all_cells_taller_than_this_row(self):
-        """
-        A generator that gets all cells that are taller than this row (which
-        means they span multiple rows).
-        """
-        for cell in self._cells:
-            if cell.start_row + cell.height > self._start_row + self._height:
-                yield cell
-
-    def get_all_cells_starting_at_this_row(self):
-        """
-        A generator that gets all cells that start at this row (which means
-        they are not spanning from another row).
-        """
-        for cell in self._cells:
-            if cell.start_row == self._start_row:
-                yield cell
-
-    def get_cell_starting_at_this_row_at_column(self, column):
-        """
-        Returns the cell (or None if no cell is found) that starts in this row,
-        at the column specified.
-        """
-        for cell in self.get_all_cells_starting_at_this_row():
-            if cell.start_col == column:
-                return cell
-            elif cell.start_col > column:
-                break
-        return None
-
-    @property
-    def height(self):
-        """
-        Returns the height (in number of characters) of this row. The height is
-        equal to the height of the shortest cell in this row.
-        """
-        return self._height
-
-    @property
-    def start_row(self):
-        """
-        The index of the line in the block at which this row starts.
-        """
-        return self._start_row
-
-    @property
-    def end_row(self):
-        """
-        The index of the line in the block at which this row ends. This is
-        equal to the starting row plus the height.
-        """
-        return self._start_row + self._height
-
-    @property
-    def start_col(self):
-        """
-        The column in the block at which this row starts. If a cell starts at
-        this row, that cell's start column is returned. Otherwise, the furthest
-        right connected cell's (starting from the left) end column is returned.
-        """
-        if len(self._cells) == 0:
-            return 0
-        left_cell = None
-        for cell in self._cells:
-            if cell.start_row == self.start_row:
-                return cell.start_col
-            if left_cell is None or left_cell.end_col == cell.start_col:
-                left_cell = cell
-            else:
-                break
-        return left_cell.end_col
-
-    @property
-    def end_col(self):
-        """
-        Returns the ending column for this row. The ending column is equal to
-        the last cell's ending column.
-        """
-        if len(self._cells) == 0:
-            return 0
-        return self._cells[-1].end_col
-
-
-class GridTable(object):
-    """
-    A grid table in its entirity. The start row and start column should be 0, 0
-    but can be set differently depending on the block. The width and height are
-    how many characters wide and high the table is.
-    """
-
-    def __init__(self, start_row, start_col, height, width, first_row_header=False):
-        self._rows = [GridTableRow(start_row, is_header=first_row_header)]
-        self._start_row = start_row
-        self._start_col = start_col
-        self._width = width
-        self._height = height
-
-    def new_row(self, is_header=False, header_location=-1):
-        """
-        Creates a new row which starts at the end of the previous row. Any
-        cells that are larger than the height of this row are added to the new
-        row.
-        """
-        self._rows.append(GridTableRow(self._rows[-1].end_row, is_header))
-        for cell in self._rows[-2].get_all_cells_taller_than_this_row():
-            cell.rowspan += 1
-            self._rows[-1].add_cell(cell)
-        return self._rows[-1].start_row, self._rows[-1].start_col
-
-    def add_cell(self, cell):
-        """
-        Adds a cell to the last row in the table.
-        """
-        return self._rows[-1].add_cell(cell)
-
-    def get_all_rows(self):
-        """
-        A generator that returns all rows in the table.
-        """
-        for row in self._rows:
-            yield row
-
-    def get_all_cells_starting_at_column(self, column):
-        """
-        A generator which yields all cells in all rows that start at a specific
-        column.
-        """
-        for row in self._rows:
-            cell = row.get_cell_starting_at_this_row_at_column(column)
-            if cell is not None:
-                yield cell
-
-    def calculate_colspans(self):
-        """
-        After all cells are added to the table, this function will calculate
-        all colspans for all cells in the array. It does this by walking
-        through all cells and finding each column in which a cell ends, and
-        increasing the colspans of all rows that start before that column and
-        ends after that column by one.
-        """
-        start_col = self._start_col
-        end_col = self.end_col
-        cells = []
-        while start_col < end_col:
-            new_cells = list(self.get_all_cells_starting_at_column(start_col))
-            for cell in new_cells:
-                if cell not in cells:
-                    cells.append(cell)
-            for cell in cells:
-                if cell.end_col < end_col:
-                    end_col = cell.end_col
-            for i in range(len(cells) - 1, -1, -1):
-                if cells[i].end_col > end_col:
-                    cells[i].colspan += 1
-                else:
-                    del cells[i]
-            start_col = end_col
-            end_col = self.end_col
-
-    @property
-    def start_row(self):
-        """
-        Returns the index of the row (in number of characters) that the table
-        starts at.
-        """
-        return self._start_row
-
-    @property
-    def start_col(self):
-        """
-        Returns the index of the column (in number of characters) that the
-        table starts at.
-        """
-        return self._start_col
-
-    @property
-    def width(self):
-        """
-        Returns the width (in number of characters) of the table.
-        """
-        return self._width
-
-    @property
-    def height(self):
-        """
-        Returns the height (in number of characters) of the table.
-        """
-        return self._height
-
-    @property
-    def end_row(self):
-        """
-        Returns the index of the row (in number of characters) that the table
-        ends at. It is equal to the starting row plus the height.
-        """
-        return self._start_row + self._height
-
-    @property
-    def end_col(self):
-        """
-        Returns the index of the column (in number of characters) that the
-        table ends at. It is equal to the starting row plus the height.
-        """
-        return self._start_col + self._width
-
-    @property
-    def has_header(self):
-        return self._rows[0].is_header
-
-
-class GridTableProcessor(markdown.blockprocessors.BlockProcessor):
-    """
-    The markdown block processor used to parse a grid table. A malformed grid
-    table is generated as a block of text instead of being removed.
-    """
-    _header_regex = r'\+=+(\+=+)*\+'
-
+class GridTableProcessor(BlockProcessor):
     def test(self, parent, block):
-        """
-        This function tests to see if the block of text passed in is a table or
-        not. A table is thus defined as a block of text which has more than 2
-        lines, has a '+-' on both the top and bottom left corners, has a '-+'
-        on both the top an bottom right corners, and has a '|' at the beginning
-        and end of the first and last rows.
-        """
-        rows = []
-        Started = False
-        InTable = True
-        for r in block.split('\n'):
-            if not Started and (r.startswith('+') or r.startswith('|')):
-                Started = True
-            if Started and InTable and (r.startswith('+') or r.startswith('|')):
-                rows.append(r.strip())
-            elif Started:
-                InTable = False
-        val = (len(rows) > 2 and
-               rows[0][:2] == "+-" and rows[0][-2:] == "-+" and
-               rows[1][0] == '|' and rows[1][-1] == '|' and
-               rows[-2][0] == '|' and rows[-2][-1] == '|' and
-               rows[-1][:2] == "+-" and rows[-1][-2:] == "-+")
-        return val
+        return bool(extract_table_line_of(block))
 
     def run(self, parent, blocks):
-        """
-        Starts parsing the block of text which contains the table. It first
-        finds the header (if one exists) as ended by a row of '=' characters.
-        It then gets all the cells in the body (as a separate table from the
-        header; this needs to be changed). If getting either the header or the
-        body fails, the table is instead rendered as a block of text.
-        Otherwise, it is rendered as a table with the appropriate row and
-        column spans.
-        """
-        block = blocks.pop(0)
-        before = []
-        rows = []
-        after = []
-        Started = False
-        InTable = True
-        for r in block.split('\n'):
-            if not Started:
-                if (r.startswith('+') or r.startswith('|')):
-                    Started = True
-                else:
-                    before.append(r)
-            if Started and InTable and (r.startswith('+') or r.startswith('|')):
-                rows.append(r.strip())
-            elif Started:
-                InTable = False
-                after.append(r)
 
-        if len(before) > 0:
-            self.parser.parseBlocks(parent, ["\n".join(before)])
-
-        try:
-            orig_block = rows
-            body_block = orig_block[:]
-            success, body = self._get_all_cells(body_block)
-            if not success:
-                self._render_as_block(parent, '\n'.join(orig_block))
-                return
-            pr = etree.SubElement(parent, 'div')
-            pr.set('class', "table-wrapper")
-            table = etree.SubElement(pr, 'table')
-            self._render_rows(body, table)
-            if len(after) > 0:
-                blocks.insert(0, "\n".join(after))
-        except:
-            blocks.insert(0, block)
+        # Extract tables lines of first block
+        m = extract_table_line_of(blocks.pop(0))
+        if not m:  # pragma: no cover
+            # Should not happen
             return False
+        lines, rest, has_header = m
 
-    def _render_as_block(self, parent, text):
-        """
-        Renders a table as a block of text instead of a table. This isn't done
-        correctly, since the serialized items are serialized again, but I'll
-        fix this later.
-        """
-        trans_table = [(' ', '&nbsp;'), ('<', '&lt;'), ('>', '&gt;'), ('&', '&amp;')]
-        for from_char, to_char in trans_table:
-            text = text.replace(from_char, to_char)
-        div = etree.SubElement(parent, 'div')
-        div.set('class', 'grid-table-error')
-        div.text = text
+        # Compute columns starting positions
+        lines_info = compute_columns_starting_positions(lines)
 
-    def _header_exists(self, block):
-        """
-        Checks if a header exists. A header is defined by a row of '='
-        characters.
-        """
-        for row, i in zip(block, range(0, len(block))):
-            if re.match(self._header_regex, row):
-                return True, i, self._get_header(block)
-        return False, -1, block
+        # We will generate a table
 
-    def _get_header(self, block):
-        """
-        Separates the header of the table from the body, putting them both into
-        their own separate blocks and replacing the header separator with a
-        normal separator.
-        """
-        block = block[:]
-        for i in range(0, len(block)):
-            if re.match(self._header_regex, block[i]):
-                block[i] = block[i].replace('=', '-')
-                break
-        return block
+        table_content = extract_table_content(lines, lines_info, has_header)
+        generate_table(self.parser, table_content, parent)
 
-    def _render_rows(self, table, parent):
-        """
-        Renders all rows in a table into 'tr' elements, and all cells into all
-        'td' elements.
-        """
-        header_cell_tag = 'th'
-        body_cell_tag = 'td'
-        rendered = []
-        if table.has_header:
-            header_subparent = etree.SubElement(parent, 'thead')
-            body_subparent = etree.SubElement(parent, 'tbody')
-        else:
-            header_subparent = body_subparent = etree.SubElement(parent, 'tbody')
-        for row in table.get_all_rows():
-            if table.has_header and row.is_header:
-                subparent = header_subparent
-            else:
-                subparent = body_subparent
-            if len(list(row.get_all_cells())) != 0:
-                tr = etree.SubElement(subparent, 'tr')
-            for cell in row.get_all_cells():
-                if cell not in rendered:
-                    if row.is_header:
-                        cell_element = etree.SubElement(tr, header_cell_tag)
-                    else:
-                        cell_element = etree.SubElement(tr, body_cell_tag)
-                    rendered.append(cell)
-                    self.parser.parseBlocks(cell_element, cell.text.split('\n\n'))
-                    cell_element.set('rowspan', str(cell.rowspan))
-                    cell_element.set('colspan', str(cell.colspan))
+        # If remaining lines, process it
+        if rest:
+            blocks.insert(0, "\n".join(rest))
 
-    def _get_all_cells(self, block):
-        """
-        Finds all cells within the block and assembles them into a table
-        object. Not all rows in this table will have the same length due to
-        the possibility that cells span multiple rows. Returns the success or
-        failure of finding all cells and the table object itself. If this
-        fails, that means that the input was malformed.
-        """
-        start_row = start_col = 0
-        header_exists, header_location, block = self._header_exists(block)
-        table = GridTable(start_row, start_col, len(block) - 1, len(block[0]) - 1, header_exists)
-        while start_row < len(block) - 1:
-            new_cell = self._scan_cell(block, start_row, start_col)
-            if new_cell is None or not table.add_cell(new_cell):
-                return False, table
-            if start_col + new_cell.width >= len(block[start_row]) - 1:
-                is_header = header_exists and table._rows[-1].end_row < header_location
-                start_row, start_col = table.new_row(is_header=is_header)
-            else:
-                start_col += new_cell.width
-        table.calculate_colspans()
-        return True, table
 
-    def _scan_cell(self, block, start_row, start_col):
-        """
-        Starts scanning for a specific cell by checking the starting character
-        to make sure it's valid. It scans in the order right, down, left, up
-        to see if it can get back to its starting position. If it can, a new
-        GridTableCell is returned, and if it can't, None is returned.
-        """
-        if block[start_row][start_col] != '+':
-            return None
-        return self._scan_right(block, start_row, start_col)
+def makeExtension(*args, **kwargs):
+    return GridTableExtension(*args, **kwargs)
 
-    def _scan_right(self, block, start_row, start_col):
-        """
-        Scans right until it gets to a '+' sign. It then starts scanning down
-        to see if it can find a complete path, if it can't, it continues
-        scanning right. Otherwise, it returns the cell it found.
-        """
-        width = 1
-        while start_col + width < len(block[start_row]):
-            cur_col = start_col + width
-            if block[start_row][cur_col] == '+':
-                result = self._scan_down(block, start_row, start_col, cur_col)
-                if result is None:
-                    width += 1
-                    continue
-                return result
-            elif block[start_row][cur_col] == '-':
-                width += 1
-            else:
-                break
+
+###############################
+# Generic utilities functions #
+###############################
+
+
+def pairwise(iterable):
+    """s -> (s0,s1), (s1,s2), (s2, s3), ...
+    From itertools documentation
+    """
+    a, b = tee(iterable)
+    next(b, None)
+    return zip(a, b)
+
+
+def find_all(txt, chr):
+    """Extract all position of a character in a string"""
+    return tuple(i for i, ltr in enumerate(txt) if ltr in chr)
+
+
+def is_first_item():
+    """A iterator that return True and then always False"""
+    return chain([True], repeat(False))
+
+
+###########################
+# Lines testing functions #
+###########################
+
+
+# RE of line part. Ex: "+----+---+-------+"
+line_part = r'\+\-[-+]+\-\+'
+RE_line_part = re.compile(line_part)
+# REfor a plain line (like line part but match the full line)
+RE_line_plain = re.compile(r'^{}$'.format(line_part))
+# RE of header part. Ex: "+====+===+=======+"
+RE_line_header = re.compile(r'^\+=[=+]+=\+$')
+# RE of main line (all others)
+RE_line_main = re.compile(r'^((\+)|(\|)).+((\|)|(\+))$')
+
+
+def is_plain_line(line):
+    """Test if provided line is a plain line"""
+    return bool(RE_line_plain.match(line))
+
+
+def is_header_line(line):
+    """Test if provided line is a header line"""
+    return bool(RE_line_header.match(line))
+
+
+def is_main_line(line):
+    """Test if provided line is a main line"""
+    return bool(RE_line_main.match(line))
+
+
+def has_plain_line_part(line):
+    """Test if provided line contain part of plain line"""
+    return bool(RE_line_part.search(line))
+
+
+def extract_table_line_of(block):
+    """Extract all lines from a block or ``None`` if it is not a table.
+
+    Return values : lines of table, rest of the content and if the table is an header.
+    """
+
+    # Speedy catcher : a block must start with "+-"
+    if not block.startswith("+-"):
         return None
 
-    def _scan_down(self, block, start_row, start_col, cur_col):
-        """
-        Scans down until it gets to a '+' sign. It then starts scanning left
-        to see if it can find a complete path back to the starting position.
-        If it can, then it returns the cell it found, otherwise, it returns
-        None.
-        """
-        height = 1
-        while start_row + height < len(block):
-            cur_row = start_row + height
-            if block[cur_row][cur_col] == '+':
-                result = self._scan_left(block, start_row, start_col, cur_col, cur_row)
-                if result is None:
-                    height += 1
-                    continue
-                return result
-            elif block[cur_row][cur_col] == '|':
-                height += 1
-            else:
-                break
+    # At least 3 lines required
+    lines = block.split('\n')
+    if len(lines) < 3:
         return None
 
-    def _scan_left(self, block, start_row, start_col, cur_col, cur_row):
-        """
-        Scans left until it gets to a '+' sign. It then starts scanning up to
-        verify that the path found is a complete cell and that it gets back to
-        the starting position. If it does, it returns the cel. Otherwise it
-        returns None.
-        """
-        width = 1
-        while cur_col - width >= 0:
-            check_col = cur_col - width
-            if block[cur_row][check_col] == '+':
-                result = self._scan_up(block, start_row, start_col, cur_col, cur_row, check_col)
-                if result is None:
-                    width += 1
-                    continue
-                return result
-            elif block[cur_row][check_col] == '-':
-                width += 1
-            else:
-                break
+    # Check first line
+    if not is_plain_line(lines[0]):
         return None
 
-    def _scan_up(self, block, start_row, start_col, cur_col, cur_row, check_col):
-        """
-        Scans up until it gets to a '+' sign. If the '+' sign is in the
-        starting position, it returns a new GridTableCell. Otherwise, it
-        scans right again to verify it doesn't connect to any new paths and
-        create a new cell. If it does, then it returns None, since its
-        malformed. Otherwise it continues scanning up.
-        """
-        height = 1
-        while cur_row - height >= 0:
-            check_row = cur_row - height
-            if block[check_row][check_col] == '+':
-                if start_row == check_row and start_col == check_col:
-                    cell = GridTableCell(start_row, start_col, cur_col - start_col, height)
-                    cell.text = self._gather_text(block, cell.start_row, cell.start_col, cell.end_row, cell.end_col)
-                    return cell
-                result = self._scan_right(block, check_row, check_col)
-                if result is not None:
-                    return None
-                height += 1
-                continue
-            elif block[check_row][check_col] == '|':
-                height += 1
-            else:
-                break
-        return None
+    # Extract all table lines
+    content = [lines[0]]
+    has_header = False
+    line_length = len(lines[0])
 
-    def _gather_text(self, block, start_row, start_col, end_row, end_col):
-        """
-        Gathers the text within the cell defined by the start row, start
-        column, end row, and end column and returns them as one string.
-        """
-        text = []
-        for i in range(start_row + 1, end_row):
-            text.append(block[i][start_col + 1:end_col].rstrip())
-        return '\n'.join(self._unindent_one_level(text))
-
-    def _unindent_one_level(self, text):
-        """
-        Unindents the text one level, up to the index of the farthest-left
-        non-blank character in the text.
-        """
-        chars = 0
-        for i in range(0, len(max(text, key=len))):
-            for line in text:
-                if i < len(line) and line[i] != ' ':
-                    break
-            else:
-                chars += 1
-                continue  # This skips the break below
+    for line in lines[1:]:
+        # All lines must have the same length
+        if len(line) != line_length:
             break
-        for i in range(0, len(text)):
-            text[i] = text[i][chars:]
-        return text
+
+        # There can have only one header
+        is_header = is_header_line(line)
+        if has_header and is_header:
+            break
+        has_header = has_header or is_header
+
+        # If it like a table line, add it
+        if is_header or is_main_line(line):
+            content.append(line)
+        else:
+            break
+
+    # Last line should be a plain line
+    while len(content) > 0:
+        if not is_plain_line(content[-1]):
+            content.pop()
+        else:
+            break
+
+    # At least 3 lines required
+    if len(content) < 3:
+        return None
+
+    return content, lines[len(content):], has_header
+
+
+########################################
+# Columns starting position extraction #
+########################################
+
+
+def compute_columns_starting_positions(lines):
+    """Compute starting position of each columns of the table (=index position)"""
+
+    lines_info = []
+    stack_lines = []
+    # Stack all main lines and compute their position at once.
+    for line in lines:
+        if is_header_line(line) or has_plain_line_part(line):
+            if len(stack_lines) > 0:
+                lines_info.append(compute_main_lines_columns_starting_positions(stack_lines))
+                stack_lines = []
+            lines_info.append(compute_plain_line_columns_starting_positions(line))
+        else:
+            stack_lines.append(line)
+
+    ret = merge_columns_starting_positions(lines_info)
+    return ret
+
+
+def compute_plain_line_columns_starting_positions(line):
+    """Extract all starting columns position in line with plain line part"""
+    return find_all(line, '+|')
+
+
+def compute_main_lines_columns_starting_positions(lines):
+    """Extract all starting columns position in main lines"""
+    column_info = (find_all(line, '|') for line in lines)
+    return merge_columns_starting_positions(column_info, strict=False)
+
+
+def merge_columns_starting_positions(starting_positions, strict=True):
+    """merging all lines starting positions"""
+    starting_positions = tuple(set(starting_positions))
+
+    # If only one is provided, or all equals, return it
+    if len(starting_positions) == 1:
+        return starting_positions[0]
+    # If more than two lines, reduce by merging it two-by-two
+    elif len(starting_positions) > 2:
+        return reduce(lambda e1, e2: merge_columns_starting_positions((e1, e2), strict=strict), starting_positions)
+    # In strict mode, all starting position are keep
+    elif strict:
+        return tuple(sorted(set(chain.from_iterable(starting_positions))))
+    # In non-strict mode, keep only position that match (bigger ones)
+    else:
+        return tuple(sorted(set(starting_positions[0]) & set(starting_positions[1])))
+
+
+####################
+# Table generation #
+####################
+
+
+# Table constructor : A small pseudo-ast class hierarchy helping create tables.
+
+class TableContent(object):
+    """Table content is the root object. Contains parts. There should have one or two part (header and main content)"""
+
+    def __init__(self, lines_info):
+        self.parts = []
+        self.lines_info = lines_info
+        self.add_part()
+
+    def add_part(self):
+        self.parts.append(TablePart(self.lines_info))
+
+    def __iter__(self):
+        return iter(self.parts)
+
+    @property
+    def last_part(self):
+        return self.parts[-1]
+
+    @property
+    def raw_content(self):
+        return [part.raw_content for part in self]
+
+
+class TablePart(object):
+    """Table part. Contains rows. There can have 1+ rows. Root logic : have the two mains update functions."""
+
+    def __init__(self, lines_info):
+        self.rows = []
+        self.lines_info = lines_info
+        self.add_row()
+
+    def add_row(self):
+        self.rows.append(TableRow(self.lines_info))
+
+    def remove_last_row(self):
+        self.rows.pop()
+
+    @property
+    def last_row(self):
+        return self.rows[-1]
+
+    def __iter__(self):
+        return iter(self.rows)
+
+    def update_with_main_line(self, line, is_end_line):
+        """Main update function : update last row according to a line. If char at column limits are not authorized one,
+        merge the two columns"""
+
+        merge_chars = "+|" if is_end_line else "|"
+
+        new_cells = [self.last_row.cells[0]]
+        for cell in self.last_row.cells[1:]:
+            # Only cells with rowspan equals can be merged
+            if cell.rowspan == new_cells[-1].rowspan and line[cell.start_position - 1] not in merge_chars:
+                new_cells[-1].merge_with(cell)
+            else:
+                new_cells.append(cell)
+        self.last_row.cells = new_cells
+
+    def update_with_part_line(self, line):
+        """Update rows with line part : update rowspan by merging rows"""
+        remaining_cells = []
+
+        for cell in self.last_row:
+            part_line = line[cell.start_position - 1:cell.end_position + 1]
+            # All limitation that did not match plain line need to be merged, keep it for next row
+            if not is_plain_line(part_line):
+                cell.lines.append(line[cell.start_position:cell.end_position])
+                cell.rowspan += 1
+                remaining_cells.append(cell)
+        # Add row and keep the previous cells witch need to be merged
+        self.add_row()
+        for remaining_cell in remaining_cells:
+            self.last_row.cells = list(chain(
+                [cell for cell in self.last_row if cell.end_position < remaining_cell.start_position],
+                [remaining_cell],
+                [cell for cell in self.last_row if cell.start_position > remaining_cell.end_position]))
+
+    @property
+    def raw_content(self):
+        # Keep cells only in row where it first happen
+        previous_row = []
+        content = []
+        for new_row in (row.raw_content for row in self):
+            content.append([c for c in new_row if c not in previous_row])
+            previous_row = new_row
+        return content
+
+
+class TableRow(object):
+    """Table row : contain cells"""
+
+    def __init__(self, lines_info):
+        self.lines_info = lines_info
+        self.cells = [TableCell(i1 + 1, i2) for i1, i2 in pairwise(lines_info)]
+
+    def update_content(self, line):
+        for cell in self:
+            cell.lines.append(line[cell.start_position:cell.end_position])
+
+    def __iter__(self):
+        return iter(self.cells)
+
+    @property
+    def raw_content(self):
+        return [cell.raw_content for cell in self]
+
+
+class TableCell(object):
+    """Table cells : contain lines of text"""
+
+    def __init__(self, start_position, end_position):
+        self.start_position = start_position
+        self.end_position = end_position
+        self.colspan = 1
+        self.rowspan = 1
+        self.lines = []
+
+    def merge_with(self, other):
+        self.end_position = other.end_position
+        self.colspan += other.colspan
+        self.lines = ["{}|{}".format(l1, l2) for l1, l2 in zip(self.lines, other.lines)]
+
+    @property
+    def raw_content(self):
+        return RawCell("\n".join(l.strip() for l in self.lines), self.colspan, self.rowspan)
+
+
+# Describe a table cell
+RawCell = namedtuple('Cell', 'content colspan rowspan')
+
+
+def extract_table_content(lines, lines_info, has_header):
+    """Extract table content : return raw table content with colspan/rowspan information for each cells."""
+    # Create a table constructor
+    table = TableContent(lines_info)
+
+    for is_first_line, line in zip(is_first_item(), lines):
+        # Check line type
+        match_header = has_header and is_header_line(line)
+        is_end_line = match_header or has_plain_line_part(line)
+
+        if is_end_line:
+            # It is a header, a plain line or a line with plain line part.
+
+            # First update with main line to update last row according to new line separation
+            table.last_part.update_with_main_line(line, is_end_line)
+
+            # Update table part (will always create a new row)
+            if not is_first_line:
+                if match_header:
+                    table.add_part()
+                elif is_plain_line(line):
+                    table.last_part.add_row()
+                else:
+                    table.last_part.update_with_part_line(line)
+
+            # New raw lines are always created with global line information, need to be update
+            table.last_part.update_with_main_line(line, is_end_line)
+
+        else:
+            # It is a plain line, update current row and add line content.
+            table.last_part.update_with_main_line(line, is_end_line)
+            table.last_part.last_row.update_content(line)
+
+    # Table always end with a plain line, need to remove the last one
+    table.last_part.remove_last_row()
+
+    # Return a raw cleaned content
+    return table.raw_content
+
+
+def generate_table(parser, table_content, parent):
+    """Generate table html element from extracted table content"""
+    pr = etree.SubElement(parent, 'div')
+    pr.set('class', "table-wrapper")
+    table = etree.SubElement(pr, 'table')
+
+    has_header = len(table_content) > 1
+
+    for i, part in enumerate(table_content):
+        if has_header and i == 0:
+            root = etree.SubElement(table, 'thead')
+        else:
+            root = etree.SubElement(table, 'tbody')
+        for row in part:
+            tr = etree.SubElement(root, 'tr')
+            for content, colspan, rowspan in row:
+                td = etree.SubElement(tr, 'th' if has_header and i == 0 else 'td')
+                td.set('rowspan', str(rowspan))
+                td.set('colspan', str(colspan))
+                parser.parseBlocks(td, content.split('\n\n'))
+
+    return pr
