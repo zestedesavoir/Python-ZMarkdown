@@ -1,25 +1,10 @@
-"""
-Fenced Code Extension for Python Markdown
-=========================================
-
-This extension adds Fenced Code Blocks to Python-Markdown.
-
-See <https://pythonhosted.org/Markdown/extensions/fenced_code_blocks.html>
-for documentation.
-
-Original code Copyright 2007-2008 [Waylan Limberg](http://achinghead.com/).
-
-
-All changes Copyright 2008-2014 The Python Markdown Project
-
-License: [BSD](http://www.opensource.org/licenses/bsd-license.php)
-"""
-
-from __future__ import absolute_import
 from __future__ import unicode_literals
-from . import Extension
-from ..preprocessors import Preprocessor
-from .codehilite import CodeHilite, CodeHiliteExtension, parse_hl_lines
+from markdown import Extension
+from markdown.blockprocessors import BlockProcessor
+from markdown.extensions.codehilite import CodeHilite, CodeHiliteExtension, parse_hl_lines
+import xml.etree.ElementTree as ET
+
+from markdown import util
 import re
 
 
@@ -28,98 +13,158 @@ class FencedCodeExtension(Extension):
         """ Add FencedBlockPreprocessor to the Markdown instance. """
         md.registerExtension(self)
 
-        md.preprocessors.add('fenced_code_block',
-                             FencedBlockPreprocessor(md),
-                             ">normalize_whitespace")
+        md.parser.blockprocessors.add('fenced_code_block', FencedBlockProcessor(md), "_begin")
 
 
-class FencedBlockPreprocessor(Preprocessor):
-    FENCED_BLOCK_RE = re.compile(r'''
-(?P<fence>^(?:~{3,}|`{3,}))[ ]*         # Opening ``` or ~~~
-(\{?\.?(?P<lang>[a-zA-Z0-9_+-]*))?[ ]*  # Optional {, and lang
-# Optional highlight lines, single- or double-quote-delimited
-((?<!\n)(?P<arglist>.*?))[ ]*
-}?[ ]*\n                                # Optional closing }
-(?P<code>.*?)(?<=\n)
-(?P=fence)[ ]*$''', re.MULTILINE | re.DOTALL | re.VERBOSE)
+class FencedBlockProcessor(BlockProcessor):
+    STARTING_RE = r'(?P<fence>^(?:~{3,}|`{3,}))'
+    LANG_RE = r'(\{?\.?(?P<lang>[a-zA-Z0-9_+-]*))?'
+    ARG_ELEMENT = r'(([a-z_]+[ ]*=[ ]*)+(((?P<quot>(")|(\'))([0-9\- ]+)(?P=quot))|([0-9]+))[ ]*)'
+    ARG_LIST_RE = r'(?P<arglist>' + ARG_ELEMENT + r'*)'
     CODE_WRAP = '<pre><code%s>%s</code></pre>'
     LANG_TAG = ' class="%s"'
 
-    HL_LINES_RE = re.compile(r'''hl_lines[ ]*=[ ]*(?P<quot>"|')(?P<hl_lines>.*?)(?P=quot)''')
-    LINENOSTART_RE = re.compile(r'''linenostart[ ]*=[ ]*(?P<linenostart>[0-9]*)''')
-
     def __init__(self, md):
-        super(FencedBlockPreprocessor, self).__init__(md)
-
+        BlockProcessor.__init__(self, md.parser)
+        self.re = re.compile(
+                r'(^|\n)' + self.STARTING_RE + r'[ ]*' +  # Opening ``` or ~~~
+                self.LANG_RE + r'(?P<interspace>[ ]*)' +  # Optional {, and lang
+                self.ARG_LIST_RE +  # Optional arg list
+                r'}?[ ]*(\n|$)', re.MULTILINE | re.UNICODE)
         self.checked_for_codehilite = False
         self.codehilite_conf = {}
+        self.md = md
 
-    def run(self, lines):
-        """ Match and store Fenced Code Blocks in the HtmlStash. """
+    def test(self, parent, block):
+        return bool(self.re.search(block))
+
+    def run(self, parent, blocks):
+        first_block = blocks[0]
+        m = self.re.search(first_block)
+        if not m:  # pragma: no cover
+            # Run should only be fired if test() return True, then this should never append
+            # Do not raise an exception because exception should never be generated.
+            return False
+        gd = m.groupdict()
+
+        fence = gd['fence']
+        lang = gd['lang']
+        arglist = gd['arglist']
+        interspace = gd['interspace']
+        if lang and arglist and len(interspace) == 0:
+            arglist = lang+arglist
+            lang = ""
+        # Parse arguments
+        linenostart = (1,)
+        hl_lines = ()
+        for m_arg in re.compile(self.ARG_ELEMENT).finditer(arglist):
+            kind, args = m_arg.group(0).split("=")
+            args = args.strip()
+            if args[0] in """"'""":
+                elements = set()
+                for e in args[1:-1].split(" "):
+                    e = e.strip()
+                    if e:
+                        if "-" in e:
+                            e1, e2 = e.split("-")
+                            elements.update(range(int(e1), int(e2) + 1))
+                        else:
+                            elements.add(int(e))
+                elements = tuple(sorted(elements))
+            else:
+                elements = (int(args),)
+            if kind == "linenostart":
+                linenostart = elements
+            elif kind == "hl_lines":
+                hl_lines = elements
+            else:
+                # unknown argument
+                return False
+        linenostart, = linenostart
+
+        # Search end
+        re_end = re.compile(r'(^|\n)' + re.escape(fence) + r'[ ]*(\n|$)')
+
+        start_block = (0, m.start(), m.end())
+        end_block = (-1, -1, -1)
+        for i in range(len(blocks)):
+            if i == 0:
+                txt = first_block[m.end() + 1:]
+                dec = m.end() +1
+            else:
+                txt = blocks[i]
+                dec = 0
+            m_end = re_end.search(txt)
+            if m_end:
+                end_block = (i, m_end.start() + dec, m_end.end() + dec)
+                break
+
+        if end_block[0] < 0:
+            # Block not ended, do not transform
+            return False
+
+        # Split blocks into before/content aligned/ending
+        before = first_block[:start_block[1]]
+        content = []
+        after = blocks[end_block[0]][end_block[2]:]
+
+        for i in range(start_block[0], end_block[0] + 1):
+            block = blocks.pop(0)
+
+            if i == start_block[0]:
+                start_index = start_block[2]
+            else:
+                start_index = 0
+
+            if i == end_block[0]:
+                end_index = end_block[1]
+            else:
+                end_index = len(block)
+
+            content.append(block[start_index: end_index+1])
+            if i == end_block[0]:
+                break
+
+        content = "\n\n".join(content)
 
         # Check for code hilite extension
         if not self.checked_for_codehilite:
-            for ext in self.markdown.registeredExtensions:
+            for ext in self.md.registeredExtensions:
                 if isinstance(ext, CodeHiliteExtension):
                     self.codehilite_conf = ext.config
                     break
 
             self.checked_for_codehilite = True
 
-        text = "\n".join(lines)
-        while 1:
-            m = self.FENCED_BLOCK_RE.search(text)
-            if m:
-                lang = ''
-                not_error_parse_lang = (not m.group('arglist') or
-                                        (m.group('arglist') and
-                                         len(m.group('arglist')) > 0 and
-                                         m.group('arglist')[0] != "="))
-                if m.group('lang') and not_error_parse_lang:
-                    lang = self.LANG_TAG % m.group('lang')
+        if before:
+            self.parser.parseBlocks(parent, [before])
 
-                al = None
-                if m.group('arglist'):
-                    al = m.group('arglist')
-                if not not_error_parse_lang and al:
-                    al = m.group('lang') + al
+        # If config is not empty, then the codehighlite extension
+        # is enabled, so we call it to highlight the code
+        if self.codehilite_conf:
+            highliter = CodeHilite(content,
+                                   linenums=self.codehilite_conf['linenums'][0],
+                                   guess_lang=self.codehilite_conf['guess_lang'][0],
+                                   css_class=self.codehilite_conf['css_class'][0],
+                                   style=self.codehilite_conf['pygments_style'][0],
+                                   lang=(lang or None),
+                                   noclasses=self.codehilite_conf['noclasses'][0],
+                                   hl_lines=hl_lines,
+                                   linenostart=linenostart
+                                   )
 
-                # If config is not empty, then the codehighlite extension
-                # is enabled, so we call it to highlight the code
-                if self.codehilite_conf:
-                    hll = ""
-                    linenost = 1
-                    if al:
-                        mhl = self.HL_LINES_RE.search(al)
-                        mln = self.LINENOSTART_RE.search(al)
-                        if mhl and mhl.group('hl_lines'):
-                            hll = mhl.group('hl_lines')
-                        if mln and mln.group('linenostart'):
-                            linenost = mln.group('linenostart')
-
-                    highliter = CodeHilite(m.group('code'),
-                                           linenums=self.codehilite_conf['linenums'][0],
-                                           guess_lang=self.codehilite_conf['guess_lang'][0],
-                                           css_class=self.codehilite_conf['css_class'][0],
-                                           style=self.codehilite_conf['pygments_style'][0],
-                                           lang=(m.group('lang') or None),
-                                           noclasses=self.codehilite_conf['noclasses'][0],
-                                           hl_lines=parse_hl_lines(hll),
-                                           linenostart=linenost
-                                           )
-
-                    code = highliter.hilite()
-                else:
-                    code = self.CODE_WRAP % (lang,
-                                             self._escape(m.group('code')))
-
-                placeholder = self.markdown.htmlStash.store(code, safe=True)
-                text = '%s\n%s\n%s' % (text[:m.start()],
-                                       placeholder,
-                                       text[m.end():])
+            code = highliter.hilite()
+        else:
+            if lang:
+                cls_lang = self.LANG_TAG % lang
             else:
-                break
-        return text.split("\n")
+                cls_lang = ''
+            code = self.CODE_WRAP % (cls_lang, self._escape(content))
+
+        div_wrapper = util.etree.SubElement(parent, 'div')
+        div_wrapper.text = util.RawHTMLString(code)
+        if after:
+            blocks.insert(0, after)
 
     def _escape(self, txt):
         """ basic html escaping """

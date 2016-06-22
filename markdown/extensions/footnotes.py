@@ -183,14 +183,18 @@ class FootnoteBlockprocessor(BlockProcessor):
             if m:
                 fn, _i = self.detectTabbed(lines[i + 1:])
                 fn.insert(0, m.group(2))
-                i += _i - 1  # skip past footnote
+                i += _i #- 1  # skip past footnote
                 self.footnotes.setFootnote(m.group(1), "\n".join(fn))
+                break
+            #elif not(lines[i]):
+            #    break
             else:
                 newlines.append(lines[i])
             if len(lines) > i + 1:
                 i += 1
             else:
                 break
+        newlines.extend(lines[i:])
         del blocks[:]
         blocks.extend(("\n".join(newlines[:-1])).split("\n\n"))
 

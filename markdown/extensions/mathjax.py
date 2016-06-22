@@ -45,7 +45,7 @@ class MathJaxExtension(Extension):
     def extendMarkdown(self, md, md_globals):
         # Needs to come before escape matching because \ is pretty important in LaTeX
         md.inlinePatterns.add('mathjax', MathJaxPattern(), '<escape')
-        md.parser.blockprocessors.add('mathjax', MathJaxBlock(md.parser), '_begin')
+        md.parser.blockprocessors.add('mathjax', MathJaxBlock(md.parser), '>reference')
 
 
 def makeExtension(*args, **kwargs):

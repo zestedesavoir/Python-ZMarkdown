@@ -122,6 +122,11 @@ class AtomicString(text_type):
     pass
 
 
+class RawHTMLString(AtomicString):
+    """A string which should not be further processed."""
+    pass
+
+
 class Processor(object):
     def __init__(self, markdown_instance=None):
         if markdown_instance:

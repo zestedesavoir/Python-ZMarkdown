@@ -260,11 +260,14 @@ A paragraph before a fenced code block:
 ~~~
 Fenced code block
 ~~~'''
+        print("-"*20)
+        print(self.md.convert(text))
+        print("-"*20)
         self.assertEqual(
             self.md.convert(text),
             '<p>A paragraph before a fenced code block:</p>\n'
-            '<pre><code>Fenced code block\n'
-            '</code></pre>'
+            '<div><pre><code>Fenced code block\n'
+            '</code></pre></div>'
         )
 
     def testSafeFence(self):
@@ -273,8 +276,8 @@ Fenced code block
         self.md.safeMode = 'replace'
         self.assertEqual(
             self.md.convert(text),
-            '<pre><code>Code\n'
-            '</code></pre>'
+            '<div><pre><code>Code\n'
+            '</code></pre></div>'
         )
 
     def testNestedFence(self):
@@ -287,9 +290,9 @@ Fenced code block
 ~~~~~~~~'''
         self.assertEqual(
             self.md.convert(text),
-            '<pre><code>\n'
+            '<div><pre><code>\n\n'
             '~~~~\n'
-            '</code></pre>'
+            '</code></pre></div>'
         )
 
     def testFencedLanguage(self):
@@ -301,8 +304,8 @@ Fenced code block
 ~~~~'''
         self.assertEqual(
             self.md.convert(text),
-            '<pre><code class="python"># Some python code\n'
-            '</code></pre>'
+            '<div><pre><code class="python"># Some python code\n'
+            '</code></pre></div>'
         )
 
     def testFencedBackticks(self):
@@ -315,9 +318,9 @@ Fenced code block
 `````'''
         self.assertEqual(
             self.md.convert(text),
-            '<pre><code># Arbitrary code\n'
+            '<div><pre><code># Arbitrary code\n'
             '~~~~~ # these tildes will not close the block\n'
-            '</code></pre>'
+            '</code></pre></div>'
         )
 
     def testFencedCodeWithHighlightLines(self):
@@ -339,19 +342,19 @@ line 3
         if self.has_pygments:
             self.assertEqual(
                 md.convert(text),
-                '<div class="codehilite"><pre>'
+                '<div><div class="codehilite"><pre>'
                 '<span></span>'
                 '<span class="hll">line 1\n</span>'
                 'line 2\n'
                 '<span class="hll">line 3\n</span>'
-                '</pre></div>'
+                '</pre></div>\n</div>'
             )
         else:
             self.assertEqual(
                 md.convert(text),
-                '<pre class="codehilite"><code>line 1\n'
+                '<div><pre class="codehilite"><code>line 1\n'
                 'line 2\n'
-                'line 3</code></pre>'
+                'line 3</code></pre></div>'
             )
 
     def testFencedLanguageAndHighlightLines(self):
@@ -379,19 +382,19 @@ line 3
             if self.has_pygments:
                 self.assertEqual(
                     md.convert(text),
-                    '<div class="codehilite"><pre>'
+                    '<div><div class="codehilite"><pre>'
                     '<span></span>'
                     '<span class="hll"><span class="c1">#line 1</span>\n</span>'
                     '<span class="c1">#line 2</span>\n'
                     '<span class="hll"><span class="c1">#line 3</span>\n</span>'
-                    '</pre></div>'
+                    '</pre></div>\n</div>'
                 )
             else:
                 self.assertEqual(
                     md.convert(text),
-                    '<pre class="codehilite"><code class="language-python">#line 1\n'
+                    '<div><pre class="codehilite"><code class="language-python">#line 1\n'
                     '#line 2\n'
-                    '#line 3</code></pre>'
+                    '#line 3</code></pre>\n</div>'
                 )
 
 

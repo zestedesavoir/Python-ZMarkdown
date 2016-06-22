@@ -88,13 +88,13 @@ Par défaut, le texte est bien évidemment aligné à gauche. Comme nous le verr
 Dans les rares cas où vous souhaiteriez centrer volontairement un texte (si l'envie vous prenait d'écrire un poème par exemple), vous pourriez néanmoins utiliser la syntaxe ci-dessous :
 
 ```text
--> Ce texte est centré. <- 
+-> Ce texte est centré. <-
 ```
 
 Le texte est simplement entouré de deux petites flèches (tiret et chevron) de directions inversées. Pour aligner à droite, on utilise deux flèches dirigées vers la droite :
 
 ```text
--> Ce texte est aligné à droite. -> 
+-> Ce texte est aligné à droite. ->
 ```
 
 Il est impossible d'imbriquer des alignements. Cela n'aurait de toute façon pas de sens (comment aligner à droite un texte centré ?).

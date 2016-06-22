@@ -112,7 +112,7 @@ class AlignExtension(markdown.extensions.Extension):
     def extendMarkdown(self, md, md_globals):
         """Modifies inline patterns."""
         md.registerExtension(self)
-        md.parser.blockprocessors.add('align', AlignProcessor(md.parser), '_begin')
+        md.parser.blockprocessors.add('align', AlignProcessor(md.parser), '>reference')
 
 
 def makeExtension(*args, **kwargs):
