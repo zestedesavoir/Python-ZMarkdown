@@ -37,7 +37,6 @@ from .mathjax import MathJaxExtension
 from .customblock import CustomBlockExtension
 from .align import AlignExtension
 from .video import VideoExtension
-from .preprocessblock import PreprocessBlockExtension
 from .emoticons import EmoticonExtension
 from .grid_tables import GridTableExtension
 from .comments import CommentsExtension
@@ -83,9 +82,6 @@ class ZdsExtension(Extension):
             align_ext = AlignExtension()  # Right align and center support
             video_ext = VideoExtension(js_support=self.js_support)  # Video support
 
-            # Preprocess extension
-            preprocess_ext = PreprocessBlockExtension({"preprocess": ("fenced_code_block",)})
-
             gridtable_ext = GridTableExtension()  # Grid Table support
             comment_ext = CommentsExtension(start_tag="<--COMMENT", end_tag="COMMENT-->")  # Comment support
             legend_ext = SmartLegendExtension({"IGNORING_IMG": self.emoticons.values(),
@@ -102,7 +98,6 @@ class ZdsExtension(Extension):
                          'markdown.extensions.footnotes',  # Footnotes support, included in python-markdown
                          # Footnotes place marker can be set with the PLACE_MARKER option
                          'markdown.extensions.tables',  # Tables support, included in python-markdown
-                         'markdown.extensions.fenced_code',
                          # Extended syntaxe for code block support, included in python-markdown
                          CodeHiliteExtension(linenums=True, guess_lang=False),
                          # Code hightlight support, with line numbers, included in python-markdwon
@@ -110,13 +105,14 @@ class ZdsExtension(Extension):
                          kbd_ext,  # Kbd support
                          emo_ext,  # Smileys support
                          video_ext,  # Video support
-                         preprocess_ext,  # Preprocess support
+                         #preprocess_ext,  # Preprocess support
                          gridtable_ext,  # Grid tables support
-                         comment_ext,  # Comment support
                          legend_ext,  # Legend support
                          align_ext,  # Right align and center support
                          dheader_ext,  # Down Header support
                          mathjax_ext,  # Mathjax support
+                         'markdown.extensions.fenced_code',
+                         comment_ext,  # Comment support
                          ])
         md.registerExtensions(exts, {})
         if self.inline:
@@ -125,7 +121,6 @@ class ZdsExtension(Extension):
             md.inlinePatterns.pop("reference")
             md.inlinePatterns.pop("short_reference")
             md.inlinePatterns.pop("linebreak")
-
 
 
 def makeExtension(*args, **kwargs):

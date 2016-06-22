@@ -3,7 +3,7 @@ Si vous avez besoin d'écrire un caractère réservé entrant en conflit avec l'
 Enfin, vous pouvez mettre une partie de votre texte en commentaires en le mettant entre des balises spécifiques :
 
 ```text
-Ceci est mon texte. <--COMMENT Et ceci est une partie commentée. COMMENT--> 
+Ceci est mon texte. <--COMMENT Et ceci est une partie commentée. COMMENT-->
 ```
 
 La partie commentée n'apparaîtra tout simplement pas dans le rendu final.

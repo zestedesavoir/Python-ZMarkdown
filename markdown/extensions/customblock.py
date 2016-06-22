@@ -16,7 +16,7 @@ class CustomBlockExtension(Extension):
         md.registerExtension(self)
 
         for key, value in self.configs.items():
-            md.parser.blockprocessors.add('customblock-' + key, CustomBlockProcessor(md.parser, key, value), '_begin')
+            md.parser.blockprocessors.add('customblock-' + key, CustomBlockProcessor(md.parser, key, value), '>reference')
 
 
 class CustomBlockProcessor(BlockProcessor):

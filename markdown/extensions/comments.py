@@ -16,7 +16,7 @@ class CommentsExtension(Extension):
         md.registerExtension(self)
         md.parser.blockprocessors.add("comments",
                              CommentsBlockProcessor(md, self.getConfig("start_tag"), self.getConfig("end_tag")),
-                             "<reference")
+                             ">fenced_code_block")
 
 
 class CommentsBlockProcessor(BlockProcessor):
@@ -39,6 +39,7 @@ class CommentsBlockProcessor(BlockProcessor):
             m = self.RE.search(text)
             if m:
                 text = "%s%s" % (text[:m.start()], text[m.end():])
+                break
             else:
                 break
         del blocks[:]

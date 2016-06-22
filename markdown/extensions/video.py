@@ -42,7 +42,7 @@ class VideoExtension(markdown.Extension):
                                       klass(md, RE,
                                             self.config["{}_width".format(name)][0],
                                             self.config["{}_height".format(name)][0]),
-                                      "_begin")
+                                      ">reference")
 
     def extendMarkdown(self, md, md_globals):
         self.add_inline(md, 'dailymotion', Dailymotion,

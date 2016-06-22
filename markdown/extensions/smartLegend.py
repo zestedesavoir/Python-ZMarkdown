@@ -294,7 +294,7 @@ class SmartLegendExtension(markdown.extensions.Extension):
     def extendMarkdown(self, md, md_globals):
         md.registerExtension(self)
         md.treeprocessors.add('smart-legend', SmartLegendProcessor(md.parser, self.configs, md), "_end")
-        md.parser.blockprocessors.add('legend-processor', LegendProcessor(md.parser, md, self.configs), "_begin")
+        md.parser.blockprocessors.add('legend-processor', LegendProcessor(md.parser, md, self.configs), ">reference")
 
 
 def makeExtension(configs={}):

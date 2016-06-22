@@ -147,8 +147,10 @@ def _serialize_html(write, elem, qnames, namespaces, format):
     else:
         tag = qnames[tag]
         if tag is None:
+            if not isinstance(text, util.RawHTMLString):
+                text = _escape_cdata(text)
             if text:
-                write(_escape_cdata(text))
+                write(text)
             for e in elem:
                 _serialize_html(write, e, qnames, None, format)
         else:
@@ -161,8 +163,10 @@ def _serialize_html(write, elem, qnames, namespaces, format):
                         k = k.text
                     if isinstance(v, QName):
                         v = qnames[v.text]
-                    else:
+                    elif not isinstance(v, util.RawHTMLString):
                         v = _escape_attrib_html(v)
+                    else:
+                        print("*"*20, k, v)
                     if qnames[k] == v and format == 'html':
                         # handle boolean attributes
                         write(" %s" % v)
@@ -180,7 +184,7 @@ def _serialize_html(write, elem, qnames, namespaces, format):
             else:
                 write(">")
                 if text:
-                    if tag.lower() in ["script", "style"]:
+                    if tag.lower() in ["script", "style"] or isinstance(text, util.RawHTMLString):
                         write(text)
                     else:
                         write(_escape_cdata(text))
@@ -189,7 +193,10 @@ def _serialize_html(write, elem, qnames, namespaces, format):
                 if tag.lower() not in HTML_EMPTY:
                     write("</" + tag + ">")
     if elem.tail:
-        write(_escape_cdata(elem.tail))
+        tail =elem.tail
+        if not isinstance(tail, util.RawHTMLString):
+            tail= _escape_cdata(tail)
+        write(tail)
 
 
 def _write_html(root,
