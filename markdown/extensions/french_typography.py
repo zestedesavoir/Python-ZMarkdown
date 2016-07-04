@@ -69,12 +69,14 @@ class FrenchTypographyExtension(markdown.extensions.Extension):
         interrogationWithSpacePattern = ReplacePattern(" \?", "&#x202F;?", md)
         exclamationWithSpacePattern = ReplacePattern(" !", "&#x202F;!", md)
         perCentWithSpacePattern = ReplacePattern(" %", "&nbsp;%", md)
-        perMilWithSpacePattern = ReplacePattern(" ‰", "&nbsp;&permil;", md)
+        perMilWithSpacePattern = ReplacePattern(
+            b' \xe2\x80\xb0'.decode('utf-8'), "&nbsp;&permil;", md
+        )
         openingAngleQuoteWithSpacePattern = ReplacePattern(
-            "« ", "&laquo;&nbsp;", md
+            b'\xc2\xab '.decode('utf-8'), "&laquo;&nbsp;", md
         )
         closingAngleQuoteWithSpacePattern = ReplacePattern(
-            " »", "&nbsp;&raquo;", md
+            b' \xc2\xbb'.decode('utf-8'), "&nbsp;&raquo;", md
         )
 
         self.replacements.add(
