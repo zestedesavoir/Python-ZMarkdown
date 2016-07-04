@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 # Gestion fine de la typographie française, du moins, ce qui peut être
 # automatisé, Lointainement inspiré de l’extension SmartyPants.
 
-import re
 import markdown
 from ..inlinepatterns import HtmlPattern
+
 
 class ReplacePattern(HtmlPattern):
     def __init__(self, pattern, replacement, markdown):
@@ -14,6 +15,7 @@ class ReplacePattern(HtmlPattern):
 
     def handleMatch(self, m):
         return self.markdown.htmlStash.store(self.replacement, safe=True)
+
 
 class ReplaceWithSpacePattern(HtmlPattern):
     def __init__(self, pattern, replacement, markdown):
@@ -26,6 +28,7 @@ class ReplaceWithSpacePattern(HtmlPattern):
         space = m.group(2)
         replacement = self.replacement + space
         return self.markdown.htmlStash.store(replacement, safe=True)
+
 
 class FrenchTypographyExtension(markdown.extensions.Extension):
     def __init__(self, *args, **kwargs):
@@ -78,38 +81,38 @@ class FrenchTypographyExtension(markdown.extensions.Extension):
             'semicolon_with_space', semicolonWithSpacePattern, '_end'
         )
         self.replacements.add(
-            'colon_with_space', 
-            colonWithSpacePattern, 
+            'colon_with_space',
+            colonWithSpacePattern,
             '<semicolon_with_space'
         )
         self.replacements.add(
-            'interrogation_mark_with_space', 
-            interrogationWithSpacePattern, 
+            'interrogation_mark_with_space',
+            interrogationWithSpacePattern,
             '<colon_with_space'
         )
         self.replacements.add(
-            'exclamation_mark_with_space', 
-            exclamationWithSpacePattern, 
+            'exclamation_mark_with_space',
+            exclamationWithSpacePattern,
             '<interrogation_mark_with_space'
         )
         self.replacements.add(
-            'per_cent_with_space', 
-            perCentWithSpacePattern, 
+            'per_cent_with_space',
+            perCentWithSpacePattern,
             '<exclamation_mark_with_space'
         )
         self.replacements.add(
-            'per_mil_with_space', 
-            perMilWithSpacePattern, 
+            'per_mil_with_space',
+            perMilWithSpacePattern,
             '<per_cent_with_space'
         )
         self.replacements.add(
-            'opening_angle_quote_with_space', 
-            openingAngleQuoteWithSpacePattern, 
+            'opening_angle_quote_with_space',
+            openingAngleQuoteWithSpacePattern,
             '<per_mil_with_space'
         )
         self.replacements.add(
-            'closing_angle_quote_with_space', 
-            closingAngleQuoteWithSpacePattern, 
+            'closing_angle_quote_with_space',
+            closingAngleQuoteWithSpacePattern,
             '<opening_angle_quote_with_space'
         )
 
@@ -120,8 +123,8 @@ class FrenchTypographyExtension(markdown.extensions.Extension):
             'opening_angle_quotes', openingAngleQuotesPattern, '_begin'
         )
         self.replacements.add(
-            'closing_angle_quotes', 
-            closingAngleQuotesPattern, 
+            'closing_angle_quotes',
+            closingAngleQuotesPattern,
             '>opening_angle_quotes'
         )
 
@@ -136,8 +139,8 @@ class FrenchTypographyExtension(markdown.extensions.Extension):
             'opening_angle_quotes', openingAngleQuotesPattern, '_begin'
         )
         self.replacements.add(
-            'closing_angle_quotes', 
-            closingAngleQuotesPattern, 
+            'closing_angle_quotes',
+            closingAngleQuotesPattern,
             '>opening_angle_quotes'
         )
 
@@ -180,6 +183,7 @@ class FrenchTypographyExtension(markdown.extensions.Extension):
         processing.inlinePatterns = self.replacements
         md.treeprocessors.add('french_typography', processing, '_end')
         md.ESCAPED_CHARS.extend(["'", "«", "»"])
+
 
 def makeExtension(*args, **kwargs):
     return FrenchTypographyExtension(*args, **kwargs)
