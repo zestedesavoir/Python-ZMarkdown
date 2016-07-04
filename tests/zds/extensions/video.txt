@@ -23,7 +23,7 @@ Test video
 
 !(http://www.ina.fr/video/MAN9062216517/qui-a-vole-le-bolero-de-ravel-e01-la-naissance-du-bolero-et-la-mort-de-ravel-video.html)
 
-This one should not be allowed :
+This one should not be allowed:
 
 !(http://jsfiddle.net/Sandhose/BcKhe/)
 

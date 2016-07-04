@@ -11,13 +11,13 @@ from .delext import DelExtension
 from .emoticons import EmoticonExtension
 from .fenced_code import FencedCodeExtension
 from .footnotes import FootnoteExtension
+from .french_typography import FrenchTypographyExtension
 from .grid_tables import GridTableExtension
 from .header_dec import DownHeaderExtension
 from .kbd import KbdExtension
 from .mathjax import MathJaxExtension
 from .ping import PingExtension
 from .smart_legend import SmartLegendExtension
-from .smarty import SmartyExtension
 from .subsuperscript import SubSuperscriptExtension
 from .tables import TableExtension
 from .urlize import UrlizeExtension
@@ -52,12 +52,12 @@ class ZdsExtension(Extension):
         sub_ext = SubSuperscriptExtension()  # Sub and Superscript support
         del_ext = DelExtension()  # Del support
         urlize_ext = UrlizeExtension()  # Autolink support
-        sm_ext = SmartyExtension(smart_quotes=False)
+        typo_ext = FrenchTypographyExtension()  # French typography
         # Define used ext
         exts = [sub_ext,  # Subscript support
                 del_ext,  # Del support
                 urlize_ext,  # Autolink support
-                sm_ext]
+                typo_ext]
 
         if not self.inline:
             mathjax_ext = MathJaxExtension()  # MathJax support
