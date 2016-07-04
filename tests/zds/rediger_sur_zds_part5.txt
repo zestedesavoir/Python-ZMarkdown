@@ -21,4 +21,4 @@ Comme pour les tableaux, vous pouvez mettre une légende à votre formule, en aj
 Si vous souhaitez écrire deux symboles $ dans une même ligne, alors il vous faut **échapper** au moins l'un des deux (c'est-à-dire les faire précéder d'un antislash : \$) afin que le texte ne soit pas considéré comme une formule mathématique.
 
 [[information]]
-| Pour en savoir plus sur l'utilisation des expressions mathématiques, vous pouvez consulter le tutoriel dédié: [Comment rédiger des maths sur Zeste de Savoir ? ](http://zestedesavoir.com/tutoriels/202/comment-rediger-des-maths-sur-zeste-de-savoir/)
+| Pour en savoir plus sur l'utilisation des expressions mathématiques, vous pouvez consulter le tutoriel dédié : [Comment rédiger des maths sur Zeste de Savoir ? ](http://zestedesavoir.com/tutoriels/202/comment-rediger-des-maths-sur-zeste-de-savoir/)
