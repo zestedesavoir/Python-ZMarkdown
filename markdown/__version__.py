@@ -5,7 +5,7 @@
 # (major, minor, micro, alpha/beta/rc/final, #)
 # (1, 1, 2, 'alpha', 0) => "1.1.2.dev"
 # (1, 2, 0, 'beta', 2) => "1.2b2"
-version_info = (2, 6, 0, 'zds', 10)
+version_info = (2, 6, 0, 'zds', 11)
 
 
 def _get_version():
