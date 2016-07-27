@@ -43,7 +43,7 @@ from .grid_tables import GridTableExtension
 from .comments import CommentsExtension
 from .smartLegend import SmartLegendExtension
 from .headerDec import DownHeaderExtension
-from .smarty import SmartyExtension
+from .french_typography import FrenchTypographyExtension
 from .codehilite import CodeHiliteExtension
 
 
@@ -69,7 +69,7 @@ class ZdsExtension(Extension):
         sub_ext = SubSuperscriptExtension()  # Sub and Superscript support
         del_ext = DelExtension()  # Del support
         urlize_ext = UrlizeExtension()  # Autolink support
-        sm_ext = SmartyExtension(smart_quotes=False)
+        typo_ext = FrenchTypographyExtension()  # French typography
         if not self.inline:
             mathjax_ext = MathJaxExtension()  # MathJax support
             kbd_ext = KbdExtension()  # Keyboard support
@@ -98,7 +98,7 @@ class ZdsExtension(Extension):
         exts = [sub_ext,  # Subscript support
                 del_ext,  # Del support
                 urlize_ext,  # Autolink support
-                sm_ext,
+                typo_ext,  # French typography
                 ]
         if not self.inline:
             exts.extend(['markdown.extensions.abbr',  # Abbreviation support, included in python-markdown
