@@ -1,3 +1,4 @@
+# coding: utf-8
 """
 Python-Markdown Extension Regression Tests
 ==========================================
@@ -883,3 +884,64 @@ Must not be confused with 'ndash'  (--) ... >>
 is the &sbquo;mdash&lsquo;: \u2014
 Must not be confused with &sbquo;ndash&lsquo;  (\u2013) \u2026 ]</p>"""
         self.assertEqual(self.md.convert(text), correct)
+
+
+class TypographyListMetaClass(type):
+
+    def __new__(cls, name, bases, attrs):
+        base_chars = ["'", '&lt;&lt', '&gt;&gt;', '%o']
+        replacements = [u'&rsquo;', u'&laquo;&nbsp;', u'&nbsp;&raquo;', u'‰']
+        base_sentences = [u"Les chaussettes de l'archiduchesse",
+                          u'Mettre quelque chose << entre guillemet >> permet de montrer un doute.',
+                          u'Mettre quelque chose << entre guillemet >> permet de montrer un doute.',
+                          u'La phrase précédente montre que je suis à 1000%o fainéant.'
+                          ]
+        base_names = ["coma", "open_tag", "close_tag", "per_thousand"]
+
+        def normal_text_callable(sentence, base_char, replacement):
+
+            def exec_test(self):
+                convert = self.md.convert(sentence)
+                self.assertNotIn(base_char, convert)
+                self.assertIn(replacement, convert)
+
+            return exec_test
+
+        def inline_code_callable(sentence, base_char, replacement):
+
+            def exec_test(self):
+                convert = self.md.convert("`" + sentence + "`")
+                self.assertIn(base_char, convert)
+                self.assertNotIn(replacement, convert)
+
+            return exec_test
+
+        def block_code_callable(sentence, base_char, replacement):
+
+            def exec_test(self):
+                convert = self.md.convert("```\n" + sentence + "\n```")
+                self.assertIn(base_char, convert)
+                self.assertNotIn(replacement, convert)
+
+            return exec_test
+
+        for i, char in enumerate(base_chars):
+
+            attrs["test_" + base_names[i]+"_normal_text"] = normal_text_callable(base_sentences[i],
+                                                                                 char, replacements[i])
+
+            attrs["test_" + base_names[i]+"_inline_code"] = inline_code_callable(base_sentences[i],
+                                                                                 char, replacements[i])
+            attrs["test_" + base_names[i]+"_block_code"] = block_code_callable(base_sentences[i],
+                                                                                 char, replacements[i])
+
+        return type.__new__(cls, name, bases, attrs)
+
+
+class TestTypography(unittest.TestCase):
+    __metaclass__ = TypographyListMetaClass
+
+    def setUp(self):
+        self.md = markdown.Markdown(
+            extensions=['markdown.extensions.typographie']
+        )
