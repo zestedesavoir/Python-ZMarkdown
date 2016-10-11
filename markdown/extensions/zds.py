@@ -122,6 +122,7 @@ class ZdsExtension(Extension):
                          align_ext,  # Right align and center support
                          dheader_ext,  # Down Header support
                          mathjax_ext,  # Mathjax support
+                         toc_ext,  # Anchor link
                          ])
         md.registerExtensions(exts, {})
         if self.inline:
