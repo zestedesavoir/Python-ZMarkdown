@@ -25,6 +25,7 @@ logger = logging.getLogger('MARKDOWN')
 def build_block_parser(md_instance, **kwargs):
     """ Build the default block parser used by Markdown. """
     parser = BlockParser(md_instance)
+    parser.blockprocessors['reference'] = ReferenceProcessor(parser)
     parser.blockprocessors['empty'] = EmptyBlockProcessor(parser)
     parser.blockprocessors['indent'] = ListIndentProcessor(parser)
     parser.blockprocessors['code'] = CodeBlockProcessor(parser)
@@ -124,6 +125,48 @@ class BlockProcessor:
         * ``blocks``: A list of all remaining blocks of the document.
         """
         pass  # pragma: no cover
+
+
+class ReferenceProcessor(BlockProcessor):
+    """ Remove reference definitions from text and store for later use. """
+
+    TITLE = r'[ ]*(\"(.*)\"|\'(.*)\'|\((.*)\))[ ]*'
+    RE = re.compile(r'^[ ]{0,3}\[([^\]]*)\]:\s*([^ ]*)[ ]*(%s)?$' % TITLE, re.DOTALL)
+    TITLE_RE = re.compile(r'^%s$' % TITLE)
+
+    def __init__(self, *args):
+        BlockProcessor.__init__(self, *args)
+
+    def test(self, parent, block):
+        lines = block.split("\n")
+        for line in lines:
+            m = self.RE.match(line)
+            if m:
+                return True
+        return False
+
+    def run(self, parent, blocks):
+        block = blocks.pop(0)
+        lines = block.split("\n") + [""]
+        new_text = []
+        while lines:
+            line = lines.pop(0)
+            m = self.RE.match(line)
+            if m:
+                id = m.group(1).strip().lower()
+                link = m.group(2).lstrip('<').rstrip('>')
+                t = m.group(5) or m.group(6) or m.group(7)
+                if not t:
+                    # Check next line for title
+                    tm = self.TITLE_RE.match(lines[0])
+                    if tm:
+                        lines.pop(0)
+                        t = tm.group(2) or tm.group(3) or tm.group(4)
+                self.parser.markdown.references[id] = (link, t)
+            else:
+                new_text.append(line)
+        blocks.insert(0, "\n".join(new_text))
+
 
 
 class ListIndentProcessor(BlockProcessor):

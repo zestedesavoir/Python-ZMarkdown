@@ -19,7 +19,6 @@ def build_preprocessors(md_instance, **kwargs):
     preprocessors['normalize_whitespace'] = NormalizeWhitespace(md_instance)
     if md_instance.safeMode != 'escape':
         preprocessors["html_block"] = HtmlBlockPreprocessor(md_instance)
-    preprocessors["reference"] = ReferencePreprocessor(md_instance)
     return preprocessors
 
 
@@ -296,31 +295,3 @@ class HtmlBlockPreprocessor(Preprocessor):
         new_text = "\n\n".join(new_blocks)
         return new_text.split("\n")
 
-
-class ReferencePreprocessor(Preprocessor):
-    """ Remove reference definitions from text and store for later use. """
-
-    TITLE = r'[ ]*(\"(.*)\"|\'(.*)\'|\((.*)\))[ ]*'
-    RE = re.compile(r'^[ ]{0,3}\[([^\]]*)\]:\s*([^ ]*)[ ]*(%s)?$' % TITLE, re.DOTALL)
-    TITLE_RE = re.compile(r'^%s$' % TITLE)
-
-    def run(self, lines):
-        new_text = []
-        while lines:
-            line = lines.pop(0)
-            m = self.RE.match(line)
-            if m:
-                id = m.group(1).strip().lower()
-                link = m.group(2).lstrip('<').rstrip('>')
-                t = m.group(5) or m.group(6) or m.group(7)
-                if not t:
-                    # Check next line for title
-                    tm = self.TITLE_RE.match(lines[0])
-                    if tm:
-                        lines.pop(0)
-                        t = tm.group(2) or tm.group(3) or tm.group(4)
-                self.markdown.references[id] = (link, t)
-            else:
-                new_text.append(line)
-
-        return new_text  # + "\n"
