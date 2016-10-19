@@ -120,13 +120,12 @@ class ZdsExtension(Extension):
                          ])
         md.registerExtensions(exts, {})
         if self.inline:
-            # md.parser.blockprocessors.clear()
-            md.preprocessors.pop("reference")
             md.inlinePatterns.pop("image_link")
             md.inlinePatterns.pop("image_reference")
             md.inlinePatterns.pop("reference")
             md.inlinePatterns.pop("short_reference")
             md.inlinePatterns.pop("linebreak")
+
 
 
 def makeExtension(*args, **kwargs):
