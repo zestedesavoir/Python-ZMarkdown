@@ -19,7 +19,7 @@ License: [BSD](http://www.opensource.org/licenses/bsd-license.php)
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from . import Extension
-from ..preprocessors import Preprocessor
+from markdown.blockprocessors import BlockProcessor
 from ..inlinepatterns import Pattern
 from ..util import etree, AtomicString
 import re
@@ -33,18 +33,31 @@ class AbbrExtension(Extension):
 
     def extendMarkdown(self, md, md_globals):
         """ Insert AbbrPreprocessor before ReferencePreprocessor. """
-        md.preprocessors.add('abbr', AbbrPreprocessor(md), '>normalize_whitespace')
+        md.parser.blockprocessors.add('abbr', AbbrBlockprocessor(md), '<reference')
 
 
-class AbbrPreprocessor(Preprocessor):
+class AbbrBlockprocessor(BlockProcessor):
     """ Abbreviation Preprocessor - parse text for abbr references. """
+    def __init__(self, md):
+        BlockProcessor.__init__(self, md.parser)
+        self.markdown = md
 
-    def run(self, lines):
+    def test(self, parent, block):
+        lines = block.split("\n")
+        for line in lines:
+            m = ABBR_REF_RE.match(line)
+            if m:
+                return True
+        return False
+
+    def run(self, parent, blocks):
         '''
         Find and remove all Abbreviation references from the text.
         Each reference is set as a new AbbrPattern in the markdown instance.
 
         '''
+        block = blocks.pop(0)
+        lines = block.split("\n") + [""]
         new_text = []
         for line in lines:
             m = ABBR_REF_RE.match(line)
@@ -55,7 +68,7 @@ class AbbrPreprocessor(Preprocessor):
                     AbbrPattern(self._generate_pattern(abbr), title)
             else:
                 new_text.append(line)
-        return new_text
+        blocks.insert(0, "\n".join(new_text[:-1]))
 
     def _generate_pattern(self, text):
         '''

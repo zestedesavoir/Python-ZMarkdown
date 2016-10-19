@@ -84,8 +84,7 @@ class ZdsExtension(Extension):
             video_ext = VideoExtension(js_support=self.js_support)  # Video support
 
             # Preprocess extension
-            preprocess_ext = PreprocessBlockExtension({"preprocess": ("fenced_code_block",
-                                                                      "abbr",)})
+            preprocess_ext = PreprocessBlockExtension({"preprocess": ("fenced_code_block",)})
 
             gridtable_ext = GridTableExtension()  # Grid Table support
             comment_ext = CommentsExtension(start_tag="<--COMMENT", end_tag="COMMENT-->")  # Comment support
