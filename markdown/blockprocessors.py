@@ -165,7 +165,7 @@ class ReferenceProcessor(BlockProcessor):
                 self.parser.markdown.references[id] = (link, t)
             else:
                 new_text.append(line)
-        blocks.insert(0, "\n".join(new_text))
+        blocks.insert(0, "\n".join(new_text[:-1]))
 
 
 

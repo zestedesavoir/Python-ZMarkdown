@@ -57,7 +57,7 @@ class FootnoteExtension(Extension):
         self.parser = md.parser
         self.md = md
         # Insert a preprocessor before ReferencePreprocessor
-        md.parser.blockprocessors.add("footnote", FootnoteBlockprocessor(self), "<reference")
+        md.parser.blockprocessors.add("footnote", FootnoteBlockprocessor(md.parser, self), "<reference")
         # Insert an inline pattern before ImageReferencePattern
         FOOTNOTE_RE = r'\[\^([^\]]*)\]'  # blah blah [^1] blah
         md.inlinePatterns.add("footnote", FootnotePattern(FOOTNOTE_RE, self), "<reference")
@@ -151,7 +151,8 @@ class FootnoteExtension(Extension):
 class FootnoteBlockprocessor(BlockProcessor):
     """ Find all footnote references and store for later use. """
 
-    def __init__(self, footnotes):
+    def __init__(self, parser, footnotes):
+        BlockProcessor.__init__(self, parser)
         self.footnotes = footnotes
 
     def test(self, parent, block):
