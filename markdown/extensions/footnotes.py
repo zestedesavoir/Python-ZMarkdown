@@ -57,7 +57,7 @@ class FootnoteExtension(Extension):
         self.parser = md.parser
         self.md = md
         # Insert a preprocessor before ReferencePreprocessor
-        md.preprocessors.add("footnote", FootnotePreprocessor(self), "<reference")
+        md.preprocessors.add("footnote", FootnotePreprocessor(self), ">normalize_whitespace")
         # Insert an inline pattern before ImageReferencePattern
         FOOTNOTE_RE = r'\[\^([^\]]*)\]'  # blah blah [^1] blah
         md.inlinePatterns.add("footnote", FootnotePattern(FOOTNOTE_RE, self), "<reference")

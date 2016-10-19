@@ -33,7 +33,7 @@ class AbbrExtension(Extension):
 
     def extendMarkdown(self, md, md_globals):
         """ Insert AbbrPreprocessor before ReferencePreprocessor. """
-        md.preprocessors.add('abbr', AbbrPreprocessor(md), '<reference')
+        md.preprocessors.add('abbr', AbbrPreprocessor(md), '>normalize_whitespace')
 
 
 class AbbrPreprocessor(Preprocessor):
