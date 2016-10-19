@@ -16,7 +16,7 @@ License: [BSD](http://www.opensource.org/licenses/bsd-license.php)
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from . import Extension
-from ..preprocessors import Preprocessor
+from ..blockprocessors import BlockProcessor
 from ..inlinepatterns import Pattern
 from ..treeprocessors import Treeprocessor
 from ..postprocessors import Postprocessor
@@ -57,7 +57,7 @@ class FootnoteExtension(Extension):
         self.parser = md.parser
         self.md = md
         # Insert a preprocessor before ReferencePreprocessor
-        md.preprocessors.add("footnote", FootnotePreprocessor(self), ">normalize_whitespace")
+        md.parser.blockprocessors.add("footnote", FootnoteBlockprocessor(self), "<reference")
         # Insert an inline pattern before ImageReferencePattern
         FOOTNOTE_RE = r'\[\^([^\]]*)\]'  # blah blah [^1] blah
         md.inlinePatterns.add("footnote", FootnotePattern(FOOTNOTE_RE, self), "<reference")
@@ -148,13 +148,21 @@ class FootnoteExtension(Extension):
         return div
 
 
-class FootnotePreprocessor(Preprocessor):
+class FootnoteBlockprocessor(BlockProcessor):
     """ Find all footnote references and store for later use. """
 
     def __init__(self, footnotes):
         self.footnotes = footnotes
 
-    def run(self, lines):
+    def test(self, parent, block):
+        lines = block.split("\n")
+        for line in lines:
+            m = DEF_RE.match(line)
+            if m:
+                return True
+        return False
+
+    def run(self, parent, blocks):
         """
         Loop through lines and find, set, and remove footnote definitions.
 
@@ -165,6 +173,8 @@ class FootnotePreprocessor(Preprocessor):
         Return: A list of lines of text with footnote definitions removed.
 
         """
+        block = "\n\n".join(blocks)
+        lines = block.split("\n") + [""]
         newlines = []
         i = 0
         while True:
@@ -180,7 +190,8 @@ class FootnotePreprocessor(Preprocessor):
                 i += 1
             else:
                 break
-        return newlines
+        del blocks[:]
+        blocks.extend(("\n".join(newlines[:-1])).split("\n\n"))
 
     def detectTabbed(self, lines):
         """ Find indented text and remove indent before further proccesing.

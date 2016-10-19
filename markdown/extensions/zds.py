@@ -85,8 +85,6 @@ class ZdsExtension(Extension):
 
             # Preprocess extension
             preprocess_ext = PreprocessBlockExtension({"preprocess": ("fenced_code_block",
-                                                                      "footnote",
-                                                                      "reference",
                                                                       "abbr",)})
 
             gridtable_ext = GridTableExtension()  # Grid Table support
