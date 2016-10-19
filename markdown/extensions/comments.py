@@ -2,7 +2,7 @@
 # inspired by  https://github.com/ryneeverett/python-markdown-comments
 
 import re
-from markdown.preprocessors import Preprocessor
+from markdown.blockprocessors import BlockProcessor
 from markdown.extensions import Extension
 
 
@@ -14,29 +14,35 @@ class CommentsExtension(Extension):
 
     def extendMarkdown(self, md, md_globals):
         md.registerExtension(self)
-        md.preprocessors.add("comments",
-                             CommentsProcessor(md, self.getConfig("start_tag"), self.getConfig("end_tag")),
-                             ">fenced_code_block")
+        md.parser.blockprocessors.add("comments",
+                             CommentsBlockProcessor(md, self.getConfig("start_tag"), self.getConfig("end_tag")),
+                             "<reference")
 
 
-class CommentsProcessor(Preprocessor):
+class CommentsBlockProcessor(BlockProcessor):
     def __init__(self, md, start_tag, end_tag):
-        Preprocessor.__init__(self, md)
+        BlockProcessor.__init__(self, md.parser)
 
         StaEsc = re.escape(start_tag)
         EndEsc = re.escape(end_tag)
 
+        self.START_RE = re.compile(StaEsc, re.MULTILINE | re.DOTALL)
         self.RE = re.compile(StaEsc + r'.*?' + EndEsc, re.MULTILINE | re.DOTALL)
 
-    def run(self, lines):
-        text = "\n".join(lines)
+    def test(self, parent, block):
+        return bool(self.START_RE.search(block))
+
+
+    def run(self, parent, blocks):
+        text = "\n\n".join(blocks)
         while True:
             m = self.RE.search(text)
             if m:
                 text = "%s%s" % (text[:m.start()], text[m.end():])
             else:
                 break
-        return text.split("\n")
+        del blocks[:]
+        blocks.extend(text.split("\n\n"))
 
 
 def makeExtension(*args, **kwargs):
