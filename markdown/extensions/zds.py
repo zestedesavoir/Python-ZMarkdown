@@ -95,7 +95,7 @@ class ZdsExtension(Extension):
             legend_ext = SmartLegendExtension({"IGNORING_IMG": self.emoticons.values(),
                                                "PARENTS": ("div", "blockquote")})  # Smart Legend support
             dheader_ext = DownHeaderExtension({"OFFSET": 2})  # Offset header support
-            toc_ext = TocExtension(baselevel=3, anchorlink=True, marker="")
+            toc_ext = TocExtension(baselevel=1, anchorlink=True, marker="")
         # Define used ext
         exts = [sub_ext,  # Subscript support
                 del_ext,  # Del support
