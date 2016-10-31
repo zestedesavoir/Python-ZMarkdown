@@ -45,6 +45,7 @@ from .smartLegend import SmartLegendExtension
 from .headerDec import DownHeaderExtension
 from .smarty import SmartyExtension
 from .codehilite import CodeHiliteExtension
+from .toc import TocExtension
 
 
 class ZdsExtension(Extension):
@@ -94,6 +95,7 @@ class ZdsExtension(Extension):
             legend_ext = SmartLegendExtension({"IGNORING_IMG": self.emoticons.values(),
                                                "PARENTS": ("div", "blockquote")})  # Smart Legend support
             dheader_ext = DownHeaderExtension({"OFFSET": 2})  # Offset header support
+            toc_ext = TocExtension(baselevel=1, anchorlink=True, marker="")
         # Define used ext
         exts = [sub_ext,  # Subscript support
                 del_ext,  # Del support
@@ -120,6 +122,7 @@ class ZdsExtension(Extension):
                          align_ext,  # Right align and center support
                          dheader_ext,  # Down Header support
                          mathjax_ext,  # Mathjax support
+                         toc_ext,  # Anchor link
                          ])
         md.registerExtensions(exts, {})
         if self.inline:
