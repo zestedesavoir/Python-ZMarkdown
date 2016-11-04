@@ -314,8 +314,8 @@ class TablePart(object):
         previous_row = []
         content = []
         for new_row in (row.raw_content for row in self):
-            content.append([c for c in new_row if c not in previous_row])
-            previous_row = new_row
+            content.append([c for c in new_row if id(c) not in previous_row])
+            previous_row = [id(c) for c in new_row]
         return content
 
 
@@ -347,6 +347,7 @@ class TableCell(object):
         self.colspan = 1
         self.rowspan = 1
         self.lines = []
+        self._rc = None
 
     def merge_with(self, other):
         self.end_position = other.end_position
@@ -355,8 +356,9 @@ class TableCell(object):
 
     @property
     def raw_content(self):
-        return RawCell("\n".join(l.strip() for l in self.lines), self.colspan, self.rowspan)
-
+        if self._rc is None:
+            self._rc = RawCell("\n".join(l.strip() for l in self.lines), self.colspan, self.rowspan)
+        return self._rc
 
 # Describe a table cell
 RawCell = namedtuple('Cell', 'content colspan rowspan')
