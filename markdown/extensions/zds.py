@@ -72,7 +72,7 @@ class ZdsExtension(Extension):
         if not self.inline:
             mathjax_ext = MathJaxExtension()  # MathJax support
             kbd_ext = KbdExtension()  # Keyboard support
-            emo_ext = EmoticonExtension(emoticons = self.emoticons)  # smileys support
+            emo_ext = EmoticonExtension(emoticons=self.emoticons)  # smileys support
             customblock_ext = CustomBlockExtension({"s(ecret)?": "spoiler",
                                                     "i(nformation)?": "information ico-after",
                                                     "q(uestion)?": "question ico-after",
@@ -84,8 +84,7 @@ class ZdsExtension(Extension):
 
             gridtable_ext = GridTableExtension()  # Grid Table support
             comment_ext = CommentsExtension(start_tag="<--COMMENT", end_tag="COMMENT-->")  # Comment support
-            legend_ext = SmartLegendExtension({#"IGNORING_IMG": self.emoticons.values(),
-                                               })  # Smart Legend support
+            legend_ext = SmartLegendExtension()  # Smart Legend support
             dheader_ext = DownHeaderExtension({"OFFSET": 2})  # Offset header support
         # Define used ext
         exts = [sub_ext,  # Subscript support
@@ -105,7 +104,6 @@ class ZdsExtension(Extension):
                          kbd_ext,  # Kbd support
                          emo_ext,  # Smileys support
                          video_ext,  # Video support
-                         #preprocess_ext,  # Preprocess support
                          gridtable_ext,  # Grid tables support
                          align_ext,  # Right align and center support
                          dheader_ext,  # Down Header support

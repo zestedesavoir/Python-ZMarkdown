@@ -294,4 +294,3 @@ class HtmlBlockPreprocessor(Preprocessor):
 
         new_text = "\n\n".join(new_blocks)
         return new_text.split("\n")
-

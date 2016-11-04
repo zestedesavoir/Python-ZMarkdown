@@ -168,7 +168,6 @@ class ReferenceProcessor(BlockProcessor):
         blocks.insert(0, "\n".join(new_text[:-1]))
 
 
-
 class ListIndentProcessor(BlockProcessor):
     """ Process children of list items.
 
