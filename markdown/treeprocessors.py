@@ -85,7 +85,7 @@ class InlineProcessor(Treeprocessor):
         self.stashed_nodes[id] = node
         return placeholder
 
-    def __handleInline(self, data, patternIndex=0):
+    def __handleInline(self, data, patternIndex=0, parents=()):
         """
         Process string with inline patterns and replace it
         with placeholders
@@ -101,9 +101,12 @@ class InlineProcessor(Treeprocessor):
         if not isinstance(data, util.AtomicString):
             startIndex = 0
             while patternIndex < len(self.inlinePatterns):
-                data, matched, startIndex = self.__applyPattern(
-                    self.inlinePatterns.value_for_index(patternIndex),
-                    data, patternIndex, startIndex)
+                pattern = self.inlinePatterns.value_for_index(patternIndex)
+                if any(key in parents for key in pattern.not_in):
+                    matched = False
+                else:
+                    data, matched, startIndex = self.__applyPattern(
+                        pattern, data, patternIndex, startIndex, parents=())
                 if not matched:
                     patternIndex += 1
         return data
@@ -215,7 +218,7 @@ class InlineProcessor(Treeprocessor):
 
         return result
 
-    def __applyPattern(self, pattern, data, patternIndex, startIndex=0):
+    def __applyPattern(self, pattern, data, patternIndex, startIndex=0, parents=()):
         """
         Check if the line fits the pattern, create the necessary
         elements, add it to stashed_nodes.
@@ -244,15 +247,16 @@ class InlineProcessor(Treeprocessor):
         if not isString(node):
             if not isinstance(node.text, util.AtomicString):
                 # We need to process current node too
+                parents = parents + (self.inlinePatterns.keyOrder[patternIndex],)
                 for child in [node] + list(node):
                     if not isString(node):
                         if child.text:
                             child.text = self.__handleInline(
-                                child.text, patternIndex + 1
+                                child.text, patternIndex + 1, parents
                             )
                         if child.tail:
                             child.tail = self.__handleInline(
-                                child.tail, patternIndex
+                                child.tail, patternIndex, parents
                             )
 
         placeholder = self.__stashNode(node, pattern.type())
