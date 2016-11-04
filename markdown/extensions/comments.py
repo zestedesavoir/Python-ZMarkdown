@@ -15,8 +15,9 @@ class CommentsExtension(Extension):
     def extendMarkdown(self, md, md_globals):
         md.registerExtension(self)
         md.parser.blockprocessors.add("comments",
-                             CommentsBlockProcessor(md, self.getConfig("start_tag"), self.getConfig("end_tag")),
-                             ">fenced_code_block")
+                                      CommentsBlockProcessor(md, self.getConfig("start_tag"),
+                                                             self.getConfig("end_tag")),
+                                      ">fenced_code_block")
 
 
 class CommentsBlockProcessor(BlockProcessor):
@@ -31,7 +32,6 @@ class CommentsBlockProcessor(BlockProcessor):
 
     def test(self, parent, block):
         return bool(self.START_RE.search(block))
-
 
     def run(self, parent, blocks):
         text = "\n\n".join(blocks)

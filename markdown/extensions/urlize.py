@@ -26,7 +26,6 @@ class UrlizePattern(InlinePattern):
 
     def handleMatch(self, m):
 
-        print (m.groups())
         url = m.group(3)
 
         if url.startswith('<'):

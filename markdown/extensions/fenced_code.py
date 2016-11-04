@@ -1,9 +1,7 @@
 from __future__ import unicode_literals
 from markdown import Extension
 from markdown.blockprocessors import BlockProcessor
-from markdown.extensions.codehilite import CodeHilite, CodeHiliteExtension, parse_hl_lines
-import xml.etree.ElementTree as ET
-
+from markdown.extensions.codehilite import CodeHilite, CodeHiliteExtension
 from markdown import util
 import re
 
@@ -90,7 +88,7 @@ class FencedBlockProcessor(BlockProcessor):
         for i in range(len(blocks)):
             if i == 0:
                 txt = first_block[m.end() + 1:]
-                dec = m.end() +1
+                dec = m.end() + 1
             else:
                 txt = blocks[i]
                 dec = 0

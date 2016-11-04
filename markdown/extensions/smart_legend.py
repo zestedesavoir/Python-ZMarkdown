@@ -3,7 +3,6 @@ from markdown.blockprocessors import BlockProcessor
 import re
 from markdown.util import etree
 
-
 LEGEND_RE = r"(%s\s*)?:\s*(?P<txtlegend>.*)"
 
 
@@ -12,7 +11,8 @@ class AutoFigureProcessor(BlockProcessor):
         BlockProcessor.__init__(self, md.parser)
         self.md = md
         legend_re = LEGEND_RE % "Figure"
-        self.re = re.compile(r"^%s(\n%s)?$" % (md.inlinePatterns["image_link"].pattern, legend_re), re.MULTILINE | re.DOTALL | re.UNICODE)
+        self.re = re.compile(r"^%s(\n%s)?$" % (md.inlinePatterns["image_link"].pattern, legend_re),
+                             re.MULTILINE | re.DOTALL | re.UNICODE)
         self.legend_re = re.compile(r"^%s$" % legend_re, re.MULTILINE | re.DOTALL | re.UNICODE)
 
     def test(self, parent, block):
@@ -45,9 +45,10 @@ class AutoFigureProcessor(BlockProcessor):
 
         f.append(figcaption)
 
+
 class InnerProcessor(BlockProcessor):
     def __init__(self, md, legend_name, block_src):
-        super(InnerProcessor, self).__init__(md.parser)
+        BlockProcessor.__init__(self, md.parser)
         self.re_legend = re.compile(r"^%s$" % (LEGEND_RE % legend_name), re.MULTILINE | re.DOTALL)
         self.block_src = block_src
 
@@ -77,7 +78,7 @@ class InnerProcessor(BlockProcessor):
 
 class SmartLegendExtension(Extension):
     def __init__(self, *args, **kwargs):
-        super(SmartLegendExtension, self).__init__(*args, **kwargs)
+        Extension.__init__(self, *args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
         md.registerExtension(self)
@@ -86,10 +87,12 @@ class SmartLegendExtension(Extension):
         md.parser.blockprocessors['table'] = InnerProcessor(md, "Table", md.parser.blockprocessors['table'])
         md.parser.blockprocessors['grid-table'] = InnerProcessor(md, "Table", md.parser.blockprocessors['grid-table'])
         md.parser.blockprocessors['mathjax'] = InnerProcessor(md, "Equation", md.parser.blockprocessors['mathjax'])
-        md.parser.blockprocessors['fenced_code_block'] = InnerProcessor(md, "Code", md.parser.blockprocessors['fenced_code_block'])
+        md.parser.blockprocessors['fenced_code_block'] = InnerProcessor(md, "Code",
+                                                                        md.parser.blockprocessors['fenced_code_block'])
         for blockname, processor in md.parser.blockprocessors.items():
             if blockname.startswith("video-"):
                 md.parser.blockprocessors[blockname] = InnerProcessor(md, "Video", processor)
+
 
 def makeExtension(*args, **kwargs):
     return SmartLegendExtension(*args, **kwargs)

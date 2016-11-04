@@ -193,9 +193,9 @@ def _serialize_html(write, elem, qnames, namespaces, format):
                 if tag.lower() not in HTML_EMPTY:
                     write("</" + tag + ">")
     if elem.tail:
-        tail =elem.tail
+        tail = elem.tail
         if not isinstance(tail, util.RawHTMLString):
-            tail= _escape_cdata(tail)
+            tail = _escape_cdata(tail)
         write(tail)
 
 
