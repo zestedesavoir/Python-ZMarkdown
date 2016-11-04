@@ -193,7 +193,7 @@ The pattern classes
 class Pattern(object):
     """Base class that inline patterns subclass. """
 
-    def __init__(self, pattern, markdown_instance=None):
+    def __init__(self, pattern, markdown_instance=None, not_in=()):
         """
         Create an instant of an inline pattern.
 
@@ -208,6 +208,7 @@ class Pattern(object):
 
         # Api for Markdown to pass safe_mode into instance
         self.safe_mode = False
+        self.not_in = not_in
         if markdown_instance:
             self.markdown = markdown_instance
 

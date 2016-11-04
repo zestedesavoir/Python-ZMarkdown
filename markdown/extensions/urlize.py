@@ -24,6 +24,10 @@ URLIZE_RE = r'(^|(?<=\s))({0})(?=\.?(\s|$))'.format("|".join((
 class UrlizePattern(InlinePattern):
     """ Return a link Element given an autolink (`http://example/com`). """
 
+    def __init__(self, *args, **kwargs):
+        kwargs["not_in"] = ('link',)
+        InlinePattern.__init__(self, *args, **kwargs)
+
     def handleMatch(self, m):
 
         url = m.group(3)
