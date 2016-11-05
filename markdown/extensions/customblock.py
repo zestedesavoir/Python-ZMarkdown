@@ -8,14 +8,17 @@ import re
 class CustomBlockExtension(Extension):
     """ Custom block extension for Python-Markdown. """
 
-    def __init__(self, configs):
-        self.configs = configs
+    def __init__(self, *args, **kwargs):
+        self.config = {
+            'classes': [{}, 'A mapping from element re to html class.'],
+        }
+        Extension.__init__(self, *args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
         """ Add CustomBlock to Markdown instance. """
         md.registerExtension(self)
 
-        for key, value in self.configs.items():
+        for key, value in self.getConfig("classes").items():
             md.parser.blockprocessors.add('customblock-' + key,
                                           CustomBlockProcessor(md.parser, key, value),
                                           '>reference')
@@ -34,29 +37,27 @@ class CustomBlockProcessor(BlockProcessor):
         before = block[:m.start()]
         block = block[m.end():]  # removes the first line
 
-        cblck = []
-        theRest = []
-        inBlck = True
+        content = []
+        rest = []
+        in_block = True
 
         for line in block.split("\n"):
-            if inBlck and len(line.strip()) >= 1 and line[0] == "|":
-                if len(line) <= 1:
-                    cblck.append(line[1:])
-                elif line[1] == ' ':
-                    cblck.append(line[2:])
+            if in_block and len(line.strip()) >= 1 and line[0] == "|":
+                if len(line) <= 1 or line[1] != ' ':
+                    content.append(line[1:])
                 else:
-                    cblck.append(line[1:])
+                    content.append(line[2:])
             else:
-                theRest.append(line)
-                inBlck = False
+                rest.append(line)
+                in_block = False
 
-        return before, "\n".join(cblck), "\n".join(theRest)
+        return before, "\n".join(content), "\n".join(rest)
 
     def run(self, parent, blocks):
         block = blocks.pop(0)
         m = self.RE.search(block)
 
-        before, block, theRest = self.extractBlock(m, block)
+        before, block, rest = self.extractBlock(m, block)
 
         if before:
             self.parser.parseBlocks(parent, [before])
@@ -66,9 +67,9 @@ class CustomBlockProcessor(BlockProcessor):
 
         self.parser.parseChunk(div, block)
 
-        if theRest:
-            blocks.insert(0, theRest)
+        if rest:
+            blocks.insert(0, rest)
 
 
-def makeExtension(configs={}):
-    return CustomBlockExtension(configs=configs)
+def makeExtension(*args, **kwargs):
+    return CustomBlockExtension(*args, **kwargs)

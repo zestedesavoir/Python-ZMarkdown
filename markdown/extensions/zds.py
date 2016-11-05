@@ -69,16 +69,23 @@ class ZdsExtension(Extension):
         del_ext = DelExtension()  # Del support
         urlize_ext = UrlizeExtension()  # Autolink support
         sm_ext = SmartyExtension(smart_quotes=False)
+        # Define used ext
+        exts = [sub_ext,  # Subscript support
+                del_ext,  # Del support
+                urlize_ext,  # Autolink support
+                sm_ext]
+
         if not self.inline:
             mathjax_ext = MathJaxExtension()  # MathJax support
             kbd_ext = KbdExtension()  # Keyboard support
             emo_ext = EmoticonExtension(emoticons=self.emoticons)  # smileys support
-            customblock_ext = CustomBlockExtension({"s(ecret)?": "spoiler",
-                                                    "i(nformation)?": "information ico-after",
-                                                    "q(uestion)?": "question ico-after",
-                                                    "a(ttention)?": "warning ico-after",
-                                                    "e(rreur)?": "error ico-after",
-                                                    })  # CustomBlock support
+            customblock_ext = CustomBlockExtension(classes={
+                "s(ecret)?": "spoiler",
+                "i(nformation)?": "information ico-after",
+                "q(uestion)?": "question ico-after",
+                "a(ttention)?": "warning ico-after",
+                "e(rreur)?": "error ico-after",
+            })  # CustomBlock support
             align_ext = AlignExtension()  # Right align and center support
             video_ext = VideoExtension(js_support=self.js_support)  # Video support
 
@@ -86,13 +93,7 @@ class ZdsExtension(Extension):
             comment_ext = CommentsExtension(start_tag="<--COMMENT", end_tag="COMMENT-->")  # Comment support
             legend_ext = SmartLegendExtension()  # Smart Legend support
             dheader_ext = DownHeaderExtension({"OFFSET": 2})  # Offset header support
-        # Define used ext
-        exts = [sub_ext,  # Subscript support
-                del_ext,  # Del support
-                urlize_ext,  # Autolink support
-                sm_ext,
-                ]
-        if not self.inline:
+
             exts.extend(['markdown.extensions.abbr',  # Abbreviation support, included in python-markdown
                          'markdown.extensions.footnotes',  # Footnotes support, included in python-markdown
                          # Footnotes place marker can be set with the PLACE_MARKER option
