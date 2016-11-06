@@ -15,6 +15,7 @@ from .grid_tables import GridTableExtension
 from .header_dec import DownHeaderExtension
 from .kbd import KbdExtension
 from .mathjax import MathJaxExtension
+from .ping import PingExtension
 from .smart_legend import SmartLegendExtension
 from .smarty import SmartyExtension
 from .subsuperscript import SubSuperscriptExtension
@@ -31,6 +32,7 @@ class ZdsExtension(Extension):
             'inline': [False, ''],
             'emoticons': [{}, ''],
             'js_support': [False, ''],
+            'is_pingeable': [None, ''],
         }
 
         super(ZdsExtension, self).__init__(*args, **kwargs)
@@ -40,6 +42,10 @@ class ZdsExtension(Extension):
         self.inline = self.getConfigs().get("inline", True)
         self.emoticons = self.getConfigs().get("emoticons", {})
         self.js_support = self.getConfigs().get("js_support", False)
+        self.is_pingeable = self.getConfigs().get('is_pingeable', None)
+        if self.is_pingeable is None:
+            self.is_pingeable = lambda _: False
+
         md.inline = self.inline
 
         # create extensions :
@@ -71,6 +77,7 @@ class ZdsExtension(Extension):
             comment_ext = CommentsExtension(start_tag="<--COMMENT", end_tag="COMMENT-->")  # Comment support
             legend_ext = SmartLegendExtension()  # Smart Legend support
             dheader_ext = DownHeaderExtension(offset=2)  # Offset header support
+            ping_ext = PingExtension(is_pingeable=self.is_pingeable)  # Ping support
 
             exts.extend([AbbrExtension(),  # Abbreviation support, included in python-markdown
                          FootnoteExtension(),  # Footnotes support, included in python-markdown
@@ -89,6 +96,7 @@ class ZdsExtension(Extension):
                          FencedCodeExtension(),
                          comment_ext,  # Comment support
                          legend_ext,  # Legend support
+                         ping_ext,  # Ping support
                          ])
         md.registerExtensions(exts, {})
         if self.inline:
