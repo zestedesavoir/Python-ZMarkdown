@@ -2,6 +2,10 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from . import Extension
 
+from .abbr import AbbrExtension
+from .footnotes import FootnoteExtension
+from .tables import TableExtension
+from .fenced_code import FencedCodeExtension
 from .subsuperscript import SubSuperscriptExtension
 from .delext import DelExtension
 from .urlize import UrlizeExtension
@@ -68,13 +72,12 @@ class ZdsExtension(Extension):
             legend_ext = SmartLegendExtension()  # Smart Legend support
             dheader_ext = DownHeaderExtension(offset=2)  # Offset header support
 
-            exts.extend(['markdown.extensions.abbr',  # Abbreviation support, included in python-markdown
-                         'markdown.extensions.footnotes',  # Footnotes support, included in python-markdown
+            exts.extend([AbbrExtension(),  # Abbreviation support, included in python-markdown
+                         FootnoteExtension(),  # Footnotes support, included in python-markdown
                          # Footnotes place marker can be set with the PLACE_MARKER option
-                         'markdown.extensions.tables',  # Tables support, included in python-markdown
+                         TableExtension(),  # Tables support, included in python-markdown
                          # Extended syntaxe for code block support, included in python-markdown
                          CodeHiliteExtension(linenums=True, guess_lang=False),
-                         # Code hightlight support, with line numbers, included in python-markdwon
                          customblock_ext,  # CustomBlock support
                          kbd_ext,  # Kbd support
                          emo_ext,  # Smileys support
@@ -83,7 +86,7 @@ class ZdsExtension(Extension):
                          align_ext,  # Right align and center support
                          dheader_ext,  # Down Header support
                          mathjax_ext,  # Mathjax support
-                         'markdown.extensions.fenced_code',
+                         FencedCodeExtension(),
                          comment_ext,  # Comment support
                          legend_ext,  # Legend support
                          ])
