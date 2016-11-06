@@ -1,49 +1,26 @@
-"""
-Python-Markdown Zds Extension
-=============================
-
-A compilation of various Python-Markdown extensions suitable for zds.
-
-Note that each of the individual extensions still need to be available
-on your PYTHONPATH. This extension simply wraps them all up as a
-convenience so that only one extension needs to be listed when
-initiating Markdown. See the documentation for each individual
-extension for specifics about that extension.
-
-In the event that one or more of the supported extensions are not
-available for import, Markdown will issue a warning and simply continue
-without that extension.
-
-There may be additional extensions that are distributed with
-Python-Markdown that are not included here in Extra. Those extensions
-are not part of PHP Markdown Extra, and therefore, not part of
-Python-Markdown Extra. If you really would like Extra to include
-additional extensions, we suggest creating your own clone of Extra
-under a differant name. You could also edit the `extensions` global
-variable defined below, but be aware that such changes may be lost
-when you upgrade to any future version of Python-Markdown.
-
-"""
-
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from . import Extension
 
-from .subsuperscript import SubSuperscriptExtension
+from .abbr import AbbrExtension
+from .align import AlignExtension
+from .codehilite import CodeHiliteExtension
+from .comments import CommentsExtension
+from .customblock import CustomBlockExtension
 from .delext import DelExtension
-from .urlize import UrlizeExtension
+from .emoticons import EmoticonExtension
+from .fenced_code import FencedCodeExtension
+from .footnotes import FootnoteExtension
+from .grid_tables import GridTableExtension
+from .header_dec import DownHeaderExtension
 from .kbd import KbdExtension
 from .mathjax import MathJaxExtension
-from .customblock import CustomBlockExtension
-from .align import AlignExtension
-from .video import VideoExtension
-from .emoticons import EmoticonExtension
-from .grid_tables import GridTableExtension
-from .comments import CommentsExtension
 from .smart_legend import SmartLegendExtension
-from .headerDec import DownHeaderExtension
 from .smarty import SmartyExtension
-from .codehilite import CodeHiliteExtension
+from .subsuperscript import SubSuperscriptExtension
+from .tables import TableExtension
+from .urlize import UrlizeExtension
+from .video import VideoExtension
 
 
 class ZdsExtension(Extension):
@@ -63,43 +40,44 @@ class ZdsExtension(Extension):
         self.inline = self.getConfigs().get("inline", True)
         self.emoticons = self.getConfigs().get("emoticons", {})
         self.js_support = self.getConfigs().get("js_support", False)
+        md.inline = self.inline
 
         # create extensions :
         sub_ext = SubSuperscriptExtension()  # Sub and Superscript support
         del_ext = DelExtension()  # Del support
         urlize_ext = UrlizeExtension()  # Autolink support
         sm_ext = SmartyExtension(smart_quotes=False)
+        # Define used ext
+        exts = [sub_ext,  # Subscript support
+                del_ext,  # Del support
+                urlize_ext,  # Autolink support
+                sm_ext]
+
         if not self.inline:
             mathjax_ext = MathJaxExtension()  # MathJax support
             kbd_ext = KbdExtension()  # Keyboard support
             emo_ext = EmoticonExtension(emoticons=self.emoticons)  # smileys support
-            customblock_ext = CustomBlockExtension({"s(ecret)?": "spoiler",
-                                                    "i(nformation)?": "information ico-after",
-                                                    "q(uestion)?": "question ico-after",
-                                                    "a(ttention)?": "warning ico-after",
-                                                    "e(rreur)?": "error ico-after",
-                                                    })  # CustomBlock support
+            customblock_ext = CustomBlockExtension(classes={
+                "s(ecret)?": "spoiler",
+                "i(nformation)?": "information ico-after",
+                "q(uestion)?": "question ico-after",
+                "a(ttention)?": "warning ico-after",
+                "e(rreur)?": "error ico-after",
+            })  # CustomBlock support
             align_ext = AlignExtension()  # Right align and center support
             video_ext = VideoExtension(js_support=self.js_support)  # Video support
 
             gridtable_ext = GridTableExtension()  # Grid Table support
             comment_ext = CommentsExtension(start_tag="<--COMMENT", end_tag="COMMENT-->")  # Comment support
             legend_ext = SmartLegendExtension()  # Smart Legend support
-            dheader_ext = DownHeaderExtension({"OFFSET": 2})  # Offset header support
-        # Define used ext
-        exts = [sub_ext,  # Subscript support
-                del_ext,  # Del support
-                urlize_ext,  # Autolink support
-                sm_ext,
-                ]
-        if not self.inline:
-            exts.extend(['markdown.extensions.abbr',  # Abbreviation support, included in python-markdown
-                         'markdown.extensions.footnotes',  # Footnotes support, included in python-markdown
+            dheader_ext = DownHeaderExtension(offset=2)  # Offset header support
+
+            exts.extend([AbbrExtension(),  # Abbreviation support, included in python-markdown
+                         FootnoteExtension(),  # Footnotes support, included in python-markdown
                          # Footnotes place marker can be set with the PLACE_MARKER option
-                         'markdown.extensions.tables',  # Tables support, included in python-markdown
+                         TableExtension(),  # Tables support, included in python-markdown
                          # Extended syntaxe for code block support, included in python-markdown
                          CodeHiliteExtension(linenums=True, guess_lang=False),
-                         # Code hightlight support, with line numbers, included in python-markdwon
                          customblock_ext,  # CustomBlock support
                          kbd_ext,  # Kbd support
                          emo_ext,  # Smileys support
@@ -108,7 +86,7 @@ class ZdsExtension(Extension):
                          align_ext,  # Right align and center support
                          dheader_ext,  # Down Header support
                          mathjax_ext,  # Mathjax support
-                         'markdown.extensions.fenced_code',
+                         FencedCodeExtension(),
                          comment_ext,  # Comment support
                          legend_ext,  # Legend support
                          ])

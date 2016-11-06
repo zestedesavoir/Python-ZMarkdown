@@ -26,3 +26,6 @@ Test video
 This one should not be allowed :
 
 !(http://jsfiddle.net/Sandhose/BcKhe/)
+
+!(https://www.youtube.com/watch?v=BpJKvrjLUp0)
+with text after

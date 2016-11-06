@@ -33,8 +33,6 @@ License: BSD (see LICENSE for details).
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from .__version__ import version, version_info  # noqa
-import codecs
-import sys
 import logging
 import warnings
 import importlib
@@ -111,19 +109,6 @@ class Markdown(object):
         * lazy_ol: Ignore number of first item of ordered lists. Default: True
 
         """
-
-        # For backward compatibility, loop through old positional args
-        pos = ['extensions', 'extension_configs', 'safe_mode', 'output_format']
-        for c, arg in enumerate(args):
-            if pos[c] not in kwargs:
-                kwargs[pos[c]] = arg
-            if c + 1 == len(pos):  # pragma: no cover
-                # ignore any additional args
-                break
-        if len(args):
-            warnings.warn('Positional arguments are depreacted in Markdown'
-                          'Use keyword arguments only.',
-                          DeprecationWarning)
 
         # Loop through kwargs and assign defaults
         for option, default in self.option_defaults.items():
@@ -219,7 +204,7 @@ class Markdown(object):
             # check that this is an extension.
             if ('.' not in ext_name and not
                     (hasattr(module, 'makeExtension') or
-                     (class_name and hasattr(module, class_name)))):
+                     (class_name and hasattr(module, class_name)))):  # pragma: no cover
                 # We have a name conflict
                 # eg: extensions=['tables'] and PyTables is installed
                 raise ImportError
@@ -336,7 +321,7 @@ class Markdown(object):
 
         try:
             source = util.text_type(source)
-        except UnicodeDecodeError as e:
+        except UnicodeDecodeError as e:  # pragma: no cover
             # Customise error message while maintaining original trackback
             e.reason += '. -- Note: Markdown only accepts unicode input!'
             raise
@@ -377,73 +362,6 @@ class Markdown(object):
 
         return output.strip()
 
-    def convertFile(self, input=None, output=None, encoding=None):
-        """Converts a markdown file and returns the HTML as a unicode string.
-
-        Decodes the file using the provided encoding (defaults to utf-8),
-        passes the file content to markdown, and outputs the html to either
-        the provided stream or the file with provided name, using the same
-        encoding as the source file. The 'xmlcharrefreplace' error handler is
-        used when encoding the output.
-
-        **Note:** This is the only place that decoding and encoding of unicode
-        takes place in Python-Markdown.  (All other code is unicode-in /
-        unicode-out.)
-
-        Keyword arguments:
-
-        * input: File object or path. Reads from stdin if `None`.
-        * output: File object or path. Writes to stdout if `None`.
-        * encoding: Encoding of input and output files. Defaults to utf-8.
-
-        """
-
-        encoding = encoding or "utf-8"
-
-        # Read the source
-        if input:
-            if isinstance(input, util.string_type):
-                input_file = codecs.open(input, mode="r", encoding=encoding)
-            else:
-                input_file = codecs.getreader(encoding)(input)
-            text = input_file.read()
-            input_file.close()
-        else:
-            text = sys.stdin.read()
-            if not isinstance(text, util.text_type):
-                text = text.decode(encoding)
-
-        text = text.lstrip('\ufeff')  # remove the byte-order mark
-
-        # Convert
-        html = self.convert(text)
-
-        # Write to file or stdout
-        if output:
-            if isinstance(output, util.string_type):
-                output_file = codecs.open(output, "w",
-                                          encoding=encoding,
-                                          errors="xmlcharrefreplace")
-                output_file.write(html)
-                output_file.close()
-            else:
-                writer = codecs.getwriter(encoding)
-                output_file = writer(output, errors="xmlcharrefreplace")
-                output_file.write(html)
-                # Don't close here. User may want to write more.
-        else:
-            # Encode manually and write bytes to stdout.
-            html = html.encode(encoding, "xmlcharrefreplace")
-            try:
-                # Write bytes directly to buffer (Python 3).
-                sys.stdout.buffer.write(html)
-            except AttributeError:
-                # Probably Python 2, which works with bytes by default.
-                sys.stdout.write(html)
-
-        return self
-
-
 """
 EXPORTED FUNCTIONS
 =============================================================================
@@ -470,38 +388,3 @@ def markdown(text, *args, **kwargs):
     """
     md = Markdown(*args, **kwargs)
     return md.convert(text)
-
-
-def markdownFromFile(*args, **kwargs):
-    """Read markdown code from a file and write it to a file or a stream.
-
-    This is a shortcut function which initializes an instance of Markdown,
-    and calls the convertFile method rather than convert.
-
-    Keyword arguments:
-
-    * input: a file name or readable object.
-    * output: a file name or writable object.
-    * encoding: Encoding of input and output.
-    * Any arguments accepted by the Markdown class.
-
-    """
-    # For backward compatibility loop through positional args
-    pos = ['input', 'output', 'extensions', 'encoding']
-    c = 0
-    for arg in args:
-        if pos[c] not in kwargs:
-            kwargs[pos[c]] = arg
-        c += 1
-        if c == len(pos):
-            break
-    if len(args):
-        warnings.warn('Positional arguments are depreacted in '
-                      'Markdown and will raise an error in version 2.7. '
-                      'Use keyword arguments only.',
-                      DeprecationWarning)
-
-    md = Markdown(**kwargs)
-    md.convertFile(kwargs.get('input', None),
-                   kwargs.get('output', None),
-                   kwargs.get('encoding', None))

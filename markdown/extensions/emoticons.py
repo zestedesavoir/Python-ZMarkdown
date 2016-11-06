@@ -35,7 +35,7 @@ class EmoticonPattern(Pattern):
     def handleMatch(self, m):
         try:
             emoticon = m.group('emoticon')
-        except IndexError:
+        except IndexError:  # pragma: no cover
             return None
         el = etree.Element('img')
         el.set('src', '%s' % (self.emoticons.getConfig('emoticons')[emoticon],))

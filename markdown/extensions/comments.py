@@ -1,6 +1,3 @@
-# Comment extension
-# inspired by  https://github.com/ryneeverett/python-markdown-comments
-
 import re
 from markdown.blockprocessors import BlockProcessor
 from markdown.extensions import Extension
@@ -35,13 +32,12 @@ class CommentsBlockProcessor(BlockProcessor):
 
     def run(self, parent, blocks):
         text = "\n\n".join(blocks)
-        while True:
-            m = self.RE.search(text)
-            if m:
-                text = "%s%s" % (text[:m.start()], text[m.end():])
-                break
-            else:
-                break
+
+        m = self.RE.search(text)
+
+        if m is None:
+            return False
+        text = "%s%s" % (text[:m.start()], text[m.end():])
         del blocks[:]
         blocks.extend(text.split("\n\n"))
 

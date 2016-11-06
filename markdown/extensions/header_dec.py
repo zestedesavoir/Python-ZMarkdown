@@ -3,21 +3,16 @@ import markdown
 import re
 
 
-def makeExtension(configs=None):
-    return DownHeaderExtension(configs=configs)
-
-
 class DownHeaderExtension(markdown.Extension):
-    def __init__(self, configs):
-        self.configs = {"OFFSET": 1}
-        for key, value in configs.items():
-            self.configs[key] = value
+    def __init__(self, *args, **kwargs):
+        self.config = {"offset": [1, "header offset to apply"]}
+        markdown.Extension.__init__(self, *args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
         # VERY DANGEROUS !
         md.parser.blockprocessors["hashheader"].RE = re.compile(
-            r'(^|\n)(?P<level>#{1,' + str(6 - self.configs["OFFSET"]) + r'})(?P<header>.*?)#*(\n|$)')
-        md.treeprocessors.add('downheader', DownHeaderProcessor(self.configs["OFFSET"]), '_end')
+            r'(^|\n)(?P<level>#{1,%d})(?P<header>.*?)#*(\n|$)' % (6 - self.getConfig("offset")))
+        md.treeprocessors.add('downheader', DownHeaderProcessor(self.getConfig("offset")), '_end')
 
 
 class DownHeaderProcessor(markdown.treeprocessors.Treeprocessor):
