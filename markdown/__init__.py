@@ -112,19 +112,6 @@ class Markdown(object):
 
         """
 
-        # For backward compatibility, loop through old positional args
-        pos = ['extensions', 'extension_configs', 'safe_mode', 'output_format']
-        for c, arg in enumerate(args):
-            if pos[c] not in kwargs:
-                kwargs[pos[c]] = arg
-            if c + 1 == len(pos):  # pragma: no cover
-                # ignore any additional args
-                break
-        if len(args):
-            warnings.warn('Positional arguments are depreacted in Markdown'
-                          'Use keyword arguments only.',
-                          DeprecationWarning)
-
         # Loop through kwargs and assign defaults
         for option, default in self.option_defaults.items():
             setattr(self, option, kwargs.get(option, default))
