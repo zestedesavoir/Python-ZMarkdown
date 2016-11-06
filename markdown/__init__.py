@@ -33,8 +33,6 @@ License: BSD (see LICENSE for details).
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from .__version__ import version, version_info  # noqa
-import codecs
-import sys
 import logging
 import warnings
 import importlib
@@ -206,7 +204,7 @@ class Markdown(object):
             # check that this is an extension.
             if ('.' not in ext_name and not
                     (hasattr(module, 'makeExtension') or
-                     (class_name and hasattr(module, class_name)))):
+                     (class_name and hasattr(module, class_name)))):  # pragma: no cover
                 # We have a name conflict
                 # eg: extensions=['tables'] and PyTables is installed
                 raise ImportError
@@ -323,7 +321,7 @@ class Markdown(object):
 
         try:
             source = util.text_type(source)
-        except UnicodeDecodeError as e:
+        except UnicodeDecodeError as e:  # pragma: no cover
             # Customise error message while maintaining original trackback
             e.reason += '. -- Note: Markdown only accepts unicode input!'
             raise
