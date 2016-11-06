@@ -3,24 +3,24 @@ from __future__ import unicode_literals
 from . import Extension
 
 from .abbr import AbbrExtension
-from .footnotes import FootnoteExtension
-from .tables import TableExtension
-from .fenced_code import FencedCodeExtension
-from .subsuperscript import SubSuperscriptExtension
+from .align import AlignExtension
+from .codehilite import CodeHiliteExtension
+from .comments import CommentsExtension
+from .customblock import CustomBlockExtension
 from .delext import DelExtension
-from .urlize import UrlizeExtension
+from .emoticons import EmoticonExtension
+from .fenced_code import FencedCodeExtension
+from .footnotes import FootnoteExtension
+from .grid_tables import GridTableExtension
+from .header_dec import DownHeaderExtension
 from .kbd import KbdExtension
 from .mathjax import MathJaxExtension
-from .customblock import CustomBlockExtension
-from .align import AlignExtension
-from .video import VideoExtension
-from .emoticons import EmoticonExtension
-from .grid_tables import GridTableExtension
-from .comments import CommentsExtension
 from .smart_legend import SmartLegendExtension
-from .header_dec import DownHeaderExtension
 from .smarty import SmartyExtension
-from .codehilite import CodeHiliteExtension
+from .subsuperscript import SubSuperscriptExtension
+from .tables import TableExtension
+from .urlize import UrlizeExtension
+from .video import VideoExtension
 
 
 class ZdsExtension(Extension):
