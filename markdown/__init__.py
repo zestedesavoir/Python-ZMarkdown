@@ -110,6 +110,8 @@ class Markdown(object):
 
         """
 
+        self.metadata = {}
+
         # Loop through kwargs and assign defaults
         for option, default in self.option_defaults.items():
             setattr(self, option, kwargs.get(option, default))
@@ -270,6 +272,7 @@ class Markdown(object):
         """
         self.htmlStash.reset()
         self.references.clear()
+        self.metadata = {}
 
         for extension in self.registeredExtensions:
             if hasattr(extension, 'reset'):

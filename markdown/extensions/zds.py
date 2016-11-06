@@ -32,7 +32,7 @@ class ZdsExtension(Extension):
             'inline': [False, ''],
             'emoticons': [{}, ''],
             'js_support': [False, ''],
-            'pings': [[], ''],
+            'is_pingeable': [None, ''],
         }
 
         super(ZdsExtension, self).__init__(*args, **kwargs)
@@ -42,24 +42,21 @@ class ZdsExtension(Extension):
         self.inline = self.getConfigs().get("inline", True)
         self.emoticons = self.getConfigs().get("emoticons", {})
         self.js_support = self.getConfigs().get("js_support", False)
+        self.is_pingeable = self.getConfigs().get('is_pingeable', None)
+        if self.is_pingeable is None:
+            self.is_pingeable = lambda _: False
+
         md.inline = self.inline
-
-        def is_pinged(user=None):
-            return False
-
-        self.is_pinged = self.getConfigs().get('is_pinged', is_pinged)
 
         # create extensions :
         sub_ext = SubSuperscriptExtension()  # Sub and Superscript support
         del_ext = DelExtension()  # Del support
         urlize_ext = UrlizeExtension()  # Autolink support
         sm_ext = SmartyExtension(smart_quotes=False)
-        ping_ext = PingExtension(is_pinged=self.is_pinged)  # Ping support
         # Define used ext
         exts = [sub_ext,  # Subscript support
                 del_ext,  # Del support
                 urlize_ext,  # Autolink support
-                ping_ext,  # Ping support
                 sm_ext]
 
         if not self.inline:
@@ -80,6 +77,7 @@ class ZdsExtension(Extension):
             comment_ext = CommentsExtension(start_tag="<--COMMENT", end_tag="COMMENT-->")  # Comment support
             legend_ext = SmartLegendExtension()  # Smart Legend support
             dheader_ext = DownHeaderExtension(offset=2)  # Offset header support
+            ping_ext = PingExtension(is_pingeable=self.is_pingeable)  # Ping support
 
             exts.extend([AbbrExtension(),  # Abbreviation support, included in python-markdown
                          FootnoteExtension(),  # Footnotes support, included in python-markdown
@@ -98,6 +96,7 @@ class ZdsExtension(Extension):
                          FencedCodeExtension(),
                          comment_ext,  # Comment support
                          legend_ext,  # Legend support
+                         ping_ext,  # Ping support
                          ])
         md.registerExtensions(exts, {})
         if self.inline:

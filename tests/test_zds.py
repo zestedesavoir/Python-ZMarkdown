@@ -3,6 +3,7 @@ import unittest
 import markdown
 from markdown.extensions.header_dec import DownHeaderExtension
 from markdown.extensions.zds import ZdsExtension
+from markdown.extensions.ping import PingExtension
 
 
 class TestZDSExtensionClass(unittest.TestCase):
@@ -74,3 +75,72 @@ class TestZDSExtensionClass(unittest.TestCase):
                 '<h3>Title 1b</h3>\n'
                 '<h4>Title 2b</h4>'
         )
+
+
+class TestPing(unittest.TestCase):
+    """ Test ping extension. """
+
+    def testNoPing(self):
+        """ No ping. """
+        md = markdown.Markdown(extensions=[PingExtension()])
+        text = 'I want to ping @[Clem].'
+        self.assertEqual(
+            '<p>I want to ping @[Clem].</p>',
+            md.convert(text)
+        )
+        self.assertEqual(set(), md.metadata["ping"])
+
+    def testPingOneMember(self):
+        """ Ping one member when 2 members are specified."""
+
+        def is_pingeable(user=None):
+            return user == 'Clem'
+
+        md = markdown.Markdown(extensions=[PingExtension(is_pingeable=is_pingeable)])
+        text = 'I want to ping @[Clem] and @[Zozor].'
+        self.assertEqual(
+            '<p>I want to ping <a class="ping" href="/membres/voir/Clem/">@Clem</a> and @[Zozor].</p>',
+            md.convert(text)
+        )
+        self.assertEqual({"Clem"}, md.metadata["ping"])
+
+    def testComplexPing(self):
+        """ Complex ping. """
+
+        def is_pingeable(user=None):
+            return user == 'Clem' or user == 'A member'
+
+        md = markdown.Markdown(extensions=[PingExtension(is_pingeable=is_pingeable)])
+        text = 'I want to ping @[Clem], @[Zozor] and @[A member].'
+        self.assertEqual(
+            '<p>I want to ping <a class="ping" href="/membres/voir/Clem/">@Clem</a>, '
+            '@[Zozor] and <a class="ping" href="/membres/voir/A member/">@A member</a>.</p>',
+            md.convert(text)
+        )
+        self.assertEqual({"Clem", "A member"}, md.metadata["ping"])
+
+    def testAllSyntaxes(self):
+        """ Test all syntaxes for ping. """
+
+        def is_pingeable(user=None):
+            return user == 'Clem' or user == 'A member'
+
+        md = markdown.Markdown(extensions=[PingExtension(is_pingeable=is_pingeable)])
+        text = 'I want to ping @Clem, @[Zozor] and @[A member].'
+        self.assertEqual(
+            '<p>I want to ping <a class="ping" href="/membres/voir/Clem/">@Clem</a>, '
+            '@[Zozor] and <a class="ping" href="/membres/voir/A member/">@A member</a>.</p>',
+            md.convert(text)
+        )
+        self.assertEqual({"Clem", "A member"}, md.metadata["ping"])
+
+    def testPingNotMatched(self):
+        """ Don't ping when we don't have a space before @ """
+
+        def is_pingeable(user=None):
+            return user == 'Clem' or user == 'A member'
+
+        md = markdown.Markdown(extensions=[PingExtension(is_pingeable=is_pingeable)])
+        text = 'I want to@Clem, @[Zozor] and@[A member].'
+        self.assertEqual('<p>' + text + '</p>', md.convert(text))
+        self.assertEqual(set(), md.metadata["ping"])
