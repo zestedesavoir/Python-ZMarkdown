@@ -5,10 +5,6 @@ import sys
 import os
 from distutils.core import setup
 from distutils.command.install_scripts import install_scripts
-from distutils.command.build import build
-from distutils.core import Command
-from distutils.util import change_root, newer
-import codecs
 import imp
 
 
