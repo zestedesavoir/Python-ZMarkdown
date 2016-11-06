@@ -22,7 +22,7 @@ from .blockparser import BlockParser
 logger = logging.getLogger('MARKDOWN')
 
 
-def build_block_parser(md_instance, **kwargs):
+def build_block_parser(md_instance):
     """ Build the default block parser used by Markdown. """
     parser = BlockParser(md_instance)
     parser.blockprocessors['reference'] = ReferenceProcessor(parser)
@@ -153,7 +153,7 @@ class ReferenceProcessor(BlockProcessor):
             line = lines.pop(0)
             m = self.RE.match(line)
             if m:
-                id = m.group(1).strip().lower()
+                idd = m.group(1).strip().lower()
                 link = m.group(2).lstrip('<').rstrip('>')
                 t = m.group(5) or m.group(6) or m.group(7)
                 if not t:
@@ -162,7 +162,7 @@ class ReferenceProcessor(BlockProcessor):
                     if tm:
                         lines.pop(0)
                         t = tm.group(2) or tm.group(3) or tm.group(4)
-                self.parser.markdown.references[id] = (link, t)
+                self.parser.markdown.references[idd] = (link, t)
             else:
                 new_text.append(line)
         blocks.insert(0, "\n".join(new_text[:-1]))
@@ -477,7 +477,7 @@ class HashHeaderProcessor(BlockProcessor):
                 blocks.insert(0, after)
         else:  # pragma: no cover
             # This should never happen, but just in case...
-            logger.warn("We've got a problem header: %r" % block)
+            logger.warn("We've got a problem header: %r", block)
 
 
 class SetextHeaderProcessor(BlockProcessor):

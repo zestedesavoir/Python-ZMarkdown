@@ -45,7 +45,7 @@ from .postprocessors import build_postprocessors
 from .extensions import Extension
 from .serializers import to_html_string, to_xhtml_string
 
-__all__ = ['Markdown', 'markdown', 'markdownFromFile']
+__all__ = ['Markdown', 'markdown']
 
 logger = logging.getLogger('MARKDOWN')
 
@@ -76,7 +76,7 @@ class Markdown(object):
     ESCAPED_CHARS = ['\\', '`', '*', '_', '{', '}', '[', ']',
                      '(', ')', '>', '#', '+', '-', '.', '!']
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, **kwargs):
         """
         Creates a new Markdown instance.
 
@@ -157,9 +157,8 @@ class Markdown(object):
                 ext = self.build_extension(ext, configs.get(ext, {}))
             if isinstance(ext, Extension):
                 ext.extendMarkdown(self, globals())
-                logger.debug('Successfully loaded extension "%s.%s".'
-                             % (ext.__class__.__module__, ext.__class__.__name__)
-                             )
+                logger.debug('Successfully loaded extension "%s.%s".',
+                             ext.__class__.__module__, ext.__class__.__name__)
             elif ext is not None:
                 raise TypeError('Extension "%s.%s" must be of type: "markdown.Extension"'
                                 % (ext.__class__.__module__, ext.__class__.__name__))
@@ -199,7 +198,7 @@ class Markdown(object):
         try:
             # Assume string uses dot syntax (`path.to.some.module`)
             module = importlib.import_module(ext_name)
-            logger.debug('Successfuly imported extension module "%s".' % ext_name)
+            logger.debug('Successfuly imported extension module "%s".', ext_name)
             # For backward compat (until deprecation)
             # check that this is an extension.
             if ('.' not in ext_name and not
@@ -213,7 +212,7 @@ class Markdown(object):
             module_name = '.'.join(['markdown.extensions', ext_name])
             try:
                 module = importlib.import_module(module_name)
-                logger.debug('Successfuly imported extension module "%s".' % module_name)
+                logger.debug('Successfuly imported extension module "%s".', module_name)
                 warnings.warn('Using short names for Markdown\'s builtin '
                               'extensions is deprecated. Use the '
                               'full path to the extension with Python\'s dot '
@@ -228,7 +227,7 @@ class Markdown(object):
                 module_name_old_style = '_'.join(['mdx', ext_name])
                 try:
                     module = importlib.import_module(module_name_old_style)
-                    logger.debug('Successfuly imported extension module "%s".' % module_name_old_style)
+                    logger.debug('Successfuly imported extension module "%s".', module_name_old_style)
                     warnings.warn('Markdown\'s behavior of prepending "mdx_" '
                                   'to an extension name is deprecated. '
                                   'Use the full path to the '
@@ -278,9 +277,9 @@ class Markdown(object):
 
         return self
 
-    def set_output_format(self, format):
+    def set_output_format(self, frmt):
         """ Set the output format for the class instance. """
-        self.output_format = format.lower()
+        self.output_format = frmt.lower()
         try:
             self.serializer = self.output_formats[self.output_format]
         except KeyError as e:
@@ -362,13 +361,10 @@ class Markdown(object):
 
         return output.strip()
 
-"""
-EXPORTED FUNCTIONS
-=============================================================================
-
-Those are the two functions we really mean to export: markdown() and
-markdownFromFile().
-"""
+# EXPORTED FUNCTIONS
+# =============================================================================
+#
+# Those are the only function we really mean to export: markdown()
 
 
 def markdown(text, *args, **kwargs):

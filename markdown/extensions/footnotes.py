@@ -99,22 +99,22 @@ class FootnoteExtension(Extension):
             return '-'
         return ':'
 
-    def makeFootnoteId(self, id):
+    def makeFootnoteId(self, idd):
         """ Return footnote link id. """
         if self.getConfig("UNIQUE_IDS"):
-            return 'fn%s%d-%s' % (self.get_separator(), self.unique_prefix, id)
+            return 'fn%s%d-%s' % (self.get_separator(), self.unique_prefix, idd)
         else:
-            return 'fn%s%s' % (self.get_separator(), id)
+            return 'fn%s%s' % (self.get_separator(), idd)
 
-    def makeFootnoteRefId(self, id):
+    def makeFootnoteRefId(self, idd):
         """ Return footnote back-link id. """
         if self.getConfig("UNIQUE_IDS"):
             return 'fnref%s%d-%s' % (self.get_separator(),
-                                     self.unique_prefix, id)
+                                     self.unique_prefix, idd)
         else:
-            return 'fnref%s%s' % (self.get_separator(), id)
+            return 'fnref%s%s' % (self.get_separator(), idd)
 
-    def makeFootnotesDiv(self, root):
+    def makeFootnotesDiv(self):
         """ Return div of footnotes as et Element. """
 
         if not list(self.footnotes.keys()):
@@ -125,16 +125,16 @@ class FootnoteExtension(Extension):
         etree.SubElement(div, "hr")
         ol = etree.SubElement(div, "ol")
 
-        for id in self.footnotes.keys():
+        for idd in self.footnotes.keys():
             li = etree.SubElement(ol, "li")
-            li.set("id", self.makeFootnoteId(id))
-            self.parser.parseChunk(li, self.footnotes[id])
+            li.set("id", self.makeFootnoteId(idd))
+            self.parser.parseChunk(li, self.footnotes[idd])
             backlink = etree.Element("a")
-            backlink.set("href", "#" + self.makeFootnoteRefId(id))
+            backlink.set("href", "#" + self.makeFootnoteRefId(idd))
             if self.md.output_format not in ['html5', 'xhtml5']:
                 backlink.set("rev", "footnote")  # Invalid in HTML5
             backlink.set("class", "footnote-backref")
-            backlink.set("title", "Retourner au texte de la note %d" % (self.footnotes.index(id) + 1))
+            backlink.set("title", "Retourner au texte de la note %d" % (self.footnotes.index(idd) + 1))
             backlink.text = FN_BACKLINK_TEXT
 
             if li.getchildren():
@@ -262,16 +262,16 @@ class FootnotePattern(Pattern):
         self.footnotes = footnotes
 
     def handleMatch(self, m):
-        id = m.group(2)
-        if id in self.footnotes.footnotes.keys():
+        idd = m.group(2)
+        if idd in self.footnotes.footnotes.keys():
             sup = etree.Element("sup")
             a = etree.SubElement(sup, "a")
-            sup.set('id', self.footnotes.makeFootnoteRefId(id))
-            a.set('href', '#' + self.footnotes.makeFootnoteId(id))
+            sup.set('id', self.footnotes.makeFootnoteRefId(idd))
+            a.set('href', '#' + self.footnotes.makeFootnoteId(idd))
             if self.footnotes.md.output_format not in ['html5', 'xhtml5']:
                 a.set('rel', 'footnote')  # invalid in HTML5
             a.set('class', 'footnote-ref')
-            a.text = text_type(self.footnotes.footnotes.index(id) + 1)
+            a.text = text_type(self.footnotes.footnotes.index(idd) + 1)
             return sup
         else:
             return None
@@ -284,7 +284,7 @@ class FootnoteTreeprocessor(Treeprocessor):
         self.footnotes = footnotes
 
     def run(self, root):
-        footnotesDiv = self.footnotes.makeFootnotesDiv(root)
+        footnotesDiv = self.footnotes.makeFootnotesDiv()
         if footnotesDiv is not None:
             result = self.footnotes.findFootnotesPlaceholder(root)
             if result:
