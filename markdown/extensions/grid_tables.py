@@ -69,9 +69,9 @@ def pairwise(iterable):
     return zip(a, b)
 
 
-def find_all(txt, chr):
+def find_all(txt, char):
     """Extract all position of a character in a string"""
-    return tuple(i for i, ltr in enumerate(txt) if ltr in chr)
+    return tuple(i for i, ltr in enumerate(txt) if ltr in char)
 
 
 def is_first_item():

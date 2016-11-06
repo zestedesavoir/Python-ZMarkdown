@@ -97,7 +97,7 @@ class VideoBProcessor(BlockProcessor):
             blocks.insert(0, after)
 
     @staticmethod
-    def extract_url(m):  # pragma: no cover
+    def extract_url(_):  # pragma: no cover
         # Should be overridden in sub-class
         return ""
 
