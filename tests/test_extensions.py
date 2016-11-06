@@ -110,7 +110,7 @@ class TestCodeHilite(unittest.TestCase):
             )
 
     def testLinenumsTrue(self):
-        text = 'hl_lines\t# A Code Comment'
+        text = '\t# A Code Comment'
         md = markdown.Markdown(
             extensions=[markdown.extensions.codehilite.CodeHiliteExtension(linenums=True)])
         if self.has_pygments:
