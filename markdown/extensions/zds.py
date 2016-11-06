@@ -41,7 +41,7 @@ from .emoticons import EmoticonExtension
 from .grid_tables import GridTableExtension
 from .comments import CommentsExtension
 from .smart_legend import SmartLegendExtension
-from .headerDec import DownHeaderExtension
+from .header_dec import DownHeaderExtension
 from .smarty import SmartyExtension
 from .codehilite import CodeHiliteExtension
 
@@ -92,7 +92,7 @@ class ZdsExtension(Extension):
             gridtable_ext = GridTableExtension()  # Grid Table support
             comment_ext = CommentsExtension(start_tag="<--COMMENT", end_tag="COMMENT-->")  # Comment support
             legend_ext = SmartLegendExtension()  # Smart Legend support
-            dheader_ext = DownHeaderExtension({"OFFSET": 2})  # Offset header support
+            dheader_ext = DownHeaderExtension(offset=2)  # Offset header support
 
             exts.extend(['markdown.extensions.abbr',  # Abbreviation support, included in python-markdown
                          'markdown.extensions.footnotes',  # Footnotes support, included in python-markdown
