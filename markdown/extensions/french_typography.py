@@ -185,7 +185,3 @@ class FrenchTypographyExtension(markdown.extensions.Extension):
         processing.inlinePatterns = self.replacements
         md.treeprocessors.add('french_typography', processing, '_end')
         md.ESCAPED_CHARS.extend(["'", "«", "»"])
-
-
-def makeExtension(*args, **kwargs):
-    return FrenchTypographyExtension(*args, **kwargs)
