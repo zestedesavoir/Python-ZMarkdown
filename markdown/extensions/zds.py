@@ -32,7 +32,7 @@ class ZdsExtension(Extension):
             'inline': [False, ''],
             'emoticons': [{}, ''],
             'js_support': [False, ''],
-            'is_pingeable': [None, ''],
+            'ping_url': [None, ''],
         }
 
         super(ZdsExtension, self).__init__(*args, **kwargs)
@@ -42,9 +42,9 @@ class ZdsExtension(Extension):
         self.inline = self.getConfigs().get("inline", True)
         self.emoticons = self.getConfigs().get("emoticons", {})
         self.js_support = self.getConfigs().get("js_support", False)
-        self.is_pingeable = self.getConfigs().get('is_pingeable', None)
-        if self.is_pingeable is None:
-            self.is_pingeable = lambda _: False
+        self.ping_url = self.getConfigs().get('ping_url', None)
+        if self.ping_url is None:
+            self.ping_url = lambda _: None
 
         md.inline = self.inline
 
@@ -77,7 +77,7 @@ class ZdsExtension(Extension):
             comment_ext = CommentsExtension(start_tag="<--COMMENT", end_tag="COMMENT-->")  # Comment support
             legend_ext = SmartLegendExtension()  # Smart Legend support
             dheader_ext = DownHeaderExtension(offset=2)  # Offset header support
-            ping_ext = PingExtension(is_pingeable=self.is_pingeable)  # Ping support
+            ping_ext = PingExtension(ping_url=self.ping_url)  # Ping support
 
             exts.extend([AbbrExtension(),  # Abbreviation support, included in python-markdown
                          FootnoteExtension(),  # Footnotes support, included in python-markdown
