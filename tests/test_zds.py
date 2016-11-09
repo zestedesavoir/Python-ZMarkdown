@@ -22,7 +22,7 @@ class TestZDSExtensionClass(unittest.TestCase):
         # Complex elements should not be allowed
         self.assertEqual(
                 md.convert('> ![Image](http://test.com/image.png)'),
-                '<p>&gt; ![Image](http://test.com/image.png)\n\n</p>')
+                '<p>&gt;&#x202F;![Image](http://test.com/image.png)\n</p>')
 
     def test_ping_function(self):
         def ping_url(user=None):
