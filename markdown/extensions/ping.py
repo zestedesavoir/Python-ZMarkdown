@@ -18,7 +18,7 @@ class PingPattern(Pattern):
 
     def handleMatch(self, m):
         name = m.group(2) if m.group(2) is not None else m.group(3)
-        if name is None:
+        if name is None:    # pragma: no cover
             return None
         url = self.ping_url(name)
         if url is None:
