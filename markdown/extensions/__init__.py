@@ -43,7 +43,7 @@ class Extension(object):
         """ Set a config setting for `key` with the given `value`. """
         if isinstance(self.config[key][0], bool):
             value = parseBoolValue(value)
-        if self.config[key][0] is None:
+        if self.config[key][0] is None and not callable(value):
             value = parseBoolValue(value, preserve_none=True)
         self.config[key][0] = value
 
