@@ -24,6 +24,20 @@ class TestZDSExtensionClass(unittest.TestCase):
                 md.convert('> ![Image](http://test.com/image.png)'),
                 '<p>&gt; ![Image](http://test.com/image.png)\n\n</p>')
 
+    def test_ping_function(self):
+        def ping_url(user=None):
+            if user == 'Clem':
+                return '/membres/voir/{}/'.format(user)
+
+        zds_ext = ZdsExtension(ping_url=ping_url)
+        md = markdown.Markdown(extensions=[zds_ext])
+        text = 'I want to ping @[Clem] and @[Zozor].'
+        self.assertEqual(
+            '<p>I want to ping <a class="ping" href="/membres/voir/Clem/">@Clem</a> and @[Zozor].</p>',
+            md.convert(text)
+        )
+        self.assertEqual({"Clem"}, md.metadata["ping"])
+
     def test_header_dec(self):
         md = markdown.Markdown()
         text_ref = ('# Title 1\n'
