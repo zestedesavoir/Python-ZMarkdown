@@ -119,8 +119,8 @@ class FrenchTypographyExtension(markdown.extensions.Extension):
         )
 
     def replaceAngleQuotes(self, md):
-        openingAngleQuotesPattern = ReplacePattern(r'\<\<', "&laquo;", md)
-        closingAngleQuotesPattern = ReplacePattern(r'\>\>', "&raquo;", md)
+        openingAngleQuotesPattern = ReplacePattern(r'<<', "&laquo;", md)
+        closingAngleQuotesPattern = ReplacePattern(r'>>', "&raquo;", md)
         self.replacements.add(
             'opening_angle_quotes', openingAngleQuotesPattern, '_begin'
         )
@@ -132,16 +132,16 @@ class FrenchTypographyExtension(markdown.extensions.Extension):
 
     def replaceAngleQuotesWithSpaces(self, md):
         openingAngleQuotesPattern = ReplacePattern(
-            r'\<\< ', "&laquo;&nbsp;", md
+            r'<< ', "&laquo;&nbsp;", md
         )
         closingAngleQuotesPattern = ReplacePattern(
-            r' \>\>', "&nbsp;&raquo;", md
+            r' >>', "&nbsp;&raquo;", md
         )
         self.replacements.add(
-            'opening_angle_quotes', openingAngleQuotesPattern, '_begin'
+            'opening_angle_quotes_space', openingAngleQuotesPattern, '_begin'
         )
         self.replacements.add(
-            'closing_angle_quotes',
+            'closing_angle_quotes_space',
             closingAngleQuotesPattern,
             '>opening_angle_quotes'
         )
@@ -152,7 +152,7 @@ class FrenchTypographyExtension(markdown.extensions.Extension):
 
     def replacePerMilWithSpace(self, md):
         perMilPattern = ReplacePattern(" %o", "&nbsp;&permil;", md)
-        self.replacements.add('per_mil', perMilPattern, '_begin')
+        self.replacements.add('per_mil_with_space2', perMilPattern, '_begin')
 
     def replaceEllipses(self, md):
         ellipsesPattern = ReplacePattern(
@@ -165,23 +165,27 @@ class FrenchTypographyExtension(markdown.extensions.Extension):
         self.replacements = markdown.odict.OrderedDict()
         if configs['apostrophes']:
             self.replaceApostrophes(md)
+            md.ESCAPED_CHARS.append("'")
         if configs['em_dashes']:
             self.replaceEmDashes(md)
         if configs['en_dashes']:
             self.replaceEnDashes(md)
         if configs['unbreakable_spaces']:
             self.replaceSpaces(md)
+            md.ESCAPED_CHARS.extend([" ", "«", "»"])
         if configs['angle_quotes']:
             self.replaceAngleQuotes(md)
+            md.ESCAPED_CHARS.append("<")
         if configs['angle_quotes'] and configs['unbreakable_spaces']:
             self.replaceAngleQuotesWithSpaces(md)
         if configs['per_mil']:
             self.replacePerMil(md)
+            md.ESCAPED_CHARS.append("%")
         if configs['per_mil'] and configs['unbreakable_spaces']:
             self.replacePerMilWithSpace(md)
         if configs['ellipses']:
             self.replaceEllipses(md)
+            md.ESCAPED_CHARS.append("...")
         processing = markdown.treeprocessors.InlineProcessor(md)
         processing.inlinePatterns = self.replacements
         md.treeprocessors.add('french_typography', processing, '_end')
-        md.ESCAPED_CHARS.extend(["'", "«", "»"])

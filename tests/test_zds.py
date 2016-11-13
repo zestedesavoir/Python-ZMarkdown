@@ -1,9 +1,11 @@
+# -*- encoding: utf-8 -*-
 from __future__ import unicode_literals
 import unittest
 import markdown
 from markdown.extensions.header_dec import DownHeaderExtension
 from markdown.extensions.zds import ZdsExtension
 from markdown.extensions.ping import PingExtension
+from markdown.extensions.french_typography import FrenchTypographyExtension
 
 
 class TestZDSExtensionClass(unittest.TestCase):
@@ -162,3 +164,56 @@ class TestPing(unittest.TestCase):
         text = 'I want to@Clem, @[Zozor] and@[A member].'
         self.assertEqual('<p>' + text + '</p>', md.convert(text))
         self.assertEqual(set(), md.metadata["ping"])
+
+
+class TestTypography(unittest.TestCase):
+    def setUp(self):
+        self.md = markdown.Markdown(safe_mode='escape', extensions=[FrenchTypographyExtension()])
+
+    def simple_comparison(self, src, result):
+        self.assertEqual(
+            '<p>{}</p>'.format(result),
+            self.md.convert(src))
+
+    def test_basic(self):
+        self.simple_comparison("c'est", "c&rsquo;est")
+        self.simple_comparison("un --- deux", "un &mdash; deux")
+        self.simple_comparison("un -- deux", "un &ndash; deux")
+        self.simple_comparison("un ; deux", "un&#x202F;; deux")
+        self.simple_comparison("un : deux", "un&#x202F;: deux")
+        self.simple_comparison("un ? deux", "un&#x202F;? deux")
+        self.simple_comparison("un ??? deux", "un&#x202F;??? deux")
+        self.simple_comparison("un ! deux", "un&#x202F;! deux")
+        self.simple_comparison("un !!! deux", "un&#x202F;!!! deux")
+        self.simple_comparison("42 %", "42&nbsp;%")
+        self.simple_comparison("42 ‰", "42&nbsp;&permil;")
+        self.simple_comparison("« Zeste »", "&laquo;&nbsp;Zeste&nbsp;&raquo;")
+        self.simple_comparison("<<Zeste>>", "&laquo;Zeste&raquo;")
+        self.simple_comparison("<< Zeste >>", "&laquo;&nbsp;Zeste&nbsp;&raquo;")
+        self.simple_comparison("42%o", "42&permil;")
+        self.simple_comparison("42 %o", "42&nbsp;&permil;")
+        self.simple_comparison("42...", "42&hellip;")
+
+    def test_escape(self):
+        self.simple_comparison(r"c\'est", "c'est")
+        self.simple_comparison(r"un \-\-- deux", "un --- deux")
+        self.simple_comparison(r"un \-- deux", "un -- deux")
+        self.simple_comparison(r"un\ ; deux", "un ; deux")
+        self.simple_comparison(r"un\ : deux", "un : deux")
+        self.simple_comparison(r"un\ ? deux", "un ? deux")
+        self.simple_comparison(r"un\ ! deux", "un ! deux")
+        self.simple_comparison(r"42\ %", "42 %")
+        self.simple_comparison(r"42\ ‰", "42 ‰")
+        self.simple_comparison(r"\« Zeste\ »", "« Zeste »")
+        self.simple_comparison(r"\<<Zeste\>>", "&lt;&lt;Zeste&gt;&gt;")
+        self.simple_comparison(r"\<< Zeste\ \>>", "&lt;&lt; Zeste &gt;&gt;")
+        self.simple_comparison(r"42\%o", "42%o")
+        self.simple_comparison(r"42 \%o", "42 %o")
+        self.simple_comparison(r"42\...", "42...")
+
+    def test_neg(self):
+        self.simple_comparison("un - deux", "un - deux")
+        self.simple_comparison("un ---- deux", "un ---- deux")
+        self.simple_comparison("un ;) deux", "un ;) deux")
+        self.simple_comparison("un :) deux", "un :) deux")
+        self.simple_comparison(r"< < Zeste > >", "&lt; &lt; Zeste &gt; &gt;")

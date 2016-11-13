@@ -165,8 +165,6 @@ def _serialize_html(write, elem, qnames, namespaces, format):
                         v = qnames[v.text]
                     elif not isinstance(v, util.RawHTMLString):
                         v = _escape_attrib_html(v)
-                    else:
-                        print("*"*20, k, v)
                     if qnames[k] == v and format == 'html':
                         # handle boolean attributes
                         write(" %s" % v)
