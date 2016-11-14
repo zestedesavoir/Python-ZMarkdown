@@ -92,14 +92,7 @@ class TestZDSExtensionClass(unittest.TestCase):
     def test_typography(self):
         zds_ext = ZdsExtension(emoticons={":D": "image.png"})
         md = markdown.Markdown(extensions=[zds_ext])
-        print(md.convert("Petit << essai >> un peu plus `<< complet 'sur la typo' >>` !\n\n"
-                       "```\n"
-                       "Petit << essai >> un peu plus `<< complet 'sur la typo' >> !\n"
-                       "```\n\n"
-                       "```python\n"
-                       "a = 42 >> 2\n"
-                       "b = 'zds'\n"
-                       "```\n"))
+
         self.assertEqual(
             """<p>Petit &laquo;&nbsp;essai&nbsp;&raquo; un peu plus <code>&lt;&lt; complet 'sur la typo' &gt;&gt;"""
             """</code>&#x202F;!</p>\n"""
