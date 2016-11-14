@@ -2,6 +2,7 @@
 # Gestion fine de la typographie française, du moins, ce qui peut être
 # automatisé, Lointainement inspiré de l’extension SmartyPants.
 
+from __future__ import unicode_literals
 import markdown
 from ..inlinepatterns import HtmlPattern
 
@@ -69,15 +70,9 @@ class FrenchTypographyExtension(markdown.extensions.Extension):
         interrogationWithSpacePattern = ReplacePattern(" \?", "&#x202F;?", md)
         exclamationWithSpacePattern = ReplacePattern(" !", "&#x202F;!", md)
         perCentWithSpacePattern = ReplacePattern(" %", "&nbsp;%", md)
-        perMilWithSpacePattern = ReplacePattern(
-            b' \xe2\x80\xb0'.decode('utf-8'), "&nbsp;&permil;", md
-        )
-        openingAngleQuoteWithSpacePattern = ReplacePattern(
-            b'\xc2\xab '.decode('utf-8'), "&laquo;&nbsp;", md
-        )
-        closingAngleQuoteWithSpacePattern = ReplacePattern(
-            b' \xc2\xbb'.decode('utf-8'), "&nbsp;&raquo;", md
-        )
+        perMilWithSpacePattern = ReplacePattern(' ‰', "&nbsp;&permil;", md)
+        openingAngleQuoteWithSpacePattern = ReplacePattern('« ', "&laquo;&nbsp;", md)
+        closingAngleQuoteWithSpacePattern = ReplacePattern(' »', "&nbsp;&raquo;", md)
 
         self.replacements.add(
             'semicolon_with_space', semicolonWithSpacePattern, '_end'
