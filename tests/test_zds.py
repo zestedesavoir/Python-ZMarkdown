@@ -118,6 +118,7 @@ class TestZDSExtensionClass(unittest.TestCase):
                        "b = 'zds'\n"
                        "```\n"))
 
+
 class TestPing(unittest.TestCase):
     """ Test ping extension. """
 
