@@ -20,7 +20,7 @@ def build_postprocessors(md_instance, **kwargs):
     postprocessors = odict.OrderedDict()
     postprocessors["raw_html"] = RawHtmlPostprocessor(md_instance)
     postprocessors["amp_substitute"] = AndSubstitutePostprocessor()
-    postprocessors["unescape"] = UnescapePostprocessor()
+    postprocessors["unescape"] = UnescapePostprocessor(md_instance)
     return postprocessors
 
 
@@ -101,8 +101,18 @@ class UnescapePostprocessor(Postprocessor):
 
     RE = re.compile('%s(\d+)%s' % (util.STX, util.ETX))
 
+    def escape(self, html):
+        """ Basic html escaping """
+        html = html.replace('&', '&amp;')
+        html = html.replace('<', '&lt;')
+        html = html.replace('>', '&gt;')
+        return html.replace('"', '&quot;')
+
     def unescape(self, m):
-        return util.int2str(int(m.group(1)))
+        raw = util.int2str(int(m.group(1)))
+        if str(self.markdown.safeMode).lower() == 'escape':
+            raw = self.escape(raw)
+        return raw
 
     def run(self, text):
         return self.RE.sub(self.unescape, text)

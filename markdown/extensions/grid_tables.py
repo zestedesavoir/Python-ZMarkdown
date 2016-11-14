@@ -360,6 +360,7 @@ class TableCell(object):
             self._rc = RawCell("\n".join(l.strip() for l in self.lines), self.colspan, self.rowspan)
         return self._rc
 
+
 # Describe a table cell
 RawCell = namedtuple('Cell', 'content colspan rowspan')
 

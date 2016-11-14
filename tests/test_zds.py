@@ -1,9 +1,11 @@
+# -*- encoding: utf-8 -*-
 from __future__ import unicode_literals
 import unittest
 import markdown
 from markdown.extensions.header_dec import DownHeaderExtension
 from markdown.extensions.zds import ZdsExtension
 from markdown.extensions.ping import PingExtension
+from markdown.extensions.french_typography import FrenchTypographyExtension
 
 
 class TestZDSExtensionClass(unittest.TestCase):
@@ -22,7 +24,7 @@ class TestZDSExtensionClass(unittest.TestCase):
         # Complex elements should not be allowed
         self.assertEqual(
                 md.convert('> ![Image](http://test.com/image.png)'),
-                '<p>&gt; ![Image](http://test.com/image.png)\n\n</p>')
+                '<p>&gt;&#x202F;![Image](http://test.com/image.png)\n</p>')
 
     def test_ping_function(self):
         def ping_url(user=None):
@@ -61,8 +63,7 @@ class TestZDSExtensionClass(unittest.TestCase):
                 '<h6>Title 6</h6>\n'
                 '<h6># Title 7</h6>\n'
                 '<h1>Title 1b</h1>\n'
-                '<h2>Title 2b</h2>'
-        )
+                '<h2>Title 2b</h2>')
         md = markdown.Markdown(extensions=[DownHeaderExtension(offset=1)])
         self.assertEqual(
                 md.convert(text_ref),
@@ -74,8 +75,7 @@ class TestZDSExtensionClass(unittest.TestCase):
                 '<h6># Title 6</h6>\n'
                 '<h6>## Title 7</h6>\n'
                 '<h2>Title 1b</h2>\n'
-                '<h3>Title 2b</h3>'
-        )
+                '<h3>Title 2b</h3>')
         md = markdown.Markdown(extensions=[DownHeaderExtension(offset=2)])
         self.assertEqual(
                 md.convert(text_ref),
@@ -87,8 +87,36 @@ class TestZDSExtensionClass(unittest.TestCase):
                 '<h6>## Title 6</h6>\n'
                 '<h6>### Title 7</h6>\n'
                 '<h3>Title 1b</h3>\n'
-                '<h4>Title 2b</h4>'
-        )
+                '<h4>Title 2b</h4>')
+
+    def test_typography(self):
+        zds_ext = ZdsExtension(emoticons={":D": "image.png"})
+        md = markdown.Markdown(extensions=[zds_ext])
+
+        self.assertEqual(
+            """<p>Petit &laquo;&nbsp;essai&nbsp;&raquo; un peu plus <code>&lt;&lt; complet 'sur la typo' &gt;&gt;"""
+            """</code>&#x202F;!</p>\n"""
+            """<div><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div>"""
+            """</td><td class="code"><div class="codehilite"><pre><span></span>Petit &lt;&lt; essai &gt;&gt; """
+            """un peu plus `&lt;&lt; complet &#39;sur la typo&#39; &gt;&gt; !\n"""
+            """</pre></div>\n"""
+            """</td></tr></table></div>\n"""
+            """<div><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1\n"""
+            """2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">a<"""
+            """/span> <span class="o">=</span> <span class="mi">42</span> <span class="o">&gt;&gt;"""
+            """</span> <span class="mi">2</span>\n"""
+            """<span class="n">b</span> <span class="o">=</span> <span class="s1">&#39;zds&#39;</span>\n"""
+            """</pre></div>\n"""
+            """</td></tr></table></div>""",
+
+            md.convert("Petit << essai >> un peu plus `<< complet 'sur la typo' >>` !\n\n"
+                       "```\n"
+                       "Petit << essai >> un peu plus `<< complet 'sur la typo' >> !\n"
+                       "```\n\n"
+                       "```python\n"
+                       "a = 42 >> 2\n"
+                       "b = 'zds'\n"
+                       "```\n"))
 
 
 class TestPing(unittest.TestCase):
@@ -162,3 +190,56 @@ class TestPing(unittest.TestCase):
         text = 'I want to@Clem, @[Zozor] and@[A member].'
         self.assertEqual('<p>' + text + '</p>', md.convert(text))
         self.assertEqual(set(), md.metadata["ping"])
+
+
+class TestTypography(unittest.TestCase):
+    def setUp(self):
+        self.md = markdown.Markdown(safe_mode='escape', extensions=[FrenchTypographyExtension()])
+
+    def simple_comparison(self, src, result):
+        self.assertEqual(
+            '<p>{}</p>'.format(result),
+            self.md.convert(src))
+
+    def test_basic(self):
+        self.simple_comparison("c'est", "c&rsquo;est")
+        self.simple_comparison("un --- deux", "un &mdash; deux")
+        self.simple_comparison("un -- deux", "un &ndash; deux")
+        self.simple_comparison("un ; deux", "un&#x202F;; deux")
+        self.simple_comparison("un : deux", "un&#x202F;: deux")
+        self.simple_comparison("un ? deux", "un&#x202F;? deux")
+        self.simple_comparison("un ??? deux", "un&#x202F;??? deux")
+        self.simple_comparison("un ! deux", "un&#x202F;! deux")
+        self.simple_comparison("un !!! deux", "un&#x202F;!!! deux")
+        self.simple_comparison("42 %", "42&nbsp;%")
+        self.simple_comparison("42 ‰", "42&nbsp;&permil;")
+        self.simple_comparison("« Zeste »", "&laquo;&nbsp;Zeste&nbsp;&raquo;")
+        self.simple_comparison("<<Zeste>>", "&laquo;Zeste&raquo;")
+        self.simple_comparison("<< Zeste >>", "&laquo;&nbsp;Zeste&nbsp;&raquo;")
+        self.simple_comparison("42%o", "42&permil;")
+        self.simple_comparison("42 %o", "42&nbsp;&permil;")
+        self.simple_comparison("42...", "42&hellip;")
+
+    def test_escape(self):
+        self.simple_comparison(r"c\'est", "c'est")
+        self.simple_comparison(r"un \-\-- deux", "un --- deux")
+        self.simple_comparison(r"un \-- deux", "un -- deux")
+        self.simple_comparison(r"un\ ; deux", "un ; deux")
+        self.simple_comparison(r"un\ : deux", "un : deux")
+        self.simple_comparison(r"un\ ? deux", "un ? deux")
+        self.simple_comparison(r"un\ ! deux", "un ! deux")
+        self.simple_comparison(r"42\ %", "42 %")
+        self.simple_comparison(r"42\ ‰", "42 ‰")
+        self.simple_comparison(r"\« Zeste\ »", "« Zeste »")
+        self.simple_comparison(r"\<<Zeste\>>", "&lt;&lt;Zeste&gt;&gt;")
+        self.simple_comparison(r"\<< Zeste\ \>>", "&lt;&lt; Zeste &gt;&gt;")
+        self.simple_comparison(r"42\%o", "42%o")
+        self.simple_comparison(r"42 \%o", "42 %o")
+        self.simple_comparison(r"42\...", "42...")
+
+    def test_neg(self):
+        self.simple_comparison("un - deux", "un - deux")
+        self.simple_comparison("un ---- deux", "un ---- deux")
+        self.simple_comparison("un ;) deux", "un ;) deux")
+        self.simple_comparison("un :) deux", "un :) deux")
+        self.simple_comparison(r"< < Zeste > >", "&lt; &lt; Zeste &gt; &gt;")
