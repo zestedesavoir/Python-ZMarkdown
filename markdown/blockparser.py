@@ -77,7 +77,6 @@ class BlockParser:
         Nothing is returned.
 
         """
-        print(self.markdown.inline)
         if self.markdown.inline:
             self.blockprocessors["paragraph"].run(parent, [text])
         else:
