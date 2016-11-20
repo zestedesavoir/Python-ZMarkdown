@@ -39,6 +39,59 @@ class ZdsExtension(Extension):
 
         super(ZdsExtension, self).__init__(*args, **kwargs)
 
+    def _create_common_extension(self):
+        # create extensions :
+        sub_ext = SubSuperscriptExtension()  # Sub and Superscript support
+        del_ext = DelExtension()  # Del support
+        urlize_ext = UrlizeExtension()  # Autolink support
+        typo_ext = FrenchTypographyExtension()  # French typography
+        return [sub_ext,  # Subscript support
+                del_ext,  # Del support
+                urlize_ext,  # Autolink support
+                typo_ext]
+
+    def _create_non_inline_extension(self):
+        mathjax_ext = MathJaxExtension()  # MathJax support
+        kbd_ext = KbdExtension()  # Keyboard support
+        emo_ext = EmoticonExtension(emoticons=self.emoticons)  # smileys support
+        customblock_ext = CustomBlockExtension(classes={
+            "s(ecret)?": "spoiler",
+            "i(nformation)?": "information ico-after",
+            "q(uestion)?": "question ico-after",
+            "a(ttention)?": "warning ico-after",
+            "e(rreur)?": "error ico-after",
+        })  # CustomBlock support
+        align_ext = AlignExtension()  # Right align and center support
+        video_ext = VideoExtension(js_support=self.js_support)  # Video support
+
+        gridtable_ext = GridTableExtension()  # Grid Table support
+        comment_ext = CommentsExtension(start_tag="<--COMMENT", end_tag="COMMENT-->")  # Comment support
+        legend_ext = SmartLegendExtension()  # Smart Legend support
+        dheader_ext = DownHeaderExtension(offset=2)  # Offset header support
+        ping_ext = PingExtension(ping_url=self.ping_url)  # Ping support
+        title_anchor_ext = TitleAnchorExtension(link_position="after", marker_key=self.marker_key)
+
+        return [AbbrExtension(),  # Abbreviation support, included in python-markdown
+                FootnoteExtension(unique_prefix=self.marker_key),
+                # Footnotes support, included in python-markdown
+                TableExtension(),  # Tables support, included in python-markdown
+                # Extended syntaxe for code block support, included in python-markdown
+                CodeHiliteExtension(linenums=True, guess_lang=False),
+                customblock_ext,  # CustomBlock support
+                kbd_ext,  # Kbd support
+                emo_ext,  # Smileys support
+                video_ext,  # Video support
+                gridtable_ext,  # Grid tables support
+                align_ext,  # Right align and center support
+                dheader_ext,  # Down Header support
+                mathjax_ext,  # Mathjax support
+                FencedCodeExtension(),
+                comment_ext,  # Comment support
+                legend_ext,  # Legend support
+                ping_ext,  # Ping support
+                title_anchor_ext,  # Anchor in title elements
+                ]
+
     def extendMarkdown(self, md, md_globals):
         """ Register extension instances. """
         config = self.getConfigs()
@@ -52,58 +105,12 @@ class ZdsExtension(Extension):
 
         md.inline = self.inline
 
-        # create extensions :
-        sub_ext = SubSuperscriptExtension()  # Sub and Superscript support
-        del_ext = DelExtension()  # Del support
-        urlize_ext = UrlizeExtension()  # Autolink support
-        typo_ext = FrenchTypographyExtension()  # French typography
         # Define used ext
-        exts = [sub_ext,  # Subscript support
-                del_ext,  # Del support
-                urlize_ext,  # Autolink support
-                typo_ext]
+        exts = self._create_common_extension()
 
         if not self.inline:
-            mathjax_ext = MathJaxExtension()  # MathJax support
-            kbd_ext = KbdExtension()  # Keyboard support
-            emo_ext = EmoticonExtension(emoticons=self.emoticons)  # smileys support
-            customblock_ext = CustomBlockExtension(classes={
-                "s(ecret)?": "spoiler",
-                "i(nformation)?": "information ico-after",
-                "q(uestion)?": "question ico-after",
-                "a(ttention)?": "warning ico-after",
-                "e(rreur)?": "error ico-after",
-            })  # CustomBlock support
-            align_ext = AlignExtension()  # Right align and center support
-            video_ext = VideoExtension(js_support=self.js_support)  # Video support
+            exts.extend(self._create_non_inline_extension())
 
-            gridtable_ext = GridTableExtension()  # Grid Table support
-            comment_ext = CommentsExtension(start_tag="<--COMMENT", end_tag="COMMENT-->")  # Comment support
-            legend_ext = SmartLegendExtension()  # Smart Legend support
-            dheader_ext = DownHeaderExtension(offset=2)  # Offset header support
-            ping_ext = PingExtension(ping_url=self.ping_url)  # Ping support
-            title_anchor_ext = TitleAnchorExtension(link_position="after", marker_key=self.marker_key)
-
-            exts.extend([AbbrExtension(),  # Abbreviation support, included in python-markdown
-                         FootnoteExtension(unique_prefix=self.marker_key),
-                         # Footnotes support, included in python-markdown
-                         TableExtension(),  # Tables support, included in python-markdown
-                         # Extended syntaxe for code block support, included in python-markdown
-                         CodeHiliteExtension(linenums=True, guess_lang=False),
-                         customblock_ext,  # CustomBlock support
-                         kbd_ext,  # Kbd support
-                         emo_ext,  # Smileys support
-                         video_ext,  # Video support
-                         gridtable_ext,  # Grid tables support
-                         align_ext,  # Right align and center support
-                         dheader_ext,  # Down Header support
-                         mathjax_ext,  # Mathjax support
-                         FencedCodeExtension(),
-                         comment_ext,  # Comment support
-                         legend_ext,  # Legend support
-                         ping_ext,  # Ping support
-                         title_anchor_ext,  # Anchor in title elements
-                         ])
         md.registerExtensions(exts, {})
         if self.inline:
             md.inlinePatterns.pop("image_link")
