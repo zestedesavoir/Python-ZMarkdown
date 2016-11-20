@@ -209,7 +209,7 @@ def _write_html(root,
     if encoding is None:
         return "".join(data)
     else:
-        return _encode("".join(data))
+        return _encode("".join(data), encoding)
 
 
 # --------------------------------------------------------------------
