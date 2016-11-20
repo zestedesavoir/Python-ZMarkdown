@@ -13,7 +13,7 @@ from . import odict
 import re
 
 
-def build_preprocessors(md_instance, **kwargs):
+def build_preprocessors(md_instance):
     """ Build the default set of preprocessors used by Markdown. """
     preprocessors = odict.OrderedDict()
     preprocessors['normalize_whitespace'] = NormalizeWhitespace(md_instance)

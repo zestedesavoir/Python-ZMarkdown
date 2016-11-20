@@ -5,7 +5,7 @@ from . import odict
 from . import inlinepatterns
 
 
-def build_treeprocessors(md_instance, **kwargs):
+def build_treeprocessors(md_instance):
     """ Build the default treeprocessors for Markdown. """
     treeprocessors = odict.OrderedDict()
     treeprocessors["inline"] = InlineProcessor(md_instance)

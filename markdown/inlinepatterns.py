@@ -62,7 +62,7 @@ except ImportError:  # pragma: no cover
     import htmlentitydefs as entities
 
 
-def build_inlinepatterns(md_instance, **kwargs):
+def build_inlinepatterns(md_instance):
     """ Build the default set of inline patterns for Markdown. """
     inlinePatterns = odict.OrderedDict()
     inlinePatterns["backtick"] = BacktickPattern(BACKTICK_RE)

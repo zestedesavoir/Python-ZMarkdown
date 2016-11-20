@@ -15,7 +15,7 @@ from . import odict
 import re
 
 
-def build_postprocessors(md_instance, **kwargs):
+def build_postprocessors(md_instance):
     """ Build the default postprocessors for Markdown. """
     postprocessors = odict.OrderedDict()
     postprocessors["raw_html"] = RawHtmlPostprocessor(md_instance)
