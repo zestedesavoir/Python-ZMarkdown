@@ -95,11 +95,11 @@ class TestZDSExtensionClass(unittest.TestCase):
         md = markdown.Markdown(extensions=[zds_ext])
 
         self.assertEqual(
-                """<p>Petit &laquo;&nbsp;essai&nbsp;&raquo; un peu plus <code>&lt;&lt; complet 'sur la typo' &gt;&gt;"""
-                """</code>&#x202F;!</p>\n"""
-                """<div><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div>"""
-                """</td><td class="code"><div class="codehilite"><pre><span></span>Petit &lt;&lt; essai &gt;&gt; """
-                """un peu plus `&lt;&lt; complet &#39;sur la typo&#39; &gt;&gt; !\n"""
+                """<p>Petit &laquo;&nbsp;essai&nbsp;&raquo; un peu plus <code>&lt;&lt; complet 'sur la typo' &gt;"""
+                """&gt;</code>&#x202F;!</p>\n"""
+                """<div><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre>"""
+                """</div></td><td class="code"><div class="codehilite"><pre><span></span>Petit &lt;&lt; essai &gt;"""
+                """&gt; un peu plus `&lt;&lt; complet &#39;sur la typo&#39; &gt;&gt; !\n"""
                 """</pre></div>\n"""
                 """</td></tr></table></div>\n"""
                 """<div><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1\n"""

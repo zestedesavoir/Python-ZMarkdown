@@ -39,8 +39,8 @@ class FootnoteExtension(Extension):
         self.config = {'PLACE_MARKER': ["///Footnotes Go Here///",
                                         "The text string that marks where the footnotes go"],
                        'unique_prefix': ["",
-                                      "Avoid name collisions across "
-                                      "multiple calls to reset()."],
+                                         "Avoid name collisions across "
+                                         "multiple calls to reset()."],
                        "BACKLINK_TEXT": ["&#8617;",
                                          "The text string that links from the footnote "
                                          "to the reader's place."]}
@@ -71,7 +71,6 @@ class FootnoteExtension(Extension):
     def reset(self):
         """ Clear footnotes on reset, and prepare for distinct document. """
         self.footnotes = OrderedDict()
-
 
     def findFootnotesPlaceholder(self, root):
         """ Return ElementTree Element that contains Footnote placeholder. """
