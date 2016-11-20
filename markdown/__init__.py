@@ -58,7 +58,6 @@ class Markdown(object):
     option_defaults = {
         'html_replacement_text': '[HTML_REMOVED]',
         'tab_length': 4,
-        'enable_attributes': True,
         'smart_emphasis': True,
         'lazy_ol': True,
         'inline': False,
@@ -104,7 +103,6 @@ class Markdown(object):
         * html_replacement_text: Deprecated! Text used when safe_mode is set
           to "replace".
         * tab_length: Length of tabs in the source. Default: 4
-        * enable_attributes: Enable the conversion of attributes. Default: True
         * smart_emphasis: Treat `_connected_words_` intelligently Default: True
         * lazy_ol: Ignore number of first item of ordered lists. Default: True
 
@@ -117,9 +115,6 @@ class Markdown(object):
             setattr(self, option, kwargs.get(option, default))
 
         self.safeMode = kwargs.get('safe_mode', False)
-        if self.safeMode and 'enable_attributes' not in kwargs:
-            # Disable attributes in safeMode when not explicitly set
-            self.enable_attributes = False
 
         self.registeredExtensions = []
         self.docType = ""

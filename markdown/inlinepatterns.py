@@ -450,10 +450,7 @@ class ImagePattern(LinkPattern):
         if len(src_parts) > 1:
             el.set('title', dequote(self.unescape(" ".join(src_parts[1:]))))
 
-        if self.markdown.enable_attributes:
-            truealt = handleAttributes(m.group(2), el)
-        else:
-            truealt = m.group(2)
+        truealt = m.group(2)
 
         el.set('alt', self.unescape(truealt))
         return el
@@ -502,9 +499,6 @@ class ImageReferencePattern(ReferencePattern):
         el.set("src", self.sanitize_url(href))
         if title:
             el.set("title", title)
-
-        if self.markdown.enable_attributes:
-            text = handleAttributes(text, el)
 
         el.set("alt", self.unescape(text))
         return el

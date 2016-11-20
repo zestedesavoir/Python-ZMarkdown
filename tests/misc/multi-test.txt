@@ -1,7 +1,7 @@
 
-# Header {@id=inthebeginning}
+# Header
 
-Now, let's try something *inline{@class=special}*, to see if it works
+Now, let's try something *inline*, to see if it works
 
 
 Blah blah blah <http://www.slashdot.org>
