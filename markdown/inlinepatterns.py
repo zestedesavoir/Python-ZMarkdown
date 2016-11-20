@@ -49,10 +49,8 @@ import re
 
 import six
 
-
 if six.PY3:
     unicode = str
-
 
 try:  # pragma: no cover
     from urllib.parse import urlparse
@@ -92,10 +90,8 @@ def build_inlinepatterns(md_instance, **kwargs):
     return inlinePatterns
 
 
-"""
-The actual regular expressions for patterns
------------------------------------------------------------------------------
-"""
+# The actual regular expressions for patterns
+# -----------------------------------------------------------------------------
 
 NOBRACKET = r'[^\]\[]*'
 BRK = (
@@ -184,10 +180,8 @@ def handleAttributes(text, parent):
     return ATTR_RE.sub(attributeCallback, text)
 
 
-"""
-The pattern classes
------------------------------------------------------------------------------
-"""
+# The pattern classes
+# -----------------------------------------------------------------------------
 
 
 class Pattern(object):

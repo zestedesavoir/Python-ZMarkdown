@@ -3,11 +3,9 @@ from __future__ import unicode_literals
 import re
 import sys
 
+# Python 3 Stuff
+# =============================================================================
 
-"""
-Python 3 Stuff
-=============================================================================
-"""
 PY3 = sys.version_info[0] == 3
 
 if PY3:  # pragma: no cover
@@ -15,42 +13,36 @@ if PY3:  # pragma: no cover
     text_type = str
     int2str = chr
 else:  # pragma: no cover
-    string_type = basestring   # noqa
-    text_type = unicode        # noqa
-    int2str = unichr           # noqa
+    string_type = basestring  # noqa
+    text_type = unicode  # noqa
+    int2str = unichr  # noqa
 
-
-"""
-Constants you might want to modify
------------------------------------------------------------------------------
-"""
+# Constants you might want to modify
+# -----------------------------------------------------------------------------
 
 
 BLOCK_LEVEL_ELEMENTS = re.compile(
-    "^(p|div|h[1-6]|blockquote|pre|table|dl|ol|ul"
-    "|script|noscript|form|fieldset|iframe|math"
-    "|hr|hr/|style|li|dt|dd|thead|tbody"
-    "|tr|th|td|section|footer|header|group|figure"
-    "|figcaption|aside|article|canvas|output"
-    "|progress|video|nav)$",
-    re.IGNORECASE
+        "^(p|div|h[1-6]|blockquote|pre|table|dl|ol|ul"
+        "|script|noscript|form|fieldset|iframe|math"
+        "|hr|hr/|style|li|dt|dd|thead|tbody"
+        "|tr|th|td|section|footer|header|group|figure"
+        "|figcaption|aside|article|canvas|output"
+        "|progress|video|nav)$",
+        re.IGNORECASE
 )
 # Placeholders
 STX = u'\u0002'  # Use STX ("Start of text") for start-of-placeholder
 ETX = u'\u0003'  # Use ETX ("End of text") for end-of-placeholder
-INLINE_PLACEHOLDER_PREFIX = STX+"klzzwxh:"
+INLINE_PLACEHOLDER_PREFIX = STX + "klzzwxh:"
 INLINE_PLACEHOLDER = INLINE_PLACEHOLDER_PREFIX + "%s" + ETX
 INLINE_PLACEHOLDER_RE = re.compile(INLINE_PLACEHOLDER % r'([0-9]+)')
-AMP_SUBSTITUTE = STX+"amp"+ETX
+AMP_SUBSTITUTE = STX + "amp" + ETX
 HTML_PLACEHOLDER = STX + "wzxhzdk:%s" + ETX
 HTML_PLACEHOLDER_RE = re.compile(HTML_PLACEHOLDER % r'([0-9]+)')
 TAG_PLACEHOLDER = STX + "hzzhzkh:%s" + ETX
 
-
-"""
-Constants you probably do not need to change
------------------------------------------------------------------------------
-"""
+# Constants you probably do not need to change
+# -----------------------------------------------------------------------------
 
 RTL_BIDI_RANGES = (
     ('\u0590', '\u07FF'),
@@ -67,6 +59,7 @@ try:  # pragma: no cover
     # Is the C implementation of ElementTree available?
     import xml.etree.cElementTree as etree
     from xml.etree.ElementTree import Comment
+
     # Serializers (including ours) test with non-c Comment
     etree.test_comment = Comment
     if etree.VERSION < "1.0.5":
@@ -74,14 +67,13 @@ try:  # pragma: no cover
 except (ImportError, RuntimeError):  # pragma: no cover
     # Use the Python implementation of ElementTree?
     import xml.etree.ElementTree as etree
+
     if etree.VERSION < "1.1":
         raise RuntimeError("ElementTree version 1.1 or higher is required")
 
 
-"""
-AUXILIARY GLOBAL FUNCTIONS
-=============================================================================
-"""
+# AUXILIARY GLOBAL FUNCTIONS
+# =============================================================================
 
 
 def isBlockLevel(tag):
@@ -111,10 +103,8 @@ def parseBoolValue(value, fail_on_errors=True, preserve_none=False):
         raise ValueError('Cannot parse bool value: %r' % value)
 
 
-"""
-MISC AUXILIARY CLASSES
-=============================================================================
-"""
+# MISC AUXILIARY CLASSES
+# =============================================================================
 
 
 class AtomicString(text_type):
