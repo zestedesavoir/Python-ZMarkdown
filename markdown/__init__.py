@@ -43,7 +43,7 @@ from .treeprocessors import build_treeprocessors
 from .inlinepatterns import build_inlinepatterns
 from .postprocessors import build_postprocessors
 from .extensions import Extension
-from .serializers import to_html_string, to_xhtml_string
+from .serializers import to_html_string
 
 __all__ = ['Markdown', 'markdown']
 
@@ -60,15 +60,6 @@ class Markdown(object):
         'inline': False,
     }
 
-    output_formats = {
-        'html': to_html_string,
-        'html4': to_html_string,
-        'html5': to_html_string,
-        'xhtml': to_xhtml_string,
-        'xhtml1': to_xhtml_string,
-        'xhtml5': to_xhtml_string,
-    }
-
     ESCAPED_CHARS = ['\\', '`', '*', '_', '{', '}', '[', ']',
                      '(', ')', '>', '#', '+', '-', '.', '!']
 
@@ -82,19 +73,7 @@ class Markdown(object):
            If they are of type string, the module mdx_name.py will be loaded.
            If they are a subclass of markdown.Extension, they will be used
            as-is.
-        * extension_configs: Configuration settingis for extensions.
-        * output_format: Format of output. Supported formats are:
-            * "xhtml1": Outputs XHTML 1.x. Default.
-            * "xhtml5": Outputs XHTML style tags of HTML 5
-            * "xhtml": Outputs latest supported version of XHTML
-              (currently XHTML 1.1).
-            * "html4": Outputs HTML 4
-            * "html5": Outputs HTML style tags of HTML 5
-            * "html": Outputs latest supported version of HTML
-              (currently HTML 4).
-            Note that it is suggested that the more specific formats ("xhtml1"
-            and "html4") be used as "xhtml" or "html" may change in the future
-            if it makes sense at that time.
+        * extension_configs: Configuration settings for extensions.
         * tab_length: Length of tabs in the source. Default: 4
         """
 
@@ -114,7 +93,8 @@ class Markdown(object):
         self.htmlStash = util.HtmlStash()
         self.registerExtensions(extensions=kwargs.get('extensions', []),
                                 configs=kwargs.get('extension_configs', {}))
-        self.set_output_format(kwargs.get('output_format', 'xhtml1'))
+        self.serializer = to_html_string
+
         self.reset()
 
     def build_parser(self):
@@ -261,21 +241,6 @@ class Markdown(object):
             if hasattr(extension, 'reset'):
                 extension.reset()
 
-        return self
-
-    def set_output_format(self, frmt):
-        """ Set the output format for the class instance. """
-        self.output_format = frmt.lower()
-        try:
-            self.serializer = self.output_formats[self.output_format]
-        except KeyError as e:
-            valid_formats = list(self.output_formats.keys())
-            valid_formats.sort()
-            message = 'Invalid Output Format: "%s". Use one of %s.' \
-                      % (self.output_format,
-                         '"' + '", "'.join(valid_formats) + '"')
-            e.args = (message,) + e.args[1:]
-            raise
         return self
 
     def convert(self, source):

@@ -63,7 +63,7 @@ class TestBlockParser(unittest.TestCase):
         text = 'foo'
         self.parser.parseChunk(root, text)
         self.assertEqual(
-            markdown.serializers.to_xhtml_string(root),
+            markdown.serializers.to_html_string(root),
             "<div><p>foo</p></div>"
         )
 
@@ -74,7 +74,7 @@ class TestBlockParser(unittest.TestCase):
         self.assertTrue(isinstance(tree, markdown.util.etree.ElementTree))
         self.assertTrue(markdown.util.etree.iselement(tree.getroot()))
         self.assertEqual(
-            markdown.serializers.to_xhtml_string(tree.getroot()),
+            markdown.serializers.to_html_string(tree.getroot()),
             "<div><h1>foo</h1><p>bar</p><pre><code>baz\n</code></pre></div>"
         )
 
@@ -339,10 +339,6 @@ class TestErrors(unittest.TestCase):
             source = "foo".encode('utf-16')
             self.assertRaises(UnicodeDecodeError, markdown.markdown, source)
 
-    def testBadOutputFormat(self):
-        """ Test failure on bad output_format. """
-        self.assertRaises(KeyError, markdown.Markdown, output_format='invalid')
-
     def testLoadExtensionFailure(self):
         """ Test failure of an extension to load. """
         self.assertRaises(
@@ -485,17 +481,6 @@ class testSerializers(unittest.TestCase):
             '<div><p>foo</p><hr></div>'
         )
 
-    def testXhtml(self):
-        """" Test XHTML serialization. """
-        el = markdown.util.etree.Element('div')
-        p = markdown.util.etree.SubElement(el, 'p')
-        p.text = 'foo'
-        markdown.util.etree.SubElement(el, 'hr')
-        self.assertEqual(
-            markdown.serializers.to_xhtml_string(el),
-            '<div><p>foo</p><hr /></div>'
-        )
-
     def testMixedCaseTags(self):
         """" Test preservation of tag case. """
         el = markdown.util.etree.Element('MixedCase')
@@ -504,28 +489,8 @@ class testSerializers(unittest.TestCase):
         em.text = 'html'
         markdown.util.etree.SubElement(el, 'HR')
         self.assertEqual(
-            markdown.serializers.to_xhtml_string(el),
-            '<MixedCase>not valid <EMPHASIS>html</EMPHASIS><HR /></MixedCase>'
-        )
-
-    def buildExtension(self):
-        """ Build an extension which registers fakeSerializer. """
-        def fakeSerializer(elem):
-            # Ignore input and return hardcoded output
-            return '<div><p>foo</p></div>'
-
-        class registerFakeSerializer(markdown.extensions.Extension):
-            def extendMarkdown(self, md, md_globals):
-                md.output_formats['fake'] = fakeSerializer
-
-        return registerFakeSerializer()
-
-    def testRegisterSerializer(self):
-        self.assertEqual(
-            markdown.markdown(
-                'baz', extensions=[self.buildExtension()], output_format='fake'
-            ),
-            '<p>foo</p>'
+            markdown.serializers.to_html_string(el),
+            '<MixedCase>not valid <EMPHASIS>html</EMPHASIS><HR></MixedCase>'
         )
 
 
