@@ -75,8 +75,6 @@ def build_inlinepatterns(md_instance):
     inlinePatterns["autolink"] = AutolinkPattern(AUTOLINK_RE, md_instance)
     inlinePatterns["automail"] = AutomailPattern(AUTOMAIL_RE, md_instance)
     inlinePatterns["linebreak"] = SubstituteTagPattern(LINE_BREAK_RE, 'br')
-    if md_instance.safeMode != 'escape':
-        inlinePatterns["html"] = HtmlPattern(HTML_RE, md_instance)
     inlinePatterns["entity"] = HtmlPattern(ENTITY_RE, md_instance)
     inlinePatterns["not_strong"] = SimpleTextPattern(NOT_STRONG_RE)
     inlinePatterns["em_strong"] = DoubleTagPattern(EM_STRONG_RE, 'strong,em')
@@ -143,9 +141,6 @@ AUTOLINK_RE = r'<((?:[Ff]|[Hh][Tt])[Tt][Pp][Ss]?://[^>]*)>'
 
 # <me@example.com>
 AUTOMAIL_RE = r'<([^> \!]*@[^> ]*)>'
-
-# <...>
-HTML_RE = r'(\<([a-zA-Z/][^\>]*?|\!--.*?--)\>)'
 
 # &amp;
 ENTITY_RE = r'(&[\#a-zA-Z0-9]*;)'
@@ -422,9 +417,6 @@ class LinkPattern(Pattern):
         return el
 
     def sanitize_url(self, url):
-        if not self.markdown.safeMode:
-            # Return immediately bipassing parsing.
-            return url
         return sanitize_url(url)
 
 

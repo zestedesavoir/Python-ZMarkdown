@@ -156,7 +156,7 @@ class TestHtmlStash(unittest.TestCase):
 
     def testUnsafeHtmlInSafeMode(self):
         """ Test that unsafe HTML gets escaped in safe_mode. """
-        output = markdown.markdown('foo', extensions=[self.build_extension()], safe_mode='escape')
+        output = markdown.markdown('foo', extensions=[self.build_extension()])
         self.assertEqual(output, '<p>&lt;script&gt;print(&quot;evil&quot;)&lt;/script&gt;</p>')
 
     def build_extension(self):

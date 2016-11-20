@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 from __future__ import absolute_import
 from . import util
 from . import odict
-from . import inlinepatterns
 
 
 def build_treeprocessors(md_instance):

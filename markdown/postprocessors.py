@@ -52,20 +52,13 @@ class RawHtmlPostprocessor(Postprocessor):
         """ Iterate over html stash and restore "safe" html. """
         for i in range(self.markdown.htmlStash.html_counter):
             html, safe = self.markdown.htmlStash.rawHtmlBlocks[i]
-            if self.markdown.safeMode and not safe:
-                if str(self.markdown.safeMode).lower() == 'escape':
-                    html = self.escape(html)
-                elif str(self.markdown.safeMode).lower() == 'remove':
-                    html = ''
-                else:
-                    html = self.markdown.html_replacement_text
-            if (self.isblocklevel(html) and
-               (safe or not self.markdown.safeMode)):
+            if not safe:
+                html = self.escape(html)
+            if (self.isblocklevel(html) and safe):
                 text = text.replace(
                     "<p>%s</p>" %
                     (self.markdown.htmlStash.get_placeholder(i)),
-                    html + "\n"
-                )
+                    html + "\n")
             text = text.replace(
                 self.markdown.htmlStash.get_placeholder(i), html
             )
@@ -110,9 +103,7 @@ class UnescapePostprocessor(Postprocessor):
 
     def unescape(self, m):
         raw = util.int2str(int(m.group(1)))
-        if str(self.markdown.safeMode).lower() == 'escape':
-            raw = self.escape(raw)
-        return raw
+        return self.escape(raw)
 
     def run(self, text):
         return self.RE.sub(self.unescape, text)

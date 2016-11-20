@@ -56,7 +56,6 @@ class Markdown(object):
     doc_tag = "div"  # Element used to wrap document - later removed
 
     option_defaults = {
-        'html_replacement_text': '[HTML_REMOVED]',
         'tab_length': 4,
         'inline': False,
     }
@@ -96,10 +95,6 @@ class Markdown(object):
             Note that it is suggested that the more specific formats ("xhtml1"
             and "html4") be used as "xhtml" or "html" may change in the future
             if it makes sense at that time.
-        * safe_mode: Deprecated! Disallow raw html. One of "remove", "replace"
-          or "escape".
-        * html_replacement_text: Deprecated! Text used when safe_mode is set
-          to "replace".
         * tab_length: Length of tabs in the source. Default: 4
         """
 
@@ -108,8 +103,6 @@ class Markdown(object):
         # Loop through kwargs and assign defaults
         for option, default in self.option_defaults.items():
             setattr(self, option, kwargs.get(option, default))
-
-        self.safeMode = kwargs.get('safe_mode', False)
 
         self.registeredExtensions = []
         self.docType = ""
