@@ -47,12 +47,14 @@ class AlignProcessor(BlockProcessor):
 
         if end_block[0] < 0:
             # Block not ended, do not transform
-            return False
+            return None, None, None
         return start_block, content_align, end_block
 
     def _extract_content(self, blocks, m):
         first_block = blocks[0]
         start_block, content_align, end_block = self._extract_position(blocks, m)
+        if start_block is None:
+            return None, None, None, None
 
         # Split blocks into before/content aligned/ending
         # There should never have before and ending because regex require that the expression is starting/ending the
@@ -88,6 +90,8 @@ class AlignProcessor(BlockProcessor):
             return False
 
         before, content, after, content_align = self._extract_content(blocks, m)
+        if before is None:
+            return False
 
         if before:  # pragma: no cover
             # This should never occur because regex require that the expression is starting the block.
