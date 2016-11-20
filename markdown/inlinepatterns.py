@@ -49,10 +49,8 @@ import re
 
 import six
 
-
 if six.PY3:
     unicode = str
-
 
 try:  # pragma: no cover
     from urllib.parse import urlparse
@@ -64,7 +62,7 @@ except ImportError:  # pragma: no cover
     import htmlentitydefs as entities
 
 
-def build_inlinepatterns(md_instance, **kwargs):
+def build_inlinepatterns(md_instance):
     """ Build the default set of inline patterns for Markdown. """
     inlinePatterns = odict.OrderedDict()
     inlinePatterns["backtick"] = BacktickPattern(BACKTICK_RE)
@@ -92,10 +90,8 @@ def build_inlinepatterns(md_instance, **kwargs):
     return inlinePatterns
 
 
-"""
-The actual regular expressions for patterns
------------------------------------------------------------------------------
-"""
+# The actual regular expressions for patterns
+# -----------------------------------------------------------------------------
 
 NOBRACKET = r'[^\]\[]*'
 BRK = (
@@ -184,10 +180,8 @@ def handleAttributes(text, parent):
     return ATTR_RE.sub(attributeCallback, text)
 
 
-"""
-The pattern classes
------------------------------------------------------------------------------
-"""
+# The pattern classes
+# -----------------------------------------------------------------------------
 
 
 class Pattern(object):
@@ -253,9 +247,9 @@ class Pattern(object):
                     yield e.tail
 
         def get_stash(m):
-            id = m.group(1)
-            if id in stash:
-                value = stash.get(id)
+            idd = m.group(1)
+            if idd in stash:
+                value = stash.get(idd)
                 if isinstance(value, util.string_type):
                     return value
                 else:
@@ -353,8 +347,8 @@ class HtmlPattern(Pattern):
             return text
 
         def get_stash(m):
-            id = m.group(1)
-            value = stash.get(id)
+            idd = m.group(1)
+            value = stash.get(idd)
             if value is not None:
                 try:
                     return self.markdown.serializer(value)
@@ -386,7 +380,7 @@ def sanitize_url(url):
 
     """
     try:
-        scheme, netloc, path, params, query, fragment = spited_url = urlparse(url)
+        scheme, netloc, _, _, _, _ = spited_url = urlparse(url)
     except ValueError:  # pragma: no cover
         # Bad url - so bad it couldn't be parsed.
         return ''
@@ -472,19 +466,19 @@ class ReferencePattern(LinkPattern):
 
     def handleMatch(self, m):
         try:
-            id = m.group(9).lower()
+            idd = m.group(9).lower()
         except IndexError:
-            id = None
-        if not id:
+            idd = None
+        if not idd:
             # if we got something like "[Google][]" or "[Goggle]"
             # we'll use "google" as the id
-            id = m.group(2).lower()
+            idd = m.group(2).lower()
 
         # Clean up linebreaks in id
-        id = self.NEWLINE_CLEANUP_RE.sub(' ', id)
-        if id not in self.markdown.references:  # ignore undefined refs
+        idd = self.NEWLINE_CLEANUP_RE.sub(' ', idd)
+        if idd not in self.markdown.references:  # ignore undefined refs
             return None
-        href, title = self.markdown.references[id]
+        href, title = self.markdown.references[idd]
 
         text = m.group(2)
         return self.makeTag(href, title, text)

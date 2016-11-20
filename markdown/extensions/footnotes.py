@@ -89,9 +89,9 @@ class FootnoteExtension(Extension):
         res = finder(root)
         return res
 
-    def setFootnote(self, id, text):
+    def setFootnote(self, idd, text):
         """ Store a footnote for later retrieval. """
-        self.footnotes[id] = text
+        self.footnotes[idd] = text
 
     def get_separator(self):
         if self.md.output_format in ['html5', 'xhtml5']:
