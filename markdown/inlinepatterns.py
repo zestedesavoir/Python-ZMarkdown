@@ -83,10 +83,7 @@ def build_inlinepatterns(md_instance):
     inlinePatterns["strong_em"] = DoubleTagPattern(STRONG_EM_RE, 'em,strong')
     inlinePatterns["strong"] = SimpleTagPattern(STRONG_RE, 'strong')
     inlinePatterns["emphasis"] = SimpleTagPattern(EMPHASIS_RE, 'em')
-    if md_instance.smart_emphasis:
-        inlinePatterns["emphasis2"] = SimpleTagPattern(SMART_EMPHASIS_RE, 'em')
-    else:
-        inlinePatterns["emphasis2"] = SimpleTagPattern(EMPHASIS_2_RE, 'em')
+    inlinePatterns["emphasis2"] = SimpleTagPattern(SMART_EMPHASIS_RE, 'em')
     return inlinePatterns
 
 
@@ -122,9 +119,6 @@ STRONG_EM_RE = r'(\*|_)\2{2}(.+?)\2{2}(.*?)\2'
 
 # _smart_emphasis_
 SMART_EMPHASIS_RE = r'(?<!\w)(_)(?!_)(.+?)(?<!_)\2(?!\w)'
-
-# _emphasis_
-EMPHASIS_2_RE = r'(_)(.+?)\2'
 
 # [text](url) or [text](<url>) or [text](url "title")
 LINK_RE = NOIMG + BRK + r'''\(\s*(<.*?>|((?:(?:\(.*?\))|[^\(\)]))*?)\s*((['"])(.*?)\12\s*)?\)'''

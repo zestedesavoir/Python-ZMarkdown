@@ -58,7 +58,6 @@ class Markdown(object):
     option_defaults = {
         'html_replacement_text': '[HTML_REMOVED]',
         'tab_length': 4,
-        'smart_emphasis': True,
         'lazy_ol': True,
         'inline': False,
     }
@@ -103,7 +102,6 @@ class Markdown(object):
         * html_replacement_text: Deprecated! Text used when safe_mode is set
           to "replace".
         * tab_length: Length of tabs in the source. Default: 4
-        * smart_emphasis: Treat `_connected_words_` intelligently Default: True
         * lazy_ol: Ignore number of first item of ordered lists. Default: True
 
         """
