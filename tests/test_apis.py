@@ -10,13 +10,9 @@ Tests of the various APIs with the python markdown lib.
 from __future__ import unicode_literals
 import unittest
 import sys
-import os
 import types
 import markdown
 import warnings
-from logging import DEBUG, WARNING, CRITICAL
-import yaml
-import tempfile
 
 PY3 = sys.version_info[0] == 3
 

@@ -99,10 +99,7 @@ class AlignProcessor(BlockProcessor):
             self.parser.parseBlocks(parent, [before])
 
         sibling = self.lastChild(parent)
-        if (sibling and
-                    sibling.tag == "div" and
-                    "align" in sibling.attrib and
-                    sibling.attrib["align"] == content_align):
+        if sibling and sibling.tag == "div" and sibling.attrib.get("align", None) == content_align:
             # If previous block is the same align content, merge it !
             h = sibling
             if h.text:  # pragma: no cover
