@@ -380,7 +380,7 @@ def sanitize_url(url):
 
     """
     try:
-        scheme, netloc, _, params, query, fragment = spited_url = urlparse(url)
+        scheme, netloc, _, _, _, _ = spited_url = urlparse(url)
     except ValueError:  # pragma: no cover
         # Bad url - so bad it couldn't be parsed.
         return ''
