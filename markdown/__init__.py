@@ -58,7 +58,6 @@ class Markdown(object):
     option_defaults = {
         'html_replacement_text': '[HTML_REMOVED]',
         'tab_length': 4,
-        'lazy_ol': True,
         'inline': False,
     }
 
@@ -102,8 +101,6 @@ class Markdown(object):
         * html_replacement_text: Deprecated! Text used when safe_mode is set
           to "replace".
         * tab_length: Length of tabs in the source. Default: 4
-        * lazy_ol: Ignore number of first item of ordered lists. Default: True
-
         """
 
         self.metadata = {}
