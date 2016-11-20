@@ -60,8 +60,11 @@ class TitleAnchorTreeprocessor(Treeprocessor):
     def add_link(self, element, title_element):
         if self.link_position not in ("before", "after"):
             return
-        link = etree.Element("a", attrib={"href": u"#{}".format(title_element.anchor)})
-        link.append(etree.Element("span", attrib={"class": "anchor-link"}))
+        link = etree.Element("a")
+        link.set("href", u"#{}".format(title_element.anchor))
+        sp = etree.Element("span")
+        sp.set("class", "anchor-link")
+        link.append(sp)
         if self.link_position == "before":
             link.tail = element.text
             element.text = ""
