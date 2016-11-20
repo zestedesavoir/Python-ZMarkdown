@@ -91,20 +91,18 @@ class CodeHilite(object):
 
     """
 
-    def __init__(self, src=None, linenums=None, guess_lang=True,
-                 css_class="codehilite", lang=None, style='default',
-                 noclasses=False, tab_length=4, hl_lines=None, linenostart=1, use_pygments=True):
+    def __init__(self, src=None, **kwargs):
         self.src = src
-        self.lang = lang
-        self.linenums = linenums
-        self.guess_lang = guess_lang
-        self.css_class = css_class
-        self.style = style
-        self.noclasses = noclasses
-        self.tab_length = tab_length
-        self.hl_lines = hl_lines or []
-        self.use_pygments = use_pygments
-        self.linenostart = linenostart
+        self.lang = kwargs.get("lang", None)
+        self.linenums = kwargs.get("linenums", None)
+        self.guess_lang = kwargs.get("guess_lang", True)
+        self.css_class = kwargs.get("css_class", "codehilite")
+        self.style = kwargs.get("style", 'default')
+        self.noclasses = kwargs.get("noclasses", False)
+        self.tab_length = kwargs.get("tab_length", 4)
+        self.hl_lines = kwargs.get("hl_lines", [])
+        self.use_pygments = kwargs.get("use_pygments", True)
+        self.linenostart = kwargs.get("linenostart", 1)
 
     def hilite(self):
         """
@@ -197,10 +195,11 @@ class CodeHilite(object):
         m = c.search(fl)
         if m:
             # we have a match
-            try:
+            if m.group('lang') is not None:
                 self.lang = m.group('lang').lower()
-            except IndexError:
+            else:
                 self.lang = None
+
             if m.group('path'):
                 # path exists - restore first line
                 lines.insert(0, fl)
@@ -209,9 +208,13 @@ class CodeHilite(object):
                 self.linenums = True
 
             self.hl_lines = parse_hl_lines(m.group('hl_lines'))
-            try:
-                self.linenostart = int(m.group('linenostart'))
-            except:
+
+            if m.group('linenostart') is not None:
+                try:
+                    self.linenostart = int(m.group('linenostart'))
+                except TypeError:
+                    self.linenistart = 1
+            else:
                 self.linenistart = 1
         else:
             # No match
