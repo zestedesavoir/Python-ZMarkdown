@@ -85,7 +85,7 @@ class ZdsExtension(Extension):
             title_anchor_ext = TitleAnchorExtension(link_position="after", marker_key=self.marker_key)
 
             exts.extend([AbbrExtension(),  # Abbreviation support, included in python-markdown
-                         FootnoteExtension(),  # Footnotes support, included in python-markdown
+                         FootnoteExtension(unique_prefix=self.marker_key),  # Footnotes support, included in python-markdown
                          # Footnotes place marker can be set with the PLACE_MARKER option
                          TableExtension(),  # Tables support, included in python-markdown
                          # Extended syntaxe for code block support, included in python-markdown
