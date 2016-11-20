@@ -253,9 +253,9 @@ class Pattern(object):
                     yield e.tail
 
         def get_stash(m):
-            id = m.group(1)
-            if id in stash:
-                value = stash.get(id)
+            idd = m.group(1)
+            if idd in stash:
+                value = stash.get(idd)
                 if isinstance(value, util.string_type):
                     return value
                 else:
@@ -353,8 +353,8 @@ class HtmlPattern(Pattern):
             return text
 
         def get_stash(m):
-            id = m.group(1)
-            value = stash.get(id)
+            idd = m.group(1)
+            value = stash.get(idd)
             if value is not None:
                 try:
                     return self.markdown.serializer(value)
@@ -472,19 +472,19 @@ class ReferencePattern(LinkPattern):
 
     def handleMatch(self, m):
         try:
-            id = m.group(9).lower()
+            idd = m.group(9).lower()
         except IndexError:
-            id = None
-        if not id:
+            idd = None
+        if not idd:
             # if we got something like "[Google][]" or "[Goggle]"
             # we'll use "google" as the id
-            id = m.group(2).lower()
+            idd = m.group(2).lower()
 
         # Clean up linebreaks in id
-        id = self.NEWLINE_CLEANUP_RE.sub(' ', id)
-        if id not in self.markdown.references:  # ignore undefined refs
+        idd = self.NEWLINE_CLEANUP_RE.sub(' ', idd)
+        if idd not in self.markdown.references:  # ignore undefined refs
             return None
-        href, title = self.markdown.references[id]
+        href, title = self.markdown.references[idd]
 
         text = m.group(2)
         return self.makeTag(href, title, text)

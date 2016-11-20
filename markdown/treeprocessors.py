@@ -55,11 +55,11 @@ class InlineProcessor(Treeprocessor):
         self.markdown = md
         self.inlinePatterns = md.inlinePatterns
 
-    def __makePlaceholder(self, type):
+    def __makePlaceholder(self, _):
         """ Generate a placeholder """
-        id = "%04d" % len(self.stashed_nodes)
-        hash = util.INLINE_PLACEHOLDER % id
-        return hash, id
+        idd = "%04d" % len(self.stashed_nodes)
+        hash_ = util.INLINE_PLACEHOLDER % idd
+        return hash_, idd
 
     def __findPlaceholder(self, data, index):
         """
@@ -79,10 +79,10 @@ class InlineProcessor(Treeprocessor):
         else:
             return None, index + 1
 
-    def __stashNode(self, node, type):
+    def __stashNode(self, node, type_):
         """ Add node to stash """
-        placeholder, id = self.__makePlaceholder(type)
-        self.stashed_nodes[id] = node
+        placeholder, idd = self.__makePlaceholder(type_)
+        self.stashed_nodes[idd] = node
         return placeholder
 
     def __handleInline(self, data, patternIndex=0, parents=()):
@@ -177,10 +177,10 @@ class InlineProcessor(Treeprocessor):
         while data:
             index = data.find(self.__placeholder_prefix, strartIndex)
             if index != -1:
-                id, phEndIndex = self.__findPlaceholder(data, index)
+                idd, phEndIndex = self.__findPlaceholder(data, index)
 
-                if id in self.stashed_nodes:
-                    node = self.stashed_nodes.get(id)
+                if idd in self.stashed_nodes:
+                    node = self.stashed_nodes.get(idd)
 
                     if index > 0:
                         text = data[strartIndex:index]
