@@ -20,6 +20,7 @@ from .ping import PingExtension
 from .smart_legend import SmartLegendExtension
 from .subsuperscript import SubSuperscriptExtension
 from .tables import TableExtension
+from .title_anchor import TitleAnchorExtension
 from .urlize import UrlizeExtension
 from .video import VideoExtension
 
@@ -33,18 +34,21 @@ class ZdsExtension(Extension):
             'emoticons': [{}, ''],
             'js_support': [False, ''],
             'ping_url': [None, ''],
+            'marker_key': ["", 'Unique key for the extract used in reference elements'],
         }
 
         super(ZdsExtension, self).__init__(*args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
         """ Register extension instances. """
-        self.inline = self.getConfigs().get("inline", True)
-        self.emoticons = self.getConfigs().get("emoticons", {})
-        self.js_support = self.getConfigs().get("js_support", False)
-        self.ping_url = self.getConfigs().get('ping_url', None)
+        config = self.getConfigs()
+        self.inline = config.get("inline", True)
+        self.emoticons = config.get("emoticons", {})
+        self.js_support = config.get("js_support", False)
+        self.ping_url = config.get('ping_url', None)
         if self.ping_url is None:
             self.ping_url = lambda _: None
+        self.marker_key = config.get("marker_key", "")
 
         md.inline = self.inline
 
@@ -78,10 +82,11 @@ class ZdsExtension(Extension):
             legend_ext = SmartLegendExtension()  # Smart Legend support
             dheader_ext = DownHeaderExtension(offset=2)  # Offset header support
             ping_ext = PingExtension(ping_url=self.ping_url)  # Ping support
+            title_anchor_ext = TitleAnchorExtension(link_position="after", marker_key=self.marker_key)
 
             exts.extend([AbbrExtension(),  # Abbreviation support, included in python-markdown
-                         FootnoteExtension(),  # Footnotes support, included in python-markdown
-                         # Footnotes place marker can be set with the PLACE_MARKER option
+                         FootnoteExtension(unique_prefix=self.marker_key),
+                         # Footnotes support, included in python-markdown
                          TableExtension(),  # Tables support, included in python-markdown
                          # Extended syntaxe for code block support, included in python-markdown
                          CodeHiliteExtension(linenums=True, guess_lang=False),
@@ -97,6 +102,7 @@ class ZdsExtension(Extension):
                          comment_ext,  # Comment support
                          legend_ext,  # Legend support
                          ping_ext,  # Ping support
+                         title_anchor_ext,  # Anchor in title elements
                          ])
         md.registerExtensions(exts, {})
         if self.inline:

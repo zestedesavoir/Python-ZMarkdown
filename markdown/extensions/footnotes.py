@@ -33,21 +33,21 @@ TABBED_RE = re.compile(r'((\t)|(    ))(.*)')
 class FootnoteExtension(Extension):
     """ Footnote Extension. """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, **kwargs):
         """ Setup configs. """
 
         self.config = {'PLACE_MARKER': ["///Footnotes Go Here///",
                                         "The text string that marks where the footnotes go"],
-                       'UNIQUE_IDS': [False,
-                                      "Avoid name collisions across "
-                                      "multiple calls to reset()."],
+                       'unique_prefix': ["",
+                                         "Avoid name collisions across "
+                                         "multiple calls to reset()."],
                        "BACKLINK_TEXT": ["&#8617;",
                                          "The text string that links from the footnote "
                                          "to the reader's place."]}
-        super(FootnoteExtension, self).__init__(*args, **kwargs)
+        super(FootnoteExtension, self).__init__(**kwargs)
 
         # In multiple invocations, emit links that don't get tangled.
-        self.unique_prefix = 0
+        self.unique_prefix = self.getConfig('unique_prefix')
 
         self.reset()
 
@@ -56,7 +56,7 @@ class FootnoteExtension(Extension):
         md.registerExtension(self)
         self.parser = md.parser
         self.md = md
-        # Insert a preprocessor before ReferencePreprocessor
+        # Insert a blockprocessor before ReferencePreprocessor
         md.parser.blockprocessors.add("footnote", FootnoteBlockprocessor(md.parser, self), "<reference")
         # Insert an inline pattern before ImageReferencePattern
         FOOTNOTE_RE = r'\[\^([^\]]*)\]'  # blah blah [^1] blah
@@ -65,13 +65,12 @@ class FootnoteExtension(Extension):
         # This must be before all other treeprocessors (i.e., inline and
         # codehilite) so they can run on the the contents of the div.
         md.treeprocessors.add("footnote", FootnoteTreeprocessor(self), "_begin")
-        # Insert a postprocessor after amp_substitute oricessor
+        # Insert a postprocessor after amp_substitute processor
         md.postprocessors.add("footnote", FootnotePostprocessor(self), ">amp_substitute")
 
     def reset(self):
         """ Clear footnotes on reset, and prepare for distinct document. """
         self.footnotes = OrderedDict()
-        self.unique_prefix += 1
 
     def findFootnotesPlaceholder(self, root):
         """ Return ElementTree Element that contains Footnote placeholder. """
@@ -101,15 +100,15 @@ class FootnoteExtension(Extension):
 
     def makeFootnoteId(self, idd):
         """ Return footnote link id. """
-        if self.getConfig("UNIQUE_IDS"):
-            return 'fn%s%d-%s' % (self.get_separator(), self.unique_prefix, idd)
+        if self.unique_prefix:
+            return 'fn%s%s-%s' % (self.get_separator(), self.unique_prefix, idd)
         else:
             return 'fn%s%s' % (self.get_separator(), idd)
 
     def makeFootnoteRefId(self, idd):
         """ Return footnote back-link id. """
-        if self.getConfig("UNIQUE_IDS"):
-            return 'fnref%s%d-%s' % (self.get_separator(),
+        if self.unique_prefix:
+            return 'fnref%s%s-%s' % (self.get_separator(),
                                      self.unique_prefix, idd)
         else:
             return 'fnref%s%s' % (self.get_separator(), idd)
@@ -282,6 +281,7 @@ class FootnoteTreeprocessor(Treeprocessor):
 
     def __init__(self, footnotes):
         self.footnotes = footnotes
+        Treeprocessor.__init__(self)
 
     def run(self, root):
         footnotesDiv = self.footnotes.makeFootnotesDiv()
@@ -305,6 +305,7 @@ class FootnotePostprocessor(Postprocessor):
 
     def __init__(self, footnotes):
         self.footnotes = footnotes
+        Postprocessor.__init__(self)
 
     def run(self, text):
         text = text.replace(FN_BACKLINK_TEXT, self.footnotes.getConfig("BACKLINK_TEXT"))
