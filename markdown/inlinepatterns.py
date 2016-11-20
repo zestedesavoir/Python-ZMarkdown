@@ -75,18 +75,13 @@ def build_inlinepatterns(md_instance):
     inlinePatterns["autolink"] = AutolinkPattern(AUTOLINK_RE, md_instance)
     inlinePatterns["automail"] = AutomailPattern(AUTOMAIL_RE, md_instance)
     inlinePatterns["linebreak"] = SubstituteTagPattern(LINE_BREAK_RE, 'br')
-    if md_instance.safeMode != 'escape':
-        inlinePatterns["html"] = HtmlPattern(HTML_RE, md_instance)
     inlinePatterns["entity"] = HtmlPattern(ENTITY_RE, md_instance)
     inlinePatterns["not_strong"] = SimpleTextPattern(NOT_STRONG_RE)
     inlinePatterns["em_strong"] = DoubleTagPattern(EM_STRONG_RE, 'strong,em')
     inlinePatterns["strong_em"] = DoubleTagPattern(STRONG_EM_RE, 'em,strong')
     inlinePatterns["strong"] = SimpleTagPattern(STRONG_RE, 'strong')
     inlinePatterns["emphasis"] = SimpleTagPattern(EMPHASIS_RE, 'em')
-    if md_instance.smart_emphasis:
-        inlinePatterns["emphasis2"] = SimpleTagPattern(SMART_EMPHASIS_RE, 'em')
-    else:
-        inlinePatterns["emphasis2"] = SimpleTagPattern(EMPHASIS_2_RE, 'em')
+    inlinePatterns["emphasis2"] = SimpleTagPattern(SMART_EMPHASIS_RE, 'em')
     return inlinePatterns
 
 
@@ -123,9 +118,6 @@ STRONG_EM_RE = r'(\*|_)\2{2}(.+?)\2{2}(.*?)\2'
 # _smart_emphasis_
 SMART_EMPHASIS_RE = r'(?<!\w)(_)(?!_)(.+?)(?<!_)\2(?!\w)'
 
-# _emphasis_
-EMPHASIS_2_RE = r'(_)(.+?)\2'
-
 # [text](url) or [text](<url>) or [text](url "title")
 LINK_RE = NOIMG + BRK + r'''\(\s*(<.*?>|((?:(?:\(.*?\))|[^\(\)]))*?)\s*((['"])(.*?)\12\s*)?\)'''
 
@@ -149,9 +141,6 @@ AUTOLINK_RE = r'<((?:[Ff]|[Hh][Tt])[Tt][Pp][Ss]?://[^>]*)>'
 
 # <me@example.com>
 AUTOMAIL_RE = r'<([^> \!]*@[^> ]*)>'
-
-# <...>
-HTML_RE = r'(\<([a-zA-Z/][^\>]*?|\!--.*?--)\>)'
 
 # &amp;
 ENTITY_RE = r'(&[\#a-zA-Z0-9]*;)'
@@ -428,9 +417,6 @@ class LinkPattern(Pattern):
         return el
 
     def sanitize_url(self, url):
-        if not self.markdown.safeMode:
-            # Return immediately bipassing parsing.
-            return url
         return sanitize_url(url)
 
 
@@ -450,10 +436,7 @@ class ImagePattern(LinkPattern):
         if len(src_parts) > 1:
             el.set('title', dequote(self.unescape(" ".join(src_parts[1:]))))
 
-        if self.markdown.enable_attributes:
-            truealt = handleAttributes(m.group(2), el)
-        else:
-            truealt = m.group(2)
+        truealt = m.group(2)
 
         el.set('alt', self.unescape(truealt))
         return el
@@ -502,9 +485,6 @@ class ImageReferencePattern(ReferencePattern):
         el.set("src", self.sanitize_url(href))
         if title:
             el.set("title", title)
-
-        if self.markdown.enable_attributes:
-            text = handleAttributes(text, el)
 
         el.set("alt", self.unescape(text))
         return el

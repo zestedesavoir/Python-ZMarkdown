@@ -397,9 +397,6 @@ class OListProcessor(BlockProcessor):
         else:
             # This is a new list so create parent with appropriate tag.
             lst = util.etree.SubElement(parent, self.TAG)
-            # Check if a custom start integer is set
-            if not self.parser.markdown.lazy_ol and self.STARTSWITH != '1':
-                lst.attrib['start'] = self.STARTSWITH
 
         self.parser.state.set('list')
         # Loop through items in block, recursively parsing each with the

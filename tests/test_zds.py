@@ -195,7 +195,7 @@ class TestPing(unittest.TestCase):
 
 class TestTypography(unittest.TestCase):
     def setUp(self):
-        self.md = markdown.Markdown(safe_mode='escape', extensions=[FrenchTypographyExtension()])
+        self.md = markdown.Markdown(extensions=[FrenchTypographyExtension()])
 
     def simple_comparison(self, src, result):
         self.assertEqual(
@@ -275,7 +275,7 @@ class TestTitleAnchor(unittest.TestCase):
                     "> # Title 1\n\n"
                     'l\n')
 
-        md = markdown.Markdown(safe_mode='escape', extensions=[])
+        md = markdown.Markdown(extensions=[])
         self.assertEqual(
                 md.convert(text_ref),
                 '<h1>Title 1</h1>\n'
@@ -305,7 +305,7 @@ class TestTitleAnchor(unittest.TestCase):
                 '</blockquote>\n'
                 '<p>l</p>')
 
-        md = markdown.Markdown(safe_mode='escape', extensions=[TitleAnchorExtension()])
+        md = markdown.Markdown(extensions=[TitleAnchorExtension()])
         self.assertEqual(
                 md.convert(text_ref),
                 '<h1 id="title-1">Title 1</h1>\n'
@@ -335,7 +335,7 @@ class TestTitleAnchor(unittest.TestCase):
                 '</blockquote>\n'
                 '<p>l</p>')
 
-        md = markdown.Markdown(safe_mode='escape', extensions=[TitleAnchorExtension(root_only=False)])
+        md = markdown.Markdown(extensions=[TitleAnchorExtension(root_only=False)])
         self.assertEqual(
                 md.convert(text_ref),
                 '<h1 id="title-1">Title 1</h1>\n'
@@ -365,7 +365,7 @@ class TestTitleAnchor(unittest.TestCase):
                 '</blockquote>\n'
                 '<p>l</p>')
 
-        md = markdown.Markdown(safe_mode='escape', extensions=[TitleAnchorExtension(starting_title=2, ending_title=5)])
+        md = markdown.Markdown(extensions=[TitleAnchorExtension(starting_title=2, ending_title=5)])
         self.assertEqual(
                 md.convert(text_ref),
                 '<h1>Title 1</h1>\n'
@@ -395,7 +395,7 @@ class TestTitleAnchor(unittest.TestCase):
                 '</blockquote>\n'
                 '<p>l</p>')
 
-        md = markdown.Markdown(safe_mode='escape', extensions=[TitleAnchorExtension(marker_key="zds")])
+        md = markdown.Markdown(extensions=[TitleAnchorExtension(marker_key="zds")])
         self.assertEqual(
                 md.convert(text_ref),
                 '<h1 id="zds-title-1">Title 1</h1>\n'
@@ -425,7 +425,7 @@ class TestTitleAnchor(unittest.TestCase):
                 '</blockquote>\n'
                 '<p>l</p>')
 
-        md = markdown.Markdown(safe_mode='escape', extensions=[TitleAnchorExtension(link_position="before")])
+        md = markdown.Markdown(extensions=[TitleAnchorExtension(link_position="before")])
         self.assertEqual(
                 md.convert(text_ref),
                 '<h1 id="title-1"><a href="#title-1"><span class="anchor-link"></span></a>Title 1</h1>\n'
@@ -455,7 +455,7 @@ class TestTitleAnchor(unittest.TestCase):
                 '</blockquote>\n'
                 '<p>l</p>')
 
-        md = markdown.Markdown(safe_mode='escape', extensions=[TitleAnchorExtension(link_position="after")])
+        md = markdown.Markdown(extensions=[TitleAnchorExtension(link_position="after")])
         self.assertEqual(
                 md.convert(text_ref),
                 '<h1 id="title-1">Title 1<a href="#title-1"><span class="anchor-link"></span></a></h1>\n'
@@ -512,8 +512,7 @@ class TestTitleAnchor(unittest.TestCase):
                     'k\n'
                     "> # Title 1\n\n"
                     'l\n')
-        md = markdown.Markdown(safe_mode='escape', extensions=[TitleAnchorExtension(marker_key="zds",
-                                                                                    link_position="before")])
+        md = markdown.Markdown(extensions=[TitleAnchorExtension(marker_key="zds", link_position="before")])
         self.assertEqual(
                 md.convert(text_ref),
                 '<h1 id="zds-title-1"><a href="#zds-title-1"><span class="anchor-link"></span></a>Title 1</h1>\n'

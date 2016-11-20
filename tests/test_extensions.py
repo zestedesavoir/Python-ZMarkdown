@@ -269,16 +269,6 @@ Fenced code block
             '</code></pre></div>'
         )
 
-    def testSafeFence(self):
-        """ Test Fenced Code with safe_mode. """
-        text = '~~~\nCode\n~~~'
-        self.md.safeMode = 'replace'
-        self.assertEqual(
-            self.md.convert(text),
-            '<div><pre><code>Code\n'
-            '</code></pre></div>'
-        )
-
     def testNestedFence(self):
         """ Test nested fence. """
 

@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 from __future__ import absolute_import
 from . import util
 from . import odict
-from . import inlinepatterns
 
 
 def build_treeprocessors(md_instance):
@@ -315,23 +314,8 @@ class InlineProcessor(Treeprocessor):
                     stack.append(child)
 
             for element, lst in insertQueue:
-                if self.markdown.enable_attributes:
-                    if element.text and isString(element.text):
-                        element.text = inlinepatterns.handleAttributes(
-                            element.text, element
-                        )
                 i = 0
                 for newChild in lst:
-                    if self.markdown.enable_attributes:
-                        # Processing attributes
-                        if newChild.tail and isString(newChild.tail):
-                            newChild.tail = inlinepatterns.handleAttributes(
-                                newChild.tail, element
-                            )
-                        if newChild.text and isString(newChild.text):
-                            newChild.text = inlinepatterns.handleAttributes(
-                                newChild.text, newChild
-                            )
                     element.insert(i, newChild)
                     i += 1
         return tree

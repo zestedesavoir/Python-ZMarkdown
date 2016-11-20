@@ -1,8 +1,7 @@
 <p>Here's a simple block:</p>
-<div>
+<p>&lt;div&gt;
     foo
-</div>
-
+&lt;/div&gt;</p>
 <p>This should be a code block, though:</p>
 <pre><code>&lt;div&gt;
     foo
@@ -12,49 +11,36 @@
 <pre><code>&lt;div&gt;foo&lt;/div&gt;
 </code></pre>
 <p>Now, nested:</p>
-<div>
-    <div>
-        <div>
+<p>&lt;div&gt;
+    &lt;div&gt;
+        &lt;div&gt;
             foo
-        </div>
-    </div>
-</div>
-
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</p>
 <p>This should just be an HTML comment:</p>
-<!-- Comment -->
-
+<p>&lt;!-- Comment --&gt;</p>
 <p>Multiline:</p>
-<!--
+<p>&lt;!--
 Blah
 Blah
--->
-
+--&gt;</p>
 <p>Code block:</p>
 <pre><code>&lt;!-- Comment --&gt;
 </code></pre>
 <p>Just plain comment, with trailing spaces on the line:</p>
-<!-- foo -->
-
+<p>&lt;!-- foo --&gt;   </p>
 <p>Code:</p>
 <pre><code>&lt;hr /&gt;
 </code></pre>
 <p>Hr's:</p>
-<hr>
-
-<hr/>
-
-<hr />
-
-<hr>
-
-<hr/>
-
-<hr />
-
-<hr class="foo" id="bar" />
-
-<hr class="foo" id="bar"/>
-
-<hr class="foo" id="bar" >
-
-<p><some <a href="http://example.com">weird</a> stuff></p>
+<p>&lt;hr&gt;</p>
+<p>&lt;hr/&gt;</p>
+<p>&lt;hr /&gt;</p>
+<p>&lt;hr&gt;   </p>
+<p>&lt;hr/&gt;  </p>
+<p>&lt;hr /&gt; </p>
+<p>&lt;hr class="foo" id="bar" /&gt;</p>
+<p>&lt;hr class="foo" id="bar"/&gt;</p>
+<p>&lt;hr class="foo" id="bar" &gt;</p>
+<p>&lt;some <a href="http://example.com">weird</a> stuff&gt;</p>

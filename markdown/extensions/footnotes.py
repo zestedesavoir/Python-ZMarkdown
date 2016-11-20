@@ -94,9 +94,7 @@ class FootnoteExtension(Extension):
         self.footnotes[idd] = text
 
     def get_separator(self):
-        if self.md.output_format in ['html5', 'xhtml5']:
-            return '-'
-        return ':'
+        return '-'
 
     def makeFootnoteId(self, idd):
         """ Return footnote link id. """
@@ -130,8 +128,6 @@ class FootnoteExtension(Extension):
             self.parser.parseChunk(li, self.footnotes[idd])
             backlink = etree.Element("a")
             backlink.set("href", "#" + self.makeFootnoteRefId(idd))
-            if self.md.output_format not in ['html5', 'xhtml5']:
-                backlink.set("rev", "footnote")  # Invalid in HTML5
             backlink.set("class", "footnote-backref")
             backlink.set("title", "Retourner au texte de la note %d" % (self.footnotes.index(idd) + 1))
             backlink.text = FN_BACKLINK_TEXT
@@ -267,8 +263,6 @@ class FootnotePattern(Pattern):
             a = etree.SubElement(sup, "a")
             sup.set('id', self.footnotes.makeFootnoteRefId(idd))
             a.set('href', '#' + self.footnotes.makeFootnoteId(idd))
-            if self.footnotes.md.output_format not in ['html5', 'xhtml5']:
-                a.set('rel', 'footnote')  # invalid in HTML5
             a.set('class', 'footnote-ref')
             a.text = text_type(self.footnotes.footnotes.index(idd) + 1)
             return sup
