@@ -350,9 +350,9 @@ class HtmlPattern(Pattern):
             idd = m.group(1)
             value = stash.get(idd)
             if value is not None:
-                if isinstance(value, util.etree.Element):
+                try:
                     return self.markdown.serializer(value)
-                else:
+                except:
                     return '\%s' % value
 
         return util.INLINE_PLACEHOLDER_RE.sub(get_stash, text)
