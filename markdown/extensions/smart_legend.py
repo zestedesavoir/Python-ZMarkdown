@@ -60,8 +60,10 @@ class InnerProcessor(BlockProcessor):
         m = self.re_legend.search(first_block)
         if m:
             blocks[0] = first_block[:m.start()].rstrip()
-        self.block_src.run(parent, blocks)
-        if not m:
+        response = self.block_src.run(parent, blocks)
+        if response == False:
+            return False
+        if not m and len(blocks) > 0:
             first_block = blocks[0].strip()
             m = self.re_legend.match(first_block)
             if m:
