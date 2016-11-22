@@ -61,7 +61,7 @@ class InnerProcessor(BlockProcessor):
         if m:
             blocks[0] = first_block[:m.start()].rstrip()
         response = self.block_src.run(parent, blocks)
-        if response == False:
+        if response is False:
             return False
         if not m and len(blocks) > 0:
             first_block = blocks[0].strip()
