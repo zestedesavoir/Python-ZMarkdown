@@ -35,6 +35,7 @@ class ZdsExtension(Extension):
             'js_support': [False, ''],
             'ping_url': [None, ''],
             'marker_key': ["", 'Unique key for the extract used in reference elements'],
+            'enable_titles': [False, ''],
         }
 
         super(ZdsExtension, self).__init__(*args, **kwargs)
@@ -69,9 +70,8 @@ class ZdsExtension(Extension):
         legend_ext = SmartLegendExtension()  # Smart Legend support
         dheader_ext = DownHeaderExtension(offset=2)  # Offset header support
         ping_ext = PingExtension(ping_url=self.ping_url)  # Ping support
-        title_anchor_ext = TitleAnchorExtension(link_position="after", marker_key=self.marker_key)
 
-        return [AbbrExtension(),  # Abbreviation support, included in python-markdown
+        exts = [AbbrExtension(),  # Abbreviation support, included in python-markdown
                 FootnoteExtension(unique_prefix=self.marker_key),
                 # Footnotes support, included in python-markdown
                 TableExtension(),  # Tables support, included in python-markdown
@@ -89,8 +89,11 @@ class ZdsExtension(Extension):
                 comment_ext,  # Comment support
                 legend_ext,  # Legend support
                 ping_ext,  # Ping support
-                title_anchor_ext,  # Anchor in title elements
                 ]
+        if self.enable_titles:
+            title_anchor_ext = TitleAnchorExtension(link_position="after", marker_key=self.marker_key)
+            exts.append(title_anchor_ext)
+        return exts
 
     def extendMarkdown(self, md, md_globals):
         """ Register extension instances. """
@@ -102,6 +105,7 @@ class ZdsExtension(Extension):
         if self.ping_url is None:
             self.ping_url = lambda _: None
         self.marker_key = config.get("marker_key", "")
+        self.enable_titles = config.get("enable_titles", True)
 
         md.inline = self.inline
 
