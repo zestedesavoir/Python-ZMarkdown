@@ -22,9 +22,11 @@ class EmoticonExtension(markdown.Extension):
 
     def extendMarkdown(self, md, md_globals):
         self.md = md
-        EMOTICON_RE = u'(^|(?<=\s))(?P<emoticon>{0})((?=\s)|$)'.format(
-            '|'.join([re.escape(emoticon) for emoticon in self.getConfig('emoticons').keys()]))
-        md.inlinePatterns.add('emoticons', EmoticonPattern(EMOTICON_RE, self), "<linebreak")
+        emoticons = self.getConfig('emoticons')
+        if emoticons:
+            EMOTICON_RE = u'(^|(?<=\s))(?P<emoticon>{0})((?=\s)|$)'.format(
+                '|'.join([re.escape(emoticon) for emoticon in emoticons.keys()]))
+            md.inlinePatterns.add('emoticons', EmoticonPattern(EMOTICON_RE, emoticons), "<linebreak")
 
 
 class EmoticonPattern(Pattern):
@@ -35,10 +37,12 @@ class EmoticonPattern(Pattern):
     def handleMatch(self, m):
         try:
             emoticon = m.group('emoticon')
+            if emoticon not in self.emoticons:
+                return None
         except IndexError:  # pragma: no cover
             return None
         el = etree.Element('img')
-        el.set('src', '%s' % (self.emoticons.getConfig('emoticons')[emoticon],))
+        el.set('src', '%s' % (self.emoticons[emoticon],))
         el.set('alt', emoticon)
         return el
 
