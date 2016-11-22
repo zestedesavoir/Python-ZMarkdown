@@ -85,6 +85,8 @@ class TitleAnchorTreeprocessor(Treeprocessor):
             if tag.startswith("h") and tag in self.allowed_tags:
                 level = int(tag[1:])
                 title = element.text
+                if title is None:
+                    continue
                 anchor = self.get_anchor_key(title)
                 title_element = TitleElement(title, anchor, level)
                 toc.append((element, title_element))
