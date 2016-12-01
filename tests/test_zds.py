@@ -39,7 +39,6 @@ class TestZDSExtensionClass(unittest.TestCase):
                 '<figcaption>Image utilisateur</figcaption>\n'
                 '</figure>\n</div>')
 
-
     def test_ping_function(self):
         def ping_url(user=None):
             if user == 'Clem':
