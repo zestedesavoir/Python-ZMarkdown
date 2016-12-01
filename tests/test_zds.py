@@ -27,6 +27,18 @@ class TestZDSExtensionClass(unittest.TestCase):
                 md.convert('> ![Image](http://test.com/image.png)'),
                 '<p>&gt;&#x202F;![Image](http://test.com/image.png)\n</p>')
 
+    def test_img_in_block(self):
+
+        zds_ext = ZdsExtension(emoticons={":D": "image.png"})
+        md = markdown.Markdown(extensions=[zds_ext])
+
+        self.assertEqual(
+                md.convert('[[secret]]\n| ![Image utilisateur](http://www.glovedgirl.fr/Avatars/avatar-6.jpg)'),
+                '<div class="spoiler">\n'
+                '<figure><img alt="" src="http://www.glovedgirl.fr/Avatars/avatar-6.jpg">'
+                '<figcaption>Image utilisateur</figcaption>\n'
+                '</figure>\n</div>')
+
     def test_ping_function(self):
         def ping_url(user=None):
             if user == 'Clem':

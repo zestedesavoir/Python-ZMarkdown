@@ -25,7 +25,11 @@ class AutoFigureProcessor(BlockProcessor):
             # Should not happen
             return False
         if m.group("txtlegend") is None:
-            ml = self.legend_re.match(blocks[0])
+            if blocks:
+                ml = self.legend_re.match(blocks[0])
+            else:
+                ml = None
+
             if ml:
                 blocks.pop(0)
                 alt = m.group(1)
