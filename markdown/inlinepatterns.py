@@ -400,7 +400,7 @@ class LinkPattern(Pattern):
 
     def handleMatch(self, m):
         el = util.etree.Element("a")
-        el.text = m.group(2)
+        el.text = m.group(2).replace(".", "&#46;")
         title = m.group(13)
         href = m.group(9)
 
