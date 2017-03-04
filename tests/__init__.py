@@ -166,7 +166,7 @@ def generate(file, config):
             os.path.getmtime(output_file) < os.path.getmtime(input_file):
         print('Generating:', file)
         zmarkdown.zmarkdownFromFile(input=input_file, output=output_file,
-                                  encoding='utf-8', **config.get_args(file))
+                                    encoding='utf-8', **config.get_args(file))
     else:
         print('Already up-to-date:', file)
 
