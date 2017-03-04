@@ -1,18 +1,18 @@
 # -*- encoding: utf-8 -*-
 from __future__ import unicode_literals
 import unittest
-import markdown
-from markdown.extensions.header_dec import DownHeaderExtension
-from markdown.extensions.zds import ZdsExtension
-from markdown.extensions.ping import PingExtension
-from markdown.extensions.french_typography import FrenchTypographyExtension
-from markdown.extensions.title_anchor import TitleAnchorExtension
+import zmarkdown
+from zmarkdown.extensions.header_dec import DownHeaderExtension
+from zmarkdown.extensions.zds import ZdsExtension
+from zmarkdown.extensions.ping import PingExtension
+from zmarkdown.extensions.french_typography import FrenchTypographyExtension
+from zmarkdown.extensions.title_anchor import TitleAnchorExtension
 
 
 class TestZDSExtensionClass(unittest.TestCase):
     def test_inline_mode(self):
         zds_ext = ZdsExtension(inline=True, emoticons={":D": "image.png"})
-        md = markdown.Markdown(extensions=[zds_ext])
+        md = zmarkdown.ZMarkdown(extensions=[zds_ext])
 
         # Basic conversion
         self.assertEqual(
@@ -21,7 +21,7 @@ class TestZDSExtensionClass(unittest.TestCase):
                 'inline</em> avec <a href="http://www.zestedesavoir.com">un lien</a></p>')
 
         zds_ext = ZdsExtension(inline=True, emoticons={":D": "image.png"})
-        md = markdown.Markdown(extensions=[zds_ext])
+        md = zmarkdown.ZMarkdown(extensions=[zds_ext])
         # Complex elements should not be allowed
         self.assertEqual(
                 md.convert('> ![Image](http://test.com/image.png)'),
@@ -30,7 +30,7 @@ class TestZDSExtensionClass(unittest.TestCase):
     def test_img_in_block(self):
 
         zds_ext = ZdsExtension(emoticons={":D": "image.png"})
-        md = markdown.Markdown(extensions=[zds_ext])
+        md = zmarkdown.ZMarkdown(extensions=[zds_ext])
 
         self.assertEqual(
                 md.convert('[[secret]]\n| ![Image utilisateur](http://www.glovedgirl.fr/Avatars/avatar-6.jpg)'),
@@ -45,7 +45,7 @@ class TestZDSExtensionClass(unittest.TestCase):
                 return '/membres/voir/{}/'.format(user)
 
         zds_ext = ZdsExtension(ping_url=ping_url)
-        md = markdown.Markdown(extensions=[zds_ext])
+        md = zmarkdown.ZMarkdown(extensions=[zds_ext])
         text = 'I want to ping @[Clem] and @[Zozor].'
         self.assertEqual(
                 '<p>I want to ping <a class="ping" href="/membres/voir/Clem/">@Clem</a> and @[Zozor].</p>',
@@ -54,7 +54,7 @@ class TestZDSExtensionClass(unittest.TestCase):
         self.assertEqual({"Clem"}, md.metadata["ping"])
 
     def test_header_dec(self):
-        md = markdown.Markdown()
+        md = zmarkdown.ZMarkdown()
         text_ref = ('# Title 1\n'
                     '## Title 2\n'
                     '### Title 3\n'
@@ -77,7 +77,7 @@ class TestZDSExtensionClass(unittest.TestCase):
                 '<h6># Title 7</h6>\n'
                 '<h1>Title 1b</h1>\n'
                 '<h2>Title 2b</h2>')
-        md = markdown.Markdown(extensions=[DownHeaderExtension(offset=1)])
+        md = zmarkdown.ZMarkdown(extensions=[DownHeaderExtension(offset=1)])
         self.assertEqual(
                 md.convert(text_ref),
                 '<h2>Title 1</h2>\n'
@@ -89,7 +89,7 @@ class TestZDSExtensionClass(unittest.TestCase):
                 '<h6>## Title 7</h6>\n'
                 '<h2>Title 1b</h2>\n'
                 '<h3>Title 2b</h3>')
-        md = markdown.Markdown(extensions=[DownHeaderExtension(offset=2)])
+        md = zmarkdown.ZMarkdown(extensions=[DownHeaderExtension(offset=2)])
         self.assertEqual(
                 md.convert(text_ref),
                 '<h3>Title 1</h3>\n'
@@ -104,7 +104,7 @@ class TestZDSExtensionClass(unittest.TestCase):
 
     def test_typography(self):
         zds_ext = ZdsExtension(emoticons={":D": "image.png"})
-        md = markdown.Markdown(extensions=[zds_ext])
+        md = zmarkdown.ZMarkdown(extensions=[zds_ext])
 
         self.assertEqual(
                 """<p>Petit &laquo;&nbsp;essai&nbsp;&raquo; un peu plus <code>&lt;&lt; complet 'sur la typo' &gt;"""
@@ -137,7 +137,7 @@ class TestPing(unittest.TestCase):
 
     def testNoPing(self):
         """ No ping. """
-        md = markdown.Markdown(extensions=[PingExtension()])
+        md = zmarkdown.ZMarkdown(extensions=[PingExtension()])
         text = 'I want to ping @[Clem].'
         self.assertEqual(
                 '<p>I want to ping @[Clem].</p>',
@@ -152,7 +152,7 @@ class TestPing(unittest.TestCase):
             if user == 'Clem':
                 return '/membres/voir/{}/'.format(user)
 
-        md = markdown.Markdown(extensions=[PingExtension(ping_url=ping_url)])
+        md = zmarkdown.ZMarkdown(extensions=[PingExtension(ping_url=ping_url)])
         text = 'I want to ping @[Clem] and @[Zozor].'
         self.assertEqual(
                 '<p>I want to ping <a class="ping" href="/membres/voir/Clem/">@Clem</a> and @[Zozor].</p>',
@@ -167,7 +167,7 @@ class TestPing(unittest.TestCase):
             if user == 'Clem' or user == 'A member':
                 return '/membres/voir/{}/'.format(user)
 
-        md = markdown.Markdown(extensions=[PingExtension(ping_url=ping_url)])
+        md = zmarkdown.ZMarkdown(extensions=[PingExtension(ping_url=ping_url)])
         text = 'I want to ping @[Clem], @[Zozor] and @[A member].'
         self.assertEqual(
                 '<p>I want to ping <a class="ping" href="/membres/voir/Clem/">@Clem</a>, '
@@ -183,7 +183,7 @@ class TestPing(unittest.TestCase):
             if user == 'Clem' or user == 'A member':
                 return '/membres/voir/{}/'.format(user)
 
-        md = markdown.Markdown(extensions=[PingExtension(ping_url=ping_url)])
+        md = zmarkdown.ZMarkdown(extensions=[PingExtension(ping_url=ping_url)])
         text = 'I want to ping @Clem, @[Zozor] and @[A member].'
         self.assertEqual(
                 '<p>I want to ping <a class="ping" href="/membres/voir/Clem/">@Clem</a>, '
@@ -199,7 +199,7 @@ class TestPing(unittest.TestCase):
             if user == 'Clem' or user == 'A member':
                 return '/membres/voir/{}/'.format(user)
 
-        md = markdown.Markdown(extensions=[PingExtension(ping_url=ping_url)])
+        md = zmarkdown.ZMarkdown(extensions=[PingExtension(ping_url=ping_url)])
         text = 'I want to@Clem, @[Zozor] and@[A member].'
         self.assertEqual('<p>' + text + '</p>', md.convert(text))
         self.assertEqual(set(), md.metadata["ping"])
@@ -207,7 +207,7 @@ class TestPing(unittest.TestCase):
 
 class TestTypography(unittest.TestCase):
     def setUp(self):
-        self.md = markdown.Markdown(extensions=[FrenchTypographyExtension()])
+        self.md = zmarkdown.ZMarkdown(extensions=[FrenchTypographyExtension()])
 
     def simple_comparison(self, src, result):
         self.assertEqual(
@@ -287,7 +287,7 @@ class TestTitleAnchor(unittest.TestCase):
                     "> # Title 1\n\n"
                     'l\n')
 
-        md = markdown.Markdown(extensions=[])
+        md = zmarkdown.ZMarkdown(extensions=[])
         self.assertEqual(
                 md.convert(text_ref),
                 '<h1>Title 1</h1>\n'
@@ -317,7 +317,7 @@ class TestTitleAnchor(unittest.TestCase):
                 '</blockquote>\n'
                 '<p>l</p>')
 
-        md = markdown.Markdown(extensions=[TitleAnchorExtension()])
+        md = zmarkdown.ZMarkdown(extensions=[TitleAnchorExtension()])
         self.assertEqual(
                 md.convert(text_ref),
                 '<h1 id="title-1">Title 1</h1>\n'
@@ -347,7 +347,7 @@ class TestTitleAnchor(unittest.TestCase):
                 '</blockquote>\n'
                 '<p>l</p>')
 
-        md = markdown.Markdown(extensions=[TitleAnchorExtension(root_only=False)])
+        md = zmarkdown.ZMarkdown(extensions=[TitleAnchorExtension(root_only=False)])
         self.assertEqual(
                 md.convert(text_ref),
                 '<h1 id="title-1">Title 1</h1>\n'
@@ -377,7 +377,7 @@ class TestTitleAnchor(unittest.TestCase):
                 '</blockquote>\n'
                 '<p>l</p>')
 
-        md = markdown.Markdown(extensions=[TitleAnchorExtension(starting_title=2, ending_title=5)])
+        md = zmarkdown.ZMarkdown(extensions=[TitleAnchorExtension(starting_title=2, ending_title=5)])
         self.assertEqual(
                 md.convert(text_ref),
                 '<h1>Title 1</h1>\n'
@@ -407,7 +407,7 @@ class TestTitleAnchor(unittest.TestCase):
                 '</blockquote>\n'
                 '<p>l</p>')
 
-        md = markdown.Markdown(extensions=[TitleAnchorExtension(marker_key="zds")])
+        md = zmarkdown.ZMarkdown(extensions=[TitleAnchorExtension(marker_key="zds")])
         self.assertEqual(
                 md.convert(text_ref),
                 '<h1 id="zds-title-1">Title 1</h1>\n'
@@ -437,7 +437,7 @@ class TestTitleAnchor(unittest.TestCase):
                 '</blockquote>\n'
                 '<p>l</p>')
 
-        md = markdown.Markdown(extensions=[TitleAnchorExtension(link_position="before")])
+        md = zmarkdown.ZMarkdown(extensions=[TitleAnchorExtension(link_position="before")])
         self.assertEqual(
                 md.convert(text_ref),
                 '<h1 id="title-1"><a href="#title-1"><span class="anchor-link"></span></a>Title 1</h1>\n'
@@ -467,7 +467,7 @@ class TestTitleAnchor(unittest.TestCase):
                 '</blockquote>\n'
                 '<p>l</p>')
 
-        md = markdown.Markdown(extensions=[TitleAnchorExtension(link_position="after")])
+        md = zmarkdown.ZMarkdown(extensions=[TitleAnchorExtension(link_position="after")])
         self.assertEqual(
                 md.convert(text_ref),
                 '<h1 id="title-1">Title 1<a href="#title-1"><span class="anchor-link"></span></a></h1>\n'
@@ -524,7 +524,7 @@ class TestTitleAnchor(unittest.TestCase):
                     'k\n'
                     "> # Title 1\n\n"
                     'l\n')
-        md = markdown.Markdown(extensions=[TitleAnchorExtension(marker_key="zds", link_position="before")])
+        md = zmarkdown.ZMarkdown(extensions=[TitleAnchorExtension(marker_key="zds", link_position="before")])
         self.assertEqual(
                 md.convert(text_ref),
                 '<h1 id="zds-title-1"><a href="#zds-title-1"><span class="anchor-link"></span></a>Title 1</h1>\n'

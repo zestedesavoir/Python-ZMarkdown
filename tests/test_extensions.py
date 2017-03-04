@@ -9,14 +9,14 @@ continue to work as advertised. This used to be accomplished by doctests.
 
 from __future__ import unicode_literals
 import unittest
-import markdown
+import zmarkdown
 
 
 class TestExtensionClass(unittest.TestCase):
     """ Test markdown.extensions.Extension. """
 
     def setUp(self):
-        class TestExtension(markdown.extensions.Extension):
+        class TestExtension(zmarkdown.extensions.Extension):
             config = {
                 'foo': ['bar', 'Description of foo'],
                 'bar': ['baz', 'Description of bar']
@@ -61,7 +61,7 @@ class TestAbbr(unittest.TestCase):
     """ Test abbr extension. """
 
     def setUp(self):
-        self.md = markdown.Markdown(extensions=['markdown.extensions.abbr'])
+        self.md = zmarkdown.ZMarkdown(extensions=['zmarkdown.extensions.abbr'])
 
     def testSimpleAbbr(self):
         """ Test Abbreviations. """
@@ -98,7 +98,7 @@ class TestCodeHilite(unittest.TestCase):
 
     def testBasicCodeHilite(self):
         text = '\t# A Code Comment'
-        md = markdown.Markdown(extensions=['markdown.extensions.codehilite'])
+        md = zmarkdown.ZMarkdown(extensions=['zmarkdown.extensions.codehilite'])
         if self.has_pygments:
             # Pygments can use random lexer here as we did not specify the language
             self.assertTrue(md.convert(text).startswith('<div class="codehilite"><pre>'))
@@ -111,8 +111,8 @@ class TestCodeHilite(unittest.TestCase):
 
     def testLinenumsTrue(self):
         text = '\t# A Code Comment'
-        md = markdown.Markdown(
-            extensions=[markdown.extensions.codehilite.CodeHiliteExtension(linenums=True)])
+        md = zmarkdown.ZMarkdown(
+            extensions=[zmarkdown.extensions.codehilite.CodeHiliteExtension(linenums=True)])
         if self.has_pygments:
             # Different versions of pygments output slightly different markup.
             # So we use 'startwith' and test just enough to confirm that
@@ -131,8 +131,8 @@ class TestCodeHilite(unittest.TestCase):
 
     def testLinenumsFalse(self):
         text = '\t#!Python\n\t# A Code Comment'
-        md = markdown.Markdown(
-            extensions=[markdown.extensions.codehilite.CodeHiliteExtension(linenums=False)])
+        md = zmarkdown.ZMarkdown(
+            extensions=[zmarkdown.extensions.codehilite.CodeHiliteExtension(linenums=False)])
         if self.has_pygments:
             self.assertEqual(
                 md.convert(text),
@@ -150,8 +150,8 @@ class TestCodeHilite(unittest.TestCase):
 
     def testLinenumsNone(self):
         text = '\t# A Code Comment'
-        md = markdown.Markdown(
-            extensions=[markdown.extensions.codehilite.CodeHiliteExtension(linenums=None)])
+        md = zmarkdown.ZMarkdown(
+            extensions=[zmarkdown.extensions.codehilite.CodeHiliteExtension(linenums=None)])
         if self.has_pygments:
             # Pygments can use random lexer here as we did not specify the language
             self.assertTrue(md.convert(text).startswith('<div class="codehilite"><pre>'))
@@ -164,8 +164,8 @@ class TestCodeHilite(unittest.TestCase):
 
     def testLinenumsNoneWithShebang(self):
         text = '\t#!Python\n\t# A Code Comment'
-        md = markdown.Markdown(
-            extensions=[markdown.extensions.codehilite.CodeHiliteExtension(linenums=None)])
+        md = zmarkdown.ZMarkdown(
+            extensions=[zmarkdown.extensions.codehilite.CodeHiliteExtension(linenums=None)])
         if self.has_pygments:
             # Differant versions of pygments output slightly different markup.
             # So we use 'startwith' and test just enough to confirm that
@@ -184,8 +184,8 @@ class TestCodeHilite(unittest.TestCase):
 
     def testLinenumsNoneWithColon(self):
         text = '\t:::Python\n\t# A Code Comment'
-        md = markdown.Markdown(
-            extensions=[markdown.extensions.codehilite.CodeHiliteExtension(linenums=None)]
+        md = zmarkdown.ZMarkdown(
+            extensions=[zmarkdown.extensions.codehilite.CodeHiliteExtension(linenums=None)]
         )
         if self.has_pygments:
             self.assertEqual(
@@ -208,7 +208,7 @@ class TestCodeHilite(unittest.TestCase):
         text1 = "\t:::Python hl_lines='2'\n\t#line 1\n\t#line 2\n\t#line 3"
 
         for text in (text0, text1):
-            md = markdown.Markdown(extensions=['markdown.extensions.codehilite'])
+            md = zmarkdown.ZMarkdown(extensions=['zmarkdown.extensions.codehilite'])
             if self.has_pygments:
                 self.assertEqual(
                     md.convert(text),
@@ -230,8 +230,8 @@ class TestCodeHilite(unittest.TestCase):
 
     def testUsePygmentsFalse(self):
         text = '\t:::Python\n\t# A Code Comment'
-        md = markdown.Markdown(
-            extensions=[markdown.extensions.codehilite.CodeHiliteExtension(use_pygments=False)]
+        md = zmarkdown.ZMarkdown(
+            extensions=[zmarkdown.extensions.codehilite.CodeHiliteExtension(use_pygments=False)]
         )
         self.assertEqual(
             md.convert(text),
@@ -244,7 +244,7 @@ class TestFencedCode(unittest.TestCase):
     """ Test fenced_code extension. """
 
     def setUp(self):
-        self.md = markdown.Markdown(extensions=['markdown.extensions.fenced_code'])
+        self.md = zmarkdown.ZMarkdown(extensions=['zmarkdown.extensions.fenced_code'])
         self.has_pygments = True
         try:
             import pygments  # noqa
@@ -321,10 +321,10 @@ line 1
 line 2
 line 3
 ```'''
-        md = markdown.Markdown(
+        md = zmarkdown.ZMarkdown(
             extensions=[
-                markdown.extensions.codehilite.CodeHiliteExtension(linenums=None, guess_lang=False),
-                'markdown.extensions.fenced_code'
+                zmarkdown.extensions.codehilite.CodeHiliteExtension(linenums=None, guess_lang=False),
+                'zmarkdown.extensions.fenced_code'
             ]
         )
 
@@ -362,10 +362,10 @@ line 3
 #line 3
 ~~~'''
         for text in (text0, text1):
-            md = markdown.Markdown(
+            md = zmarkdown.ZMarkdown(
                 extensions=[
-                    markdown.extensions.codehilite.CodeHiliteExtension(linenums=None, guess_lang=False),
-                    'markdown.extensions.fenced_code'
+                    zmarkdown.extensions.codehilite.CodeHiliteExtension(linenums=None, guess_lang=False),
+                    'zmarkdown.extensions.fenced_code'
                 ]
             )
             if self.has_pygments:

@@ -1,5 +1,5 @@
 import os
-import markdown
+import zmarkdown
 import codecs
 import difflib
 try:
@@ -11,7 +11,7 @@ except ImportError as e:
     e.args = (msg,) + e.args[1:]
     raise
 
-from .plugins import Markdown, MarkdownSyntaxError
+from .plugins import ZMarkdown, ZMarkdownSyntaxError
 try:
     import tidylib
 except ImportError:
@@ -112,7 +112,7 @@ class CheckSyntax(object):
             # Normalize line endings
             # (on windows, git may have altered line endings).
             expected_output = f.read().replace("\r\n", "\n")
-        output = markdown.markdown(input, **config.get_args(file))
+        output = zmarkdown.zmarkdown(input, **config.get_args(file))
         expected_output = expected_output.strip()
         output = output.strip()
         if tidylib and config.get(cfg_section, 'normalize'):
@@ -133,7 +133,7 @@ class CheckSyntax(object):
             lineterm="\n"
         )]
         if diff:
-            raise MarkdownSyntaxError(
+            raise ZMarkdownSyntaxError(
                 'Output from "%s" failed to match expected '
                 'output.\n\n%s' % (input_file, ''.join(diff))
             )
@@ -165,8 +165,8 @@ def generate(file, config):
     if not os.path.isfile(output_file) or \
             os.path.getmtime(output_file) < os.path.getmtime(input_file):
         print('Generating:', file)
-        markdown.markdownFromFile(input=input_file, output=output_file,
-                                  encoding='utf-8', **config.get_args(file))
+        zmarkdown.zmarkdownFromFile(input=input_file, output=output_file,
+                                    encoding='utf-8', **config.get_args(file))
     else:
         print('Already up-to-date:', file)
 
@@ -184,4 +184,4 @@ def generate_all():
 
 
 def run():
-    nose.main(addplugins=[Markdown()])
+    nose.main(addplugins=[ZMarkdown()])

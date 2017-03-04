@@ -5,15 +5,15 @@ from nose.plugins.errorclass import ErrorClass, ErrorClassPlugin
 import six
 
 
-class MarkdownSyntaxError(Exception):
+class ZMarkdownSyntaxError(Exception):
     pass
 
 
-class Markdown(ErrorClassPlugin):
+class ZMarkdown(ErrorClassPlugin):
     """ Add MarkdownSyntaxError and ensure proper formatting. """
     mdsyntax = ErrorClass(
-        MarkdownSyntaxError,
-        label='MarkdownSyntaxError',
+        ZMarkdownSyntaxError,
+        label='ZMarkdownSyntaxError',
         isfailure=True
     )
     enabled = True

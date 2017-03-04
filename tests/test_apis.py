@@ -11,7 +11,7 @@ from __future__ import unicode_literals
 import unittest
 import sys
 import types
-import markdown
+import zmarkdown
 import warnings
 
 PY3 = sys.version_info[0] == 3
@@ -22,7 +22,7 @@ class TestMarkdownBasics(unittest.TestCase):
 
     def setUp(self):
         """ Create instance of Markdown. """
-        self.md = markdown.Markdown()
+        self.md = zmarkdown.ZMarkdown()
 
     def testBlankInput(self):
         """ Test blank input. """
@@ -38,16 +38,16 @@ class TestMarkdownBasics(unittest.TestCase):
 
     def testInstanceExtension(self):
         """ Test Extension loading with a class instance. """
-        from markdown.extensions.footnotes import FootnoteExtension
-        markdown.Markdown(extensions=[FootnoteExtension()])
+        from zmarkdown.extensions.footnotes import FootnoteExtension
+        zmarkdown.ZMarkdown(extensions=[FootnoteExtension()])
 
     def testNamedExtension(self):
         """ Test Extension loading with Name (`path.to.module`). """
-        markdown.Markdown(extensions=['markdown.extensions.footnotes'])
+        zmarkdown.ZMarkdown(extensions=['zmarkdown.extensions.footnotes'])
 
     def TestNamedExtensionWithClass(self):
         """ Test Extension loading with class name (`path.to.module:Class`). """
-        markdown.Markdown(extensions=['markdown.extensions.footnotes:FootnoteExtension'])
+        zmarkdown.ZMarkdown(extensions=['zmarkdown.extensions.footnotes:FootnoteExtension'])
 
 
 class TestBlockParser(unittest.TestCase):
@@ -55,15 +55,15 @@ class TestBlockParser(unittest.TestCase):
 
     def setUp(self):
         """ Create instance of BlockParser. """
-        self.parser = markdown.Markdown().parser
+        self.parser = zmarkdown.ZMarkdown().parser
 
     def testParseChunk(self):
         """ Test BlockParser.parseChunk. """
-        root = markdown.util.etree.Element("div")
+        root = zmarkdown.util.etree.Element("div")
         text = 'foo'
         self.parser.parseChunk(root, text)
         self.assertEqual(
-            markdown.serializers.to_html_string(root),
+            zmarkdown.serializers.to_html_string(root),
             "<div><p>foo</p></div>"
         )
 
@@ -71,10 +71,10 @@ class TestBlockParser(unittest.TestCase):
         """ Test BlockParser.parseDocument. """
         lines = ['#foo', '', 'bar', '', '    baz']
         tree = self.parser.parseDocument(lines)
-        self.assertTrue(isinstance(tree, markdown.util.etree.ElementTree))
-        self.assertTrue(markdown.util.etree.iselement(tree.getroot()))
+        self.assertTrue(isinstance(tree, zmarkdown.util.etree.ElementTree))
+        self.assertTrue(zmarkdown.util.etree.iselement(tree.getroot()))
         self.assertEqual(
-            markdown.serializers.to_html_string(tree.getroot()),
+            zmarkdown.serializers.to_html_string(tree.getroot()),
             "<div><h1>foo</h1><p>bar</p><pre><code>baz\n</code></pre></div>"
         )
 
@@ -83,7 +83,7 @@ class TestBlockParserState(unittest.TestCase):
     """ Tests of the State class for BlockParser. """
 
     def setUp(self):
-        self.state = markdown.blockparser.State()
+        self.state = zmarkdown.blockparser.State()
 
     def testBlankState(self):
         """ Test State when empty. """
@@ -121,7 +121,7 @@ class TestHtmlStash(unittest.TestCase):
     """ Test Markdown's HtmlStash. """
 
     def setUp(self):
-        self.stash = markdown.util.HtmlStash()
+        self.stash = zmarkdown.util.HtmlStash()
         self.placeholder = self.stash.store('foo')
 
     def testSimpleStore(self):
@@ -156,19 +156,19 @@ class TestHtmlStash(unittest.TestCase):
 
     def testUnsafeHtmlInSafeMode(self):
         """ Test that unsafe HTML gets escaped in safe_mode. """
-        output = markdown.markdown('foo', extensions=[self.build_extension()])
+        output = zmarkdown.zmarkdown('foo', extensions=[self.build_extension()])
         self.assertEqual(output, '<p>&lt;script&gt;print(&quot;evil&quot;)&lt;/script&gt;</p>')
 
     def build_extension(self):
         """ Build an extention that addes unsafe html to Stash in same_mode. """
-        class Unsafe(markdown.treeprocessors.Treeprocessor):
+        class Unsafe(zmarkdown.treeprocessors.Treeprocessor):
             def run(self, root):
                 el = root.find('p')
-                el.text = self.markdown.htmlStash.store('<script>print("evil")</script>', safe=False)
+                el.text = self.zmarkdown.htmlStash.store('<script>print("evil")</script>', safe=False)
                 return root
 
-        class StoreUnsafeHtml(markdown.extensions.Extension):
-            def extendMarkdown(self, md, md_globals):
+        class StoreUnsafeHtml(zmarkdown.extensions.Extension):
+            def extendZMarkdown(self, md, md_globals):
                 md.treeprocessors.add('unsafe', Unsafe(md), '_end')
 
         return StoreUnsafeHtml()
@@ -178,7 +178,7 @@ class TestOrderedDict(unittest.TestCase):
     """ Test OrderedDict storage class. """
 
     def setUp(self):
-        self.odict = markdown.odict.OrderedDict()
+        self.odict = zmarkdown.odict.OrderedDict()
         self.odict['first'] = 'This'
         self.odict['third'] = 'a'
         self.odict['fourth'] = 'self'
@@ -337,28 +337,28 @@ class TestErrors(unittest.TestCase):
         """ Test falure on non-unicode source text. """
         if sys.version_info < (3, 0):
             source = "foo".encode('utf-16')
-            self.assertRaises(UnicodeDecodeError, markdown.markdown, source)
+            self.assertRaises(UnicodeDecodeError, zmarkdown.zmarkdown, source)
 
     def testLoadExtensionFailure(self):
         """ Test failure of an extension to load. """
         self.assertRaises(
             ImportError,
-            markdown.Markdown, extensions=['non_existant_ext']
+            zmarkdown.ZMarkdown, extensions=['non_existant_ext']
         )
 
     def testLoadBadExtension(self):
         """ Test loading of an Extension with no makeExtension function. """
-        self.assertRaises(AttributeError, markdown.Markdown, extensions=['markdown.util'])
+        self.assertRaises(AttributeError, zmarkdown.ZMarkdown, extensions=['zmarkdown.util'])
 
     def testNonExtension(self):
         """ Test loading a non Extension object as an extension. """
-        self.assertRaises(TypeError, markdown.Markdown, extensions=[object])
+        self.assertRaises(TypeError, zmarkdown.ZMarkdown, extensions=[object])
 
     def testBaseExtention(self):
         """ Test that the base Extension class will raise NotImplemented. """
         self.assertRaises(
             NotImplementedError,
-            markdown.Markdown, extensions=[markdown.extensions.Extension()]
+            zmarkdown.ZMarkdown, extensions=[zmarkdown.extensions.Extension()]
         )
 
     def testMdxExtention(self):
@@ -366,21 +366,21 @@ class TestErrors(unittest.TestCase):
         _create_fake_extension(name='fake', use_old_style=True)
         self.assertRaises(
             DeprecationWarning,
-            markdown.Markdown, extensions=['fake']
+            zmarkdown.ZMarkdown, extensions=['fake']
         )
 
     def testShortNameExtention(self):
         """ Test that using a short name raises a DeprecationWarning. """
         self.assertRaises(
             DeprecationWarning,
-            markdown.Markdown, extensions=['footnotes']
+            zmarkdown.ZMarkdown, extensions=['footnotes']
         )
 
     def testStringConfigExtention(self):
         """ Test that passing configs to an Extension in the name raises a DeprecationWarning. """
         self.assertRaises(
             DeprecationWarning,
-            markdown.Markdown, extensions=['markdown.extension.footnotes(PLACE_MARKER=FOO)']
+            zmarkdown.ZMarkdown, extensions=['zmarkdown.extension.footnotes(PLACE_MARKER=FOO)']
         )
 
 
@@ -399,7 +399,7 @@ def _create_fake_extension(name, has_factory_func=True, is_wrong_type=False, use
         if is_wrong_type:
             return object
         else:
-            return markdown.extensions.Extension(*args, **kwargs)
+            return zmarkdown.extensions.Extension(*args, **kwargs)
 
     if has_factory_func:
         ext_mod.makeExtension = makeExtension
@@ -422,33 +422,33 @@ class testETreeComments(unittest.TestCase):
 
     def setUp(self):
         # Create comment node
-        self.comment = markdown.util.etree.Comment('foo')
-        if hasattr(markdown.util.etree, 'test_comment'):
-            self.test_comment = markdown.util.etree.test_comment
+        self.comment = zmarkdown.util.etree.Comment('foo')
+        if hasattr(zmarkdown.util.etree, 'test_comment'):
+            self.test_comment = zmarkdown.util.etree.test_comment
         else:
-            self.test_comment = markdown.util.etree.Comment
+            self.test_comment = zmarkdown.util.etree.Comment
 
     def testCommentIsComment(self):
         """ Test that an ElementTree Comment passes the `is Comment` test. """
-        self.assertTrue(self.comment.tag is markdown.util.etree.test_comment)
+        self.assertTrue(self.comment.tag is zmarkdown.util.etree.test_comment)
 
     def testCommentIsBlockLevel(self):
         """ Test that an ElementTree Comment is recognized as BlockLevel. """
-        self.assertFalse(markdown.util.isBlockLevel(self.comment.tag))
+        self.assertFalse(zmarkdown.util.isBlockLevel(self.comment.tag))
 
     def testCommentSerialization(self):
         """ Test that an ElementTree Comment serializes properly. """
         self.assertEqual(
-            markdown.serializers.to_html_string(self.comment),
+            zmarkdown.serializers.to_html_string(self.comment),
             '<!--foo-->'
         )
 
     def testCommentPrettify(self):
         """ Test that an ElementTree Comment is prettified properly. """
-        pretty = markdown.treeprocessors.PrettifyTreeprocessor()
+        pretty = zmarkdown.treeprocessors.PrettifyTreeprocessor()
         pretty.run(self.comment)
         self.assertEqual(
-            markdown.serializers.to_html_string(self.comment),
+            zmarkdown.serializers.to_html_string(self.comment),
             '<!--foo-->\n'
         )
 
@@ -456,12 +456,12 @@ class testETreeComments(unittest.TestCase):
 class testElementTailTests(unittest.TestCase):
     """ Element Tail Tests """
     def setUp(self):
-        self.pretty = markdown.treeprocessors.PrettifyTreeprocessor()
+        self.pretty = zmarkdown.treeprocessors.PrettifyTreeprocessor()
 
     def testBrTailNoNewline(self):
         """ Test that last <br> in tree has a new line tail """
-        root = markdown.util.etree.Element('root')
-        br = markdown.util.etree.SubElement(root, 'br')
+        root = zmarkdown.util.etree.Element('root')
+        br = zmarkdown.util.etree.SubElement(root, 'br')
         self.assertEqual(br.tail, None)
         self.pretty.run(root)
         self.assertEqual(br.tail, "\n")
@@ -472,24 +472,24 @@ class testSerializers(unittest.TestCase):
 
     def testHtml(self):
         """ Test HTML serialization. """
-        el = markdown.util.etree.Element('div')
-        p = markdown.util.etree.SubElement(el, 'p')
+        el = zmarkdown.util.etree.Element('div')
+        p = zmarkdown.util.etree.SubElement(el, 'p')
         p.text = 'foo'
-        markdown.util.etree.SubElement(el, 'hr')
+        zmarkdown.util.etree.SubElement(el, 'hr')
         self.assertEqual(
-            markdown.serializers.to_html_string(el),
+            zmarkdown.serializers.to_html_string(el),
             '<div><p>foo</p><hr></div>'
         )
 
     def testMixedCaseTags(self):
         """" Test preservation of tag case. """
-        el = markdown.util.etree.Element('MixedCase')
+        el = zmarkdown.util.etree.Element('MixedCase')
         el.text = 'not valid '
-        em = markdown.util.etree.SubElement(el, 'EMPHASIS')
+        em = zmarkdown.util.etree.SubElement(el, 'EMPHASIS')
         em.text = 'html'
-        markdown.util.etree.SubElement(el, 'HR')
+        zmarkdown.util.etree.SubElement(el, 'HR')
         self.assertEqual(
-            markdown.serializers.to_html_string(el),
+            zmarkdown.serializers.to_html_string(el),
             '<MixedCase>not valid <EMPHASIS>html</EMPHASIS><HR></MixedCase>'
         )
 
@@ -498,48 +498,48 @@ class testAtomicString(unittest.TestCase):
     """ Test that AtomicStrings are honored (not parsed). """
 
     def setUp(self):
-        md = markdown.Markdown()
+        md = zmarkdown.ZMarkdown()
         self.inlineprocessor = md.treeprocessors['inline']
 
     def testString(self):
         """ Test that a regular string is parsed. """
-        tree = markdown.util.etree.Element('div')
-        p = markdown.util.etree.SubElement(tree, 'p')
+        tree = zmarkdown.util.etree.Element('div')
+        p = zmarkdown.util.etree.SubElement(tree, 'p')
         p.text = 'some *text*'
         new = self.inlineprocessor.run(tree)
         self.assertEqual(
-            markdown.serializers.to_html_string(new),
+            zmarkdown.serializers.to_html_string(new),
             '<div><p>some <em>text</em></p></div>'
         )
 
     def testSimpleAtomicString(self):
         """ Test that a simple AtomicString is not parsed. """
-        tree = markdown.util.etree.Element('div')
-        p = markdown.util.etree.SubElement(tree, 'p')
-        p.text = markdown.util.AtomicString('some *text*')
+        tree = zmarkdown.util.etree.Element('div')
+        p = zmarkdown.util.etree.SubElement(tree, 'p')
+        p.text = zmarkdown.util.AtomicString('some *text*')
         new = self.inlineprocessor.run(tree)
         self.assertEqual(
-            markdown.serializers.to_html_string(new),
+            zmarkdown.serializers.to_html_string(new),
             '<div><p>some *text*</p></div>'
         )
 
     def testNestedAtomicString(self):
         """ Test that a nested AtomicString is not parsed. """
-        tree = markdown.util.etree.Element('div')
-        p = markdown.util.etree.SubElement(tree, 'p')
-        p.text = markdown.util.AtomicString('*some* ')
-        span1 = markdown.util.etree.SubElement(p, 'span')
-        span1.text = markdown.util.AtomicString('*more* ')
-        span2 = markdown.util.etree.SubElement(span1, 'span')
-        span2.text = markdown.util.AtomicString('*text* ')
-        span3 = markdown.util.etree.SubElement(span2, 'span')
-        span3.text = markdown.util.AtomicString('*here*')
-        span3.tail = markdown.util.AtomicString(' *to*')
-        span2.tail = markdown.util.AtomicString(' *test*')
-        span1.tail = markdown.util.AtomicString(' *with*')
+        tree = zmarkdown.util.etree.Element('div')
+        p = zmarkdown.util.etree.SubElement(tree, 'p')
+        p.text = zmarkdown.util.AtomicString('*some* ')
+        span1 = zmarkdown.util.etree.SubElement(p, 'span')
+        span1.text = zmarkdown.util.AtomicString('*more* ')
+        span2 = zmarkdown.util.etree.SubElement(span1, 'span')
+        span2.text = zmarkdown.util.AtomicString('*text* ')
+        span3 = zmarkdown.util.etree.SubElement(span2, 'span')
+        span3.text = zmarkdown.util.AtomicString('*here*')
+        span3.tail = zmarkdown.util.AtomicString(' *to*')
+        span2.tail = zmarkdown.util.AtomicString(' *test*')
+        span1.tail = zmarkdown.util.AtomicString(' *with*')
         new = self.inlineprocessor.run(tree)
         self.assertEqual(
-            markdown.serializers.to_html_string(new),
+            zmarkdown.serializers.to_html_string(new),
             '<div><p>*some* <span>*more* <span>*text* <span>*here*</span> '
             '*to*</span> *test*</span> *with*</p></div>'
         )
@@ -547,7 +547,7 @@ class testAtomicString(unittest.TestCase):
 
 class TestConfigParsing(unittest.TestCase):
     def assertParses(self, value, result):
-        self.assertTrue(markdown.util.parseBoolValue(value, False) is result)
+        self.assertTrue(zmarkdown.util.parseBoolValue(value, False) is result)
 
     def testBooleansParsing(self):
         self.assertParses(True, True)
@@ -558,8 +558,8 @@ class TestConfigParsing(unittest.TestCase):
         self.assertParses('none', False)
 
     def testPreserveNone(self):
-        self.assertTrue(markdown.util.parseBoolValue('None', preserve_none=True) is None)
-        self.assertTrue(markdown.util.parseBoolValue(None, preserve_none=True) is None)
+        self.assertTrue(zmarkdown.util.parseBoolValue('None', preserve_none=True) is None)
+        self.assertTrue(zmarkdown.util.parseBoolValue(None, preserve_none=True) is None)
 
     def testInvalidBooleansParsing(self):
-        self.assertRaises(ValueError, markdown.util.parseBoolValue, 'novalue')
+        self.assertRaises(ValueError, zmarkdown.util.parseBoolValue, 'novalue')
