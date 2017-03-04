@@ -38,14 +38,14 @@ clean:
 	rm -f MANIFEST
 	rm -f test-output.html
 	rm -f *.pyc
-	rm -f markdown/*.pyc
-	rm -f markdown/extensions/*.pyc
+	rm -f zmarkdown/*.pyc
+	rm -f zmarkdown/extensions/*.pyc
 	rm -f *.bak
-	rm -f markdown/*.bak
-	rm -f markdown/extensions/*.bak
+	rm -f zmarkdown/*.bak
+	rm -f zmarkdown/extensions/*.bak
 	rm -f *.swp
-	rm -f markdown/*.swp
-	rm -f markdown/extensions/*.swp
+	rm -f zmarkdown/*.swp
+	rm -f zmarkdown/extensions/*.swp
 	rm -rf build
 	rm -rf dist
 	rm -rf tmp

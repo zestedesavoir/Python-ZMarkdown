@@ -1,9 +1,8 @@
-Installing Python-Markdown
+Installing ZMArkdown
 ==========================
 
 As an Admin/Root user on your system do:
 
-    pip install markdown
+    pip install zmarkdown
 
 Or for more specific instructions, view the documentation in `docs/install.txt`
-or on the website at <https://pythonhosted.org/Markdown/install.html>.
