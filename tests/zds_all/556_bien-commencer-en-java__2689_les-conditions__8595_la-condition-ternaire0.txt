@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/556_bien-commencer-en-java__2689_les-conditions__8595_la-condition-ternaire0.txt

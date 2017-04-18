@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/746_les-capteurs-et-lenvironnement-autour-darduino__3434_generalites-sur-les-capteurs__10715_un-capteur-ca-capte0.txt

@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/548_laffichage__2629_les-objets-daffichage__8361_supprimer-un-objet-daffichage-de-la-memoire0.txt

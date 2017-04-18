@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/977_equations-a-une-inconnue__4050_methodes-de-resolution-numerique__12271_methode-de-la-fausse-position0.txt

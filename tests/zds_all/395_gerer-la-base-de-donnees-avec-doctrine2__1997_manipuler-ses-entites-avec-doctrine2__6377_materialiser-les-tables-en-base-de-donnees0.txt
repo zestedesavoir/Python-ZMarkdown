@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/395_gerer-la-base-de-donnees-avec-doctrine2__1997_manipuler-ses-entites-avec-doctrine2__6377_materialiser-les-tables-en-base-de-donnees0.txt

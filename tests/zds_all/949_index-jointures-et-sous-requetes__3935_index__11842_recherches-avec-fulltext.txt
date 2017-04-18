@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/949_index-jointures-et-sous-requetes__3935_index__11842_recherches-avec-fulltext.txt

@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/559_interactions-avec-les-bases-de-donnees__2725_lier-ses-tables-avec-des-objets-java-le-pattern-dao__8710_avant-toute-chose.txt

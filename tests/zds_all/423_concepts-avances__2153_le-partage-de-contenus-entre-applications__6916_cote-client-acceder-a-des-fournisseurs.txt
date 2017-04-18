@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/423_concepts-avances__2153_le-partage-de-contenus-entre-applications__6916_cote-client-acceder-a-des-fournisseurs.txt

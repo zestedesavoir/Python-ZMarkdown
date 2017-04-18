@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/709_les-bases__3298_programmation-fonctionnelle__10301_exemple-la-fonction-map0.txt

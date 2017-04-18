@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/552_ada-notions-essentielles__2647_variables-i-typage-et-affectation__8416_declaration-de-variables0.txt

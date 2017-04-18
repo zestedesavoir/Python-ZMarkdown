@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/685_animation-et-rigging__3217_rigging-et-animation-dun-bras__10091_des-pliures-automatiques-avec-ik-handle.txt

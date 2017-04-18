@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/553_ada-les-types-composites__2658_creer-vos-propres-types__8474_enumerer-les-valeurs-dun-type0.txt

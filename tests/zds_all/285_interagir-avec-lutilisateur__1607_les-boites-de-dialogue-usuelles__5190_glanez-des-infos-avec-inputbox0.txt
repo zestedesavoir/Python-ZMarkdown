@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/285_interagir-avec-lutilisateur__1607_les-boites-de-dialogue-usuelles__5190_glanez-des-infos-avec-inputbox0.txt

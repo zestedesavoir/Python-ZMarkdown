@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/395_gerer-la-base-de-donnees-avec-doctrine2__1996_la-couche-metier-les-entites__6376_tout-sur-le-mapping0.txt

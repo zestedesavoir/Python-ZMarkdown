@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/422_vers-des-applications-plus-complexes__2147_la-communication-entre-composants__6895_la-resolution-des-intents.txt

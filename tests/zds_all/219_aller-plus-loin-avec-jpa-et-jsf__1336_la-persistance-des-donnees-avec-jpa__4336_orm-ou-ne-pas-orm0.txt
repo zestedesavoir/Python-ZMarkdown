@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/219_aller-plus-loin-avec-jpa-et-jsf__1336_la-persistance-des-donnees-avec-jpa__4336_orm-ou-ne-pas-orm0.txt

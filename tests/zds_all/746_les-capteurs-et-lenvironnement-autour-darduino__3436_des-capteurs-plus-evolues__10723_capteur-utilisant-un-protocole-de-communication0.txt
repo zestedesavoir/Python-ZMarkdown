@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/746_les-capteurs-et-lenvironnement-autour-darduino__3436_des-capteurs-plus-evolues__10723_capteur-utilisant-un-protocole-de-communication0.txt

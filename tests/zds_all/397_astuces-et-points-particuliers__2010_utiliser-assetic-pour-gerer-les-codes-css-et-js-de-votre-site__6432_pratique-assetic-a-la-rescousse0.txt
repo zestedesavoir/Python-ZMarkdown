@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/397_astuces-et-points-particuliers__2010_utiliser-assetic-pour-gerer-les-codes-css-et-js-de-votre-site__6432_pratique-assetic-a-la-rescousse0.txt

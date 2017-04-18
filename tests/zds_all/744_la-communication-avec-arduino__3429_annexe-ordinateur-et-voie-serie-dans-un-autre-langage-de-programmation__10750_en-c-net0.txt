@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/744_la-communication-avec-arduino__3429_annexe-ordinateur-et-voie-serie-dans-un-autre-langage-de-programmation__10750_en-c-net0.txt

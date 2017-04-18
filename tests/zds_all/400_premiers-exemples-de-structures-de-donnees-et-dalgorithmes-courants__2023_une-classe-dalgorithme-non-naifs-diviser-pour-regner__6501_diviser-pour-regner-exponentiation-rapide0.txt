@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/400_premiers-exemples-de-structures-de-donnees-et-dalgorithmes-courants__2023_une-classe-dalgorithme-non-naifs-diviser-pour-regner__6501_diviser-pour-regner-exponentiation-rapide0.txt

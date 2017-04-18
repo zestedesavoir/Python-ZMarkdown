@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/1353_application-la-methode-de-newton__5355_quelques-exemples__15099_une-suite-convergente-vers-racine-de-deux.txt

@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/683_modelisation__3196_techniques-de-modelisation__10009_gerer-les-angles-avec-les-edges-loops0.txt

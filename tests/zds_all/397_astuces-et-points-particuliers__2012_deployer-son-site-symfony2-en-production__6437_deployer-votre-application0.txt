@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/397_astuces-et-points-particuliers__2012_deployer-son-site-symfony2-en-production__6437_deployer-votre-application0.txt

@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/983_equations-a-plusieurs-inconnues__4052_de-plus-en-plus-dinconnues__12278_equations-du-premier-degre0.txt

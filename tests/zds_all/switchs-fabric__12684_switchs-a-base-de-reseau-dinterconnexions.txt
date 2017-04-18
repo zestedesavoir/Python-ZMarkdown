@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/switchs-fabric__12684_switchs-a-base-de-reseau-dinterconnexions.txt

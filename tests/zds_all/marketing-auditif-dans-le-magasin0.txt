@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/marketing-auditif-dans-le-magasin0.txt

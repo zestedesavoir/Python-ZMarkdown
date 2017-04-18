@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/683_modelisation__3198_lextrusion-avancee__10016_une-extrusion-a-partir-de-deux-extremites-avec-bridge0.txt

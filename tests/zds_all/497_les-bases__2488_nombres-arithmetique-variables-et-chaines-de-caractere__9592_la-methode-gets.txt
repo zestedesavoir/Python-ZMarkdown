@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/497_les-bases__2488_nombres-arithmetique-variables-et-chaines-de-caractere__9592_la-methode-gets.txt

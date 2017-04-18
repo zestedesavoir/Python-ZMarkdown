@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/1042_les-bases-du-langage-c__4295_les-boucles__13487_boucles-infinies.txt

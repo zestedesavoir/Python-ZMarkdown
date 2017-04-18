@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/746_les-capteurs-et-lenvironnement-autour-darduino__3434_generalites-sur-les-capteurs__10716_les-caracteristiques-dun-capteur0.txt

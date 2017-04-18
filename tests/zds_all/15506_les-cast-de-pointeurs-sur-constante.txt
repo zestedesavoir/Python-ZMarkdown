@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/15506_les-cast-de-pointeurs-sur-constante.txt

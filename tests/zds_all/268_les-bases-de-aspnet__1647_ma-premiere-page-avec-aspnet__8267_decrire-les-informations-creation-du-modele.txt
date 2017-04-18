@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/268_les-bases-de-aspnet__1647_ma-premiere-page-avec-aspnet__8267_decrire-les-informations-creation-du-modele.txt

@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/396_allons-plus-loin-avec-symfony2__2007_traduire-son-site__6420_introduction-a-la-traduction.txt

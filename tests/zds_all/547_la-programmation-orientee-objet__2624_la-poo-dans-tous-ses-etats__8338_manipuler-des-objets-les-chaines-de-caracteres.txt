@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/547_la-programmation-orientee-objet__2624_la-poo-dans-tous-ses-etats__8338_manipuler-des-objets-les-chaines-de-caracteres.txt

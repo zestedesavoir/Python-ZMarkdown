@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/switchs-fabric__12683_switchs-fabric-a-memoire-partagee.txt

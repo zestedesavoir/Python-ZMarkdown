@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/1042_les-bases-du-langage-c__4286_les-variables__12905_quest-ce-quune-variable.txt

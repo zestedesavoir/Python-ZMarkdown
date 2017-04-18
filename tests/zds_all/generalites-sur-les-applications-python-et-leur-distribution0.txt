@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/generalites-sur-les-applications-python-et-leur-distribution0.txt

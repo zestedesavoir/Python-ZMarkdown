@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/553_ada-les-types-composites__2655_les-chaines-de-caracteres__8456_presentation-des-chaines-de-caracteres.txt

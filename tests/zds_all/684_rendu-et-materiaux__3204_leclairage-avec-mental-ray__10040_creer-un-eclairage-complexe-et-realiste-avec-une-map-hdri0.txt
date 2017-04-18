@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/684_rendu-et-materiaux__3204_leclairage-avec-mental-ray__10040_creer-un-eclairage-complexe-et-realiste-avec-une-map-hdri0.txt

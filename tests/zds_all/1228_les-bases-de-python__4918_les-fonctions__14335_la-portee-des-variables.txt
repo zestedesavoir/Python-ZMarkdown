@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/1228_les-bases-de-python__4918_les-fonctions__14335_la-portee-des-variables.txt

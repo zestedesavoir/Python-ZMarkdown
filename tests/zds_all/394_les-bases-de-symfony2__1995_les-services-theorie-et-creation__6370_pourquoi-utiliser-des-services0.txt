@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/394_les-bases-de-symfony2__1995_les-services-theorie-et-creation__6370_pourquoi-utiliser-des-services0.txt

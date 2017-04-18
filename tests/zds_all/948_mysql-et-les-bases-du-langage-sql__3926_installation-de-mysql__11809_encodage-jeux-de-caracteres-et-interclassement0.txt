@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/948_mysql-et-les-bases-du-langage-sql__3926_installation-de-mysql__11809_encodage-jeux-de-caracteres-et-interclassement0.txt

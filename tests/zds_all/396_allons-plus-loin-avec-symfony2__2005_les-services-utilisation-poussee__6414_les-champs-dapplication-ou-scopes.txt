@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/396_allons-plus-loin-avec-symfony2__2005_les-services-utilisation-poussee__6414_les-champs-dapplication-ou-scopes.txt

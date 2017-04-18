@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/983_equations-a-plusieurs-inconnues__4051_equations-a-deux-inconnues__12276_systeme-dequations.txt

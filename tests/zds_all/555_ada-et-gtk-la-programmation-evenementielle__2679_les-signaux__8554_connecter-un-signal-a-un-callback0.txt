@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/555_ada-et-gtk-la-programmation-evenementielle__2679_les-signaux__8554_connecter-un-signal-a-un-callback0.txt

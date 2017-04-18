@@ -1,0 +1,1 @@
+/home/christophe/Dev/Python-ZMarkdown/tests/zds_all/553_ada-les-types-composites__2655_les-chaines-de-caracteres__8459_chaines-de-caracteres-non-contraintes0.txt
